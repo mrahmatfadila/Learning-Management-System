@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                    String       @id @default(uuid())
+  name                  String
+  email                 String       @unique
+  password              String
+  role                  Role         @default(STUDENT)
+  createdAt             DateTime     @default(now())
+  updatedAt             DateTime     @updatedAt
+  isVerified            Boolean      @default(false)
+  verificationCode      String?
+  verificationExpiresAt DateTime?
+  specialty             String?
+  phone                 String?
+  bio                   String?
+  profilePicture        String?
+  emailNotifications    Boolean      @default(true)
+  darkMode              Boolean      @default(false)
+  enrollments           Enrollment[]
+  modules               Module[]     @relation("InstructorModules")
+  submissions           Submission[]
+  schedules             Schedule[]   @relation("InstructorSchedules")
+  assignedTasks         Task[]       @relation("TaskAssignments")
+  messages              Message[]
+}
+
+model Module {
+  id           String       @id @default(uuid())
+  title        String
+  category     String
+  description  String?
+  thumbnail    String?
+  instructorId String
+  isVerified   Boolean      @default(false)
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  enrollments  Enrollment[]
+  lessons      Lesson[]
+  chapters     Chapter[]
+  instructor   User         @relation("InstructorModules", fields: [instructorId], references: [id])
+  tasks        Task[]
+  schedules    Schedule[]
+}
+
+model Chapter {
+  id        String   @id @default(uuid())
+  moduleId  String
+  title     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+}
+
+model Lesson {
+  id        String   @id @default(uuid())
+  moduleId  String
+  chapter   String?
+  chapterId String?
+  title     String
+  content   String?  @db.Text
+  videoUrl  String?
+  type      String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  chapterRef Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+}
+
+model Task {
+  id          String       @id @default(uuid())
+  moduleId    String
+  title       String
+  description String
+  deadline    DateTime?
+  createdAt   DateTime     @default(now())
+  submissions Submission[]
+  module      Module       @relation(fields: [moduleId], references: [id])
+  assignedStudents User[]  @relation("TaskAssignments")
+}
+
+model Submission {
+  id          String           @id @default(uuid())
+  taskId      String
+  studentId   String
+  fileUrl     String
+  status      SubmissionStatus @default(PENDING)
+  score       Int?
+  feedback    String?
+  submittedAt DateTime         @default(now())
+  student     User             @relation(fields: [studentId], references: [id])
+  task        Task             @relation(fields: [taskId], references: [id])
+}
+
+model Enrollment {
+  id         String           @id @default(uuid())
+  studentId  String
+  moduleId   String
+  progress   Int              @default(0)
+  status     EnrollmentStatus @default(PENDING)
+  note       String?
+  enrolledAt DateTime         @default(now())
+  updatedAt  DateTime         @updatedAt
+  module     Module           @relation(fields: [moduleId], references: [id])
+  student    User             @relation(fields: [studentId], references: [id])
+
+  @@unique([studentId, moduleId])
+}
+
+enum Role {
+  ADMIN
+  INSTRUCTOR
+  STUDENT
+}
+
+enum SubmissionStatus {
+  PENDING
+  GRADED
+}
+
+enum EnrollmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Schedule {
+  id           String   @id @default(uuid())
+  title        String
+  description  String?
+  date         DateTime
+  startTime    String
+  endTime      String
+  location     String
+  instructorId String
+  moduleId     String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  instructor   User     @relation("InstructorSchedules", fields: [instructorId], references: [id])
+  module       Module?  @relation(fields: [moduleId], references: [id])
+}
+
+model Message {
+  id        String   @id @default(uuid())
+  content   String   @db.Text
+  senderId  String
+  channelId String   // 'global', instructorId, or moduleId
+  isPinned  Boolean  @default(false)
+  isDeleted Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  sender    User     @relation(fields: [senderId], references: [id], onDelete: Cascade)
+}
+

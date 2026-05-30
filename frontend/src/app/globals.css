@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+@variant dark (.dark &);
+
+:root {
+  --background: #f8fafc;
+  --foreground: #0f172a;
+}
+
+.dark {
+  --background: #0b0f19;
+  --foreground: #f8fafc;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* ── Global: semua elemen interaktif pakai cursor pointer ── */
+a,
+button,
+[role="button"],
+[role="tab"],
+[role="menuitem"],
+[role="option"],
+select,
+label[for],
+summary,
+input[type="submit"],
+input[type="reset"],
+input[type="button"],
+input[type="file"],
+input[type="checkbox"],
+input[type="radio"] {
+  cursor: pointer;
+}
+
+/* Elemen disabled tetap pakai cursor not-allowed */
+button:disabled,
+input:disabled,
+select:disabled,
+[aria-disabled="true"] {
+  cursor: not-allowed;
+}
+

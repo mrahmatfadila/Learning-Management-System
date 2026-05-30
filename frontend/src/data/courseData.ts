@@ -1,0 +1,2 @@
+// placeholder
+export const courses = [];
