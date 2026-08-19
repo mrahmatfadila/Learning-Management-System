@@ -10,84 +10,75 @@
 
 ---
 
-# 1. CORE PRINCIPLES
+# 1. CORE PRINCIPLES & PRIORITY
 
-Follow these principles in this exact priority:
+Prinsip:
+- "MAKE THE SMALLEST SAFE CHANGE."
+- "NEVER DESTROY WHAT YOU DID NOT CREATE."
+- "WHEN IN DOUBT, STOP AND ASK."
 
-1. Protect existing database and data.
-2. Protect existing source code.
-3. Protect developer's uncommitted changes.
-4. Protect Git history.
-5. Make the smallest possible change.
-6. Test every change.
-7. Create a Git checkpoint after successful work.
-8. Never perform destructive operations without explicit approval.
+Priority:
+1. Database dan data existing (PROTECT DATA FIRST).
+2. Source code existing (PROTECT CODE SECOND).
+3. Perubahan developer yang belum di-commit.
+4. Git history.
+5. Fitur existing.
+6. Penyelesaian task.
 
-NEVER sacrifice existing data or code just to make an error disappear.
+NEVER sacrifice existing data or source code just to make an error disappear quickly.
 
 ---
 
 # 2. BEFORE STARTING ANY TASK
 
-Before modifying anything:
+Before modifying anything, WAJIB:
 
-1. Check the current Git status.
-2. Identify the current branch.
-3. Check whether there are existing uncommitted changes.
-4. Understand the scope of the requested task.
-5. Identify which files actually need modification.
+1. Baca `AGENTS.md`.
+2. Jalankan `git status`.
+3. Identifikasi branch aktif (`git branch`).
+4. Periksa apakah terdapat perubahan lokal yang belum di-commit.
+5. Pahami scope task.
+6. Tentukan file yang benar-benar perlu diubah.
 
-Do NOT assume that existing uncommitted changes were created by you.
+Do NOT assume existing uncommitted changes were created by AI. They belong to the developer.
 
 If there are existing changes:
-
-* Do not delete them.
-* Do not reset them.
-* Do not overwrite them.
-* Do not use `git restore`.
-* Do not use `git reset --hard`.
-* Do not use `git clean`.
+- Do not delete them.
+- Do not reset them.
+- Do not overwrite them.
+- Do not use `git restore .` or `git checkout .`.
+- Do not use `git reset --hard` or `git clean -fd`.
+- Do not stash without a clear reason or mix unrelated changes into task commits.
 
 If existing changes conflict with the requested task, STOP and ask the developer.
 
 ---
 
-# 3. NEVER DESTROY EXISTING CODE
+# 3. SOURCE CODE SAFETY
 
 Existing code must be considered intentional unless the developer explicitly requests its removal.
 
 NEVER delete:
+- pages
+- components
+- API routes
+- backend services
+- database models
+- utility functions
+- middleware
+- authentication
+- configuration
+- migrations
+- existing features
 
-* pages
-* components
-* API routes
-* backend services
-* database models
-* utility functions
-* middleware
-* authentication
-* configuration
-* migrations
-* existing features
-
-just because:
-
-* they appear unused;
-* they appear outdated;
-* they appear duplicated;
-* they look unnecessary;
-* you think there is a better approach.
+just because they appear unused, outdated, duplicated, or unnecessary.
 
 If you believe code should be removed:
-
-STOP.
-
-Explain:
-
-* what should be removed;
-* why;
-* what depends on it;
-* possible consequences.
+STOP. Explain:
+- what should be removed;
+- why;
+- dependencies;
+- possible consequences & safer alternatives.
 
 Wait for explicit approval.
 
@@ -96,641 +87,280 @@ Wait for explicit approval.
 # 4. MINIMAL CHANGE PRINCIPLE
 
 Always use:
-
 > CHANGE ONLY WHAT IS NECESSARY.
 
-If the task requires changing one file, do not unnecessarily modify ten files.
+If the task requires changing 1-3 files, do not unnecessarily modify ten or more files.
 
 Do NOT:
-
-* refactor unrelated code;
-* rename unrelated files;
-* restructure the project;
-* replace frameworks;
-* replace libraries;
-* rewrite existing architecture;
-* modify unrelated components.
+- refactor unrelated code;
+- rename unrelated files;
+- restructure project architecture;
+- replace frameworks or major libraries;
+- rewrite existing working components.
 
 unless explicitly requested.
 
 ---
 
-# 5. DATABASE IS CRITICAL
+# 5. DATABASE SAFETY
 
-The database contains potentially irreplaceable data.
+DATABASE IS CRITICAL DATA.
 
-Treat database operations as HIGH RISK.
+Normal CRUD operations required by application features ARE ALLOWED:
+- `SELECT`
+- `INSERT`
+- `UPDATE`
+- `DELETE` on specific records with explicit `WHERE` clause
+- Normal database transactions and queries.
+
+However, the following operations are DESTRUCTIVE / HIGH RISK:
+- `DROP DATABASE`
+- `DROP TABLE`
+- `TRUNCATE`
+- Mass `DELETE`
+- `DELETE` without clear `WHERE` clause
+- Database reset / schema reset
+- Destructive migrations or deleting migration history
+- Recreating the database or deleting production data.
 
 NEVER execute destructive database operations without explicit developer approval.
 
-Forbidden without approval:
+---
 
-* `DROP DATABASE`
-* `DROP TABLE`
-* `TRUNCATE`
-* mass `DELETE`
-* database reset
-* schema reset
-* destructive migration
-* deleting migration history
-* recreating the database
-* deleting existing production data
+# 6. DELETE SAFETY
+
+`DELETE` on specific data is allowed if required by the application feature (e.g., `DELETE FROM tickets WHERE id = 123`).
+
+However, NEVER execute mass deletes (e.g., `DELETE FROM tickets`).
+
+If a `DELETE` operation has potential to remove multiple records:
+STOP. Display:
+- SQL query;
+- Target table;
+- Estimated affected record count;
+- Reason & risk assessment.
+
+Wait for developer approval before continuing.
+
+---
+
+# 7. PRISMA SAFETY
+
+For projects using Prisma:
+
+NEVER execute:
+```text
+npx prisma migrate reset
+```
+or any force database reset commands without explicit developer approval.
 
 Never use a database reset as a shortcut to solve an application error.
 
----
-
-# 6. PRISMA SAFETY
-
-This project may use Prisma.
-
-NEVER execute:
-
-```text
-prisma migrate reset
-```
-
-without explicit developer approval.
-
-NEVER use a command or option whose purpose is to forcefully reset or recreate the database without approval.
-
-When changing:
-
-```text
-prisma/schema.prisma
-```
-
-follow this process:
-
+When changing `prisma/schema.prisma`:
 1. Understand the existing schema.
 2. Identify affected models.
 3. Determine whether existing data is affected.
-4. Create a migration when appropriate.
-5. Review the migration.
+4. Create a safe migration.
+5. Review the SQL migration.
 6. Ensure existing data is preserved.
 7. Test the migration.
-8. Commit the schema and migration together.
+8. Commit schema and migration together.
 
-Never delete or rewrite existing production migrations simply to fix a development problem.
+Never delete or rewrite existing production migrations without explicit approval.
 
 ---
 
-# 7. DATABASE CHANGES REQUIRE EXTRA CAUTION
+# 8. DATABASE ADMIN & CREDENTIAL SAFETY
 
-Before executing a potentially destructive database operation, STOP.
+- Do not use superuser/admin credentials for application operations if not required.
+- Use dedicated application database users with minimum necessary permissions.
+- Do not hardcode database admin passwords, API keys, tokens, or secrets in source code.
+- NEVER commit secrets (`.env`, `.env.local`, JWT secrets, private keys, SSH keys).
 
-Report:
+---
 
+# 9. DATABASE RESET WARNING & REPORTING
+
+If an error occurs and a database reset / drop / truncate is considered:
+DO NOT execute it immediately.
+
+STOP and report:
 ```text
 DATABASE SAFETY WARNING
 
 Operation:
 [operation]
 
-Affected:
-[database/table/schema]
+Database / Table:
+[database / table]
 
 Potential impact:
 [impact]
 
-Data loss possibility:
+Potential data loss:
 [YES/NO]
+
+Alternative safe solution:
+[safe alternative]
 
 Approval required before continuing.
 ```
 
-Do not continue until the developer explicitly approves.
+Wait for explicit developer confirmation.
 
 ---
 
-# 8. GIT SAFETY
+# 10. GIT SAFETY
 
 Git is the primary source-code recovery mechanism.
 
-NEVER perform destructive Git operations without explicit approval.
-
-Forbidden without approval:
-
-```text
-git reset --hard
-git clean -fd
-git clean -fdx
-git checkout .
-git restore .
-git push --force
-git push -f
-```
-
-Also do not:
-
-* delete branches;
-* delete commits;
-* rewrite shared Git history;
-* force-push;
-* overwrite developer changes.
+FORBIDDEN without explicit approval:
+- `git reset --hard`
+- `git reset --merge`
+- `git clean -fd`
+- `git clean -fdx`
+- `git checkout .`
+- `git restore .`
+- `git push --force`
+- `git push -f`
+- deleting branches or commits;
+- rewriting shared Git history.
 
 If a Git operation could cause loss of work:
-
 STOP and ask.
 
 ---
 
-# 9. NEVER REMOVE DEVELOPER CHANGES
+# 11. PROTECT DEVELOPER CHANGES
 
-If `git status` shows changes before starting the task:
-
+If `git status` shows uncommitted changes before starting a task:
 Those changes are PROTECTED.
 
-Do not assume they belong to you.
-
-Do not:
-
-* reset them;
-* stash them without permission;
-* overwrite them;
-* delete them;
-* commit them automatically if they are unrelated.
-
+Do not assume they belong to AI.
+Do not overwrite, reset, restore, or delete them.
 Only include changes related to the current task in the task commit.
 
-If separation is difficult or uncertain:
-
-STOP and ask the developer.
-
----
-
-# 10. TASK SCOPE
-
-Only modify files necessary for the current task.
-
-For example:
-
-If the developer asks:
-
-"Fix the login validation."
-
-Do NOT automatically modify:
-
-* dashboard;
-* ticket system;
-* database unrelated to authentication;
-* UI components unrelated to login;
-* deployment configuration;
-* unrelated API endpoints.
-
-Keep changes isolated.
-
----
-
-# 11. ERROR HANDLING
-
-When an error occurs:
-
-DO NOT immediately:
-
-* reset the database;
-* delete code;
-* delete migrations;
-* recreate the project;
-* downgrade everything;
-* upgrade everything;
-* reset Git;
-* remove features.
-
-Instead:
-
-1. Read the error.
-2. Identify the root cause.
-3. Inspect relevant code.
-4. Determine the smallest safe fix.
-5. Implement the fix.
-6. Test.
-7. Review the changes.
-8. Commit.
-
-Use:
-
-```text
-ERROR
-↓
-ANALYZE
-↓
-ROOT CAUSE
-↓
-MINIMAL FIX
-↓
-TEST
-↓
-REVIEW
-↓
-COMMIT
-```
+If separation is difficult, STOP and ask the developer.
 
 ---
 
 # 12. TESTING IS REQUIRED
 
-After implementing a task, run the relevant tests.
-
-Depending on the project, check:
-
-* lint;
-* TypeScript;
-* unit tests;
-* integration tests;
-* build;
-* database migration validation;
-* application startup.
-
-Do not claim a task is complete if the relevant verification has not been performed.
+After implementing a task, run relevant verification:
+- `npm run lint` / build check
+- TypeScript check (`tsc --noEmit`)
+- Unit / integration tests
+- Database migration check
+- Application startup check.
 
 If a test fails:
-
-Do not hide the failure.
-
-Report it clearly.
+DO NOT hide the failure.
+DO NOT reset the database or delete code to pass tests.
+Find the root cause and apply a minimal fix.
 
 ---
 
 # 13. REVIEW BEFORE COMMIT
 
 Before creating a commit:
-
 1. Run `git status`.
-2. Review `git diff`.
-3. Review changed files.
-4. Check for accidental deletions.
-5. Check for unrelated modifications.
-6. Check for secrets.
-7. Check that the task works.
-8. Confirm that database changes are safe.
+2. Run `git diff`.
+3. Review changed files for accidental deletions or unrelated edits.
+4. Check for secrets.
+5. Confirm relevant tests pass and database is safe.
 
-Only then create the commit.
+Only commit changes related to the task.
 
 ---
 
 # 14. AUTOMATIC GIT CHECKPOINT
 
-When a task is successfully completed and verified:
+EVERY COMPLETED TASK MUST HAVE A RECOVERABLE GIT CHECKPOINT.
 
-CREATE A GIT COMMIT.
+Workflow:
+`TASK` → `IMPLEMENTATION` → `TEST` → `git status` → `git diff` → `REVIEW` → `git commit` → `git push (if allowed)`
 
-Use a clear commit message.
+Clear commit message format:
+`type: description` (e.g. `feat: add ticket dashboard`, `fix: resolve login validation`).
 
-Examples:
-
-```text
-feat: add ticket priority calculation
-feat: add user authentication
-fix: resolve ticket filtering issue
-fix: fix dashboard loading error
-refactor: improve ticket service
-docs: update project documentation
-chore: update dependencies
-```
-
-Do not create meaningless messages such as:
-
-```text
-update
-changes
-fix
-test
-aaa
-```
+Do NOT use vague messages (`update`, `changes`, `fix`, `aaa`).
 
 ---
 
-# 15. COMMIT ONLY RELATED CHANGES
+# 15. GITHUB PUSH SAFETY
 
-Before committing:
+If repository has GitHub remote and project workflow allows:
+1. Verify branch and commit.
+2. Confirm no secrets are included.
+3. Push to appropriate branch.
 
-Do not automatically commit every changed file.
-
-Only commit changes related to the current task.
-
-If unrelated developer changes exist:
-
-Leave them untouched.
-
-Example:
-
-Current task:
-
-```text
-Fix login validation
-```
-
-Changed files:
-
-```text
-login.tsx              ← related
-auth.ts                 ← related
-dashboard.tsx           ← unrelated
-notes.txt               ← unrelated
-```
-
-Commit only:
-
-```text
-login.tsx
-auth.ts
-```
-
-Do not include unrelated changes.
+NEVER use `git push --force` or `git push -f` without explicit approval.
+If push fails, do not delete commits or reset repository. Report error and wait.
 
 ---
 
-# 16. GITHUB PUSH
+# 16. SECRETS & ENVIRONMENT VARIABLES
 
-If this project uses GitHub and the normal project workflow allows pushing:
+NEVER commit `.env`, `.env.local`, `.env.production`, passwords, API keys, access tokens, JWT secrets, database credentials, or private keys.
 
-After a successful commit:
-
-1. Verify the current branch.
-2. Verify the commit.
-3. Verify no secrets are included.
-4. Push to the appropriate remote branch.
-
-NEVER use:
-
-```text
-git push --force
-git push -f
-```
-
-without explicit approval.
-
-If pushing fails:
-
-Do not delete commits or reset the repository to solve the problem.
-
-Report the error.
+If a secret is staged, STOP immediately and do not commit.
 
 ---
 
-# 17. SECRETS AND ENVIRONMENT VARIABLES
-
-NEVER commit secrets.
-
-Never commit:
-
-```text
-.env
-.env.local
-.env.production
-```
-
-or files containing:
-
-* passwords;
-* API keys;
-* access tokens;
-* JWT secrets;
-* database credentials;
-* private keys;
-* SSH keys;
-* service credentials.
-
-Before committing, verify that no secrets are included.
-
-If a secret is accidentally staged:
-
-STOP.
-
-Do not commit it.
-
----
-
-# 18. PROTECTED CONFIGURATION
+# 17. PROTECTED CONFIGURATION FILES
 
 Be extremely careful when modifying:
+- `.env` / `.env.local`
+- `package.json` / lockfiles
+- `tsconfig.json` / `next.config.*`
+- `prisma/schema.prisma` / `prisma/migrations/*`
+- `middleware.*` / `Dockerfile` / `docker-compose.*`
+- Authentication & Database configuration.
 
-```text
-.env
-.env.local
-package.json
-package-lock.json
-pnpm-lock.yaml
-yarn.lock
-tsconfig.json
-next.config.*
-prisma/schema.prisma
-prisma/migrations/*
-middleware.*
-Dockerfile
-docker-compose.*
-deployment configuration
-authentication configuration
-database configuration
-```
+Only modify when required by the task.
 
-Only modify these files when required by the task.
+---
 
-Do not change configuration simply because you prefer a different setup.
+# 18. ERROR HANDLING WORKFLOW
+
+When an error occurs:
+`ERROR` → `ANALYZE` → `IDENTIFY ROOT CAUSE` → `MINIMAL FIX` → `TEST` → `REVIEW` → `COMMIT`
+
+DO NOT use destructive shortcuts (db reset, git reset, deleting code/migrations) to solve errors.
 
 ---
 
 # 19. PRODUCTION SAFETY
 
 Production is HIGH RISK.
-
 Never perform destructive operations on production without explicit approval.
 
-This includes:
-
-* deleting production data;
-* resetting production database;
-* dropping production tables;
-* destructive migrations;
-* deleting production files;
-* modifying production environment;
-* force-pushing production branches.
-
-When production is involved:
-
-STOP before destructive or high-risk actions.
+If task involves production:
+STOP and explain risks before taking action.
 
 ---
 
-# 20. DO NOT USE DESTRUCTIVE SHORTCUTS
+# 20. AUTOMATIC CHECKPOINT REPORTING
 
-Never use destructive operations as shortcuts.
-
-Examples:
-
-Bad:
-
-```text
-Error → reset database
-Error → delete migration
-Error → recreate project
-Error → git reset
-Error → delete source code
-```
-
-Correct:
-
-```text
-Error
-↓
-Understand
-↓
-Diagnose
-↓
-Minimal fix
-↓
-Test
-↓
-Review
-↓
-Commit
-```
-
----
-
-# 21. RECOVERY-FIRST DEVELOPMENT
-
-Always work in a way that allows recovery.
-
-Before major changes:
-
-* ensure Git state is understood;
-* create a checkpoint when appropriate;
-* avoid modifying many unrelated files;
-* avoid destructive operations.
-
-For major database work, recommend a database backup before execution.
-
-IMPORTANT:
-
-Git protects source code.
-
-Git does NOT automatically protect database data.
-
-Database backups must be handled separately.
-
----
-
-# 22. IF SOMETHING GOES WRONG
-
-If the AI accidentally makes a large or unexpected change:
-
-DO NOT attempt to hide it.
-
-DO NOT immediately reset everything.
-
-STOP.
-
-Report:
-
-```text
-UNEXPECTED CHANGE DETECTED
-
-What happened:
-[...]
-
-Files affected:
-[...]
-
-Potential impact:
-[...]
-
-Recommended recovery:
-[...]
-
-Waiting for developer decision.
-```
-
----
-
-# 23. WHEN TO ASK FOR CONFIRMATION
-
-Explicit confirmation is REQUIRED before:
-
-* deleting files;
-* deleting folders;
-* deleting database tables;
-* deleting database data;
-* dropping databases;
-* truncating tables;
-* resetting databases;
-* destructive Prisma migrations;
-* deleting migrations;
-* resetting Git;
-* force-pushing;
-* rewriting Git history;
-* changing production;
-* major architecture changes;
-* replacing major dependencies;
-* operations that may cause irreversible data loss.
-
-Use:
-
-```text
-CONFIRMATION REQUIRED
-
-This operation may cause irreversible changes.
-
-Target:
-[...]
-
-Operation:
-[...]
-
-Risk:
-[...]
-
-Potential data/code loss:
-[...]
-
-Please explicitly confirm before I continue.
-```
-
----
-
-# 24. COMPLETION CHECKLIST
-
-A task is considered COMPLETE only when:
-
-* [ ] Requested functionality implemented.
-* [ ] Existing functionality preserved.
-* [ ] Relevant tests executed.
-* [ ] No critical errors remain.
-* [ ] Database changes reviewed.
-* [ ] No secrets exposed.
-* [ ] `git status` reviewed.
-* [ ] `git diff` reviewed.
-* [ ] No unrelated changes included.
-* [ ] Git commit created.
-* [ ] Commit hash recorded.
-* [ ] GitHub push completed if applicable.
-
----
-
-# 25. FINAL REPORT
-
-After completing a task, report:
-
+After task completion, report:
 ```text
 TASK COMPLETED
 
 Task:
-[...]
+[task description]
 
 Changes:
-- [...]
-- [...]
-- [...]
+- [change 1]
+- [change 2]
 
 Testing:
-- [...]
-- [...]
+- [test executed]
+- [result]
 
 Git:
-Branch: [...]
-Commit: [...]
-Commit message: [...]
+Branch: [branch]
+Commit: [commit hash]
+Commit message: [message]
 
 GitHub:
 Pushed: YES/NO
@@ -738,47 +368,105 @@ Pushed: YES/NO
 Database:
 Changed: YES/NO
 Migration: YES/NO
-
-Notes:
-[...]
 ```
 
 ---
 
-# 26. ABSOLUTE RULES
+# 21. MANDATORY CONFIRMATION FORMAT
 
-The following rules MUST NEVER be violated without explicit developer approval:
+Explicit approval REQUIRED before:
+`DROP DATABASE`, `DROP TABLE`, `TRUNCATE`, mass `DELETE`, database reset, destructive migration, deleting migration/important files, `git reset --hard`, `git clean`, force push, rewriting Git history, major architecture changes.
 
-1. NEVER delete the database.
-2. NEVER reset the database.
-3. NEVER intentionally delete existing data.
-4. NEVER delete existing code without approval.
-5. NEVER delete existing migrations without approval.
-6. NEVER destroy developer's uncommitted changes.
-7. NEVER use `git reset --hard` without approval.
-8. NEVER use `git clean -fd` without approval.
-9. NEVER force-push without approval.
-10. NEVER commit secrets.
-11. NEVER modify unrelated files unnecessarily.
-12. NEVER use destructive operations to solve errors.
-13. ALWAYS test completed work.
-14. ALWAYS review changes before committing.
-15. ALWAYS create a Git checkpoint after successfully completing a task.
-16. ALWAYS prioritize data safety over speed.
-17. WHEN IN DOUBT, STOP AND ASK.
+Format:
+```text
+CONFIRMATION REQUIRED
+
+Operation:
+[...]
+
+Target:
+[...]
+
+Risk:
+[...]
+
+Potential data loss:
+[...]
+
+Reason:
+[...]
+
+Alternative safe approach:
+[...]
+
+DO NOT CONTINUE UNTIL THE DEVELOPER CONFIRMS.
+```
 
 ---
 
-# 27. GOLDEN RULE
+# 22. CONFIRMATION DOES NOT OVERRIDE SAFETY
+
+Even if developer confirms a high-risk operation:
+1. Explain risks again.
+2. Ensure backup is available.
+3. Verify target database/environment is correct (not production by accident).
+
+If information is unclear, STOP and ask.
+
+---
+
+# 23. DATABASE BACKUP PRINCIPLE
+
+Git protects source code, NOT database data.
+For major database changes or risky migrations:
+Recommend a separate database backup before execution.
+
+---
+
+# 24. INITIAL SETUP INSTRUCTION
+
+When initializing rules:
+1. Check project structure.
+2. Verify `AGENTS.md` presence.
+3. Merge rules into `AGENTS.md`.
+4. Do not modify database, delete code, perform migrations, or reset Git.
+5. Display setup report to developer (Location, Creation status, Git branch, Git status, GitHub remote, pre-existing changes).
+6. DO NOT commit or push setup before explicit developer approval.
+
+---
+
+# 25. ABSOLUTE RULES
+
+1. NEVER delete or reset the database without approval.
+2. NEVER intentionally delete existing data without approval.
+3. NEVER delete existing code without approval.
+4. NEVER delete existing migrations without approval.
+5. NEVER destroy developer's uncommitted changes.
+6. NEVER use `git reset --hard` or `git clean -fd` without approval.
+7. NEVER force-push without approval.
+8. NEVER commit secrets.
+9. NEVER modify unrelated files unnecessarily.
+10. NEVER use destructive operations to solve errors.
+11. ALWAYS test completed work.
+12. ALWAYS review changes before committing.
+13. ALWAYS create a Git checkpoint after successfully completing a task.
+14. ALWAYS prioritize data safety over speed.
+15. WHEN IN DOUBT, STOP AND ASK.
+
+---
+
+# 26. GOLDEN RULE
 
 > NEVER DESTROY WHAT YOU DID NOT CREATE.
-
+>
 > NEVER DELETE WHAT YOU DO NOT FULLY UNDERSTAND.
-
-> NEVER RESET WHAT YOU HAVE NOT BACKED UP.
-
+>
 > MAKE THE SMALLEST SAFE CHANGE.
-
+>
+> PROTECT DATA FIRST.
+>
+> PROTECT CODE SECOND.
+>
 > EVERY SUCCESSFUL TASK MUST HAVE A RECOVERABLE GIT CHECKPOINT.
-
+>
 > WHEN IN DOUBT, STOP AND ASK THE DEVELOPER.
