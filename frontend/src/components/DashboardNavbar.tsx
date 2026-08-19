@@ -64,8 +64,18 @@ export default function DashboardNavbar() {
   };
 
   useEffect(() => {
-    const stored = localStorage.getItem('lms_user');
-    if (stored) { try { setUser(JSON.parse(stored)); } catch { } }
+    const loadUser = () => {
+      const stored = localStorage.getItem('lms_user');
+      if (stored) { try { setUser(JSON.parse(stored)); } catch { } }
+    };
+    loadUser();
+    // Listen for profile updates from dashboard page sync
+    window.addEventListener('storage', loadUser);
+    const interval = setInterval(loadUser, 3000); // poll every 3s for cross-tab sync
+    return () => {
+      window.removeEventListener('storage', loadUser);
+      clearInterval(interval);
+    };
   }, []);
 
   useEffect(() => {

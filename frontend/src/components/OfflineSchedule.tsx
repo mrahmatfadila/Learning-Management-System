@@ -208,15 +208,16 @@ export default function OfflineSchedule({ user }: { user: any }) {
 
   const getCourseTheme = (title: string) => {
     const t = title?.toLowerCase() || '';
-    if (t.includes('html')) return { bg: 'from-orange-500 to-red-600', label: 'HTML', emoji: '🌐' };
-    if (t.includes('css')) return { bg: 'from-blue-500 to-indigo-600', label: 'CSS', emoji: '🎨' };
-    if (t.includes('javascript') || t.includes('js')) return { bg: 'from-yellow-400 to-amber-500', label: 'JS', emoji: '⚡' };
-    if (t.includes('php')) return { bg: 'from-purple-500 to-violet-600', label: 'PHP', emoji: '🐘' };
-    if (t.includes('mysql') || t.includes('sql') || t.includes('database')) return { bg: 'from-sky-500 to-cyan-600', label: 'SQL', emoji: '🗄️' };
-    if (t.includes('git')) return { bg: 'from-rose-500 to-pink-600', label: 'GIT', emoji: '🔀' };
-    if (t.includes('react') || t.includes('mobile')) return { bg: 'from-cyan-500 to-teal-600', label: 'RN', emoji: '📱' };
-    if (t.includes('python')) return { bg: 'from-green-500 to-emerald-600', label: 'PY', emoji: '🐍' };
-    return { bg: 'from-indigo-600 to-purple-600', label: 'LMS', emoji: '📘' };
+    if (t.includes('html')) return { bg: 'from-orange-500 to-red-600', label: 'HTML', emoji: 'HTML' };
+    if (t.includes('css')) return { bg: 'from-blue-500 to-indigo-600', label: 'CSS', emoji: 'CSS' };
+    if (t.includes('javascript') || t.includes('js')) return { bg: 'from-yellow-400 to-amber-500', label: 'JS', emoji: 'JS' };
+    if (t.includes('php')) return { bg: 'from-purple-500 to-violet-600', label: 'PHP', emoji: 'PHP' };
+    if (t.includes('mysql') || t.includes('sql') || t.includes('database')) return { bg: 'from-sky-500 to-cyan-600', label: 'SQL', emoji: 'SQL' };
+    if (t.includes('git')) return { bg: 'from-rose-500 to-pink-600', label: 'GIT', emoji: 'GIT' };
+    if (t.includes('react') || t.includes('mobile')) return { bg: 'from-cyan-500 to-teal-600', label: 'RN', emoji: 'RN' };
+    if (t.includes('python')) return { bg: 'from-green-500 to-emerald-600', label: 'PY', emoji: 'PY' };
+    if (t.includes('ui') || t.includes('ux') || t.includes('design')) return { bg: 'from-fuchsia-500 to-pink-600', label: 'UI', emoji: 'UI' };
+    return { bg: 'from-indigo-600 to-purple-600', label: 'LMS', emoji: 'LMS' };
   };
 
   if (loading) {

@@ -11,6 +11,7 @@ import taskRoutes from './routes/taskRoutes';
 import submissionRoutes from './routes/submissionRoutes';
 import scheduleRoutes from './routes/scheduleRoutes';
 import messageRoutes from './routes/messageRoutes';
+import reviewRoutes from './routes/reviewRoutes';
 
 
 dotenv.config();
@@ -33,6 +34,7 @@ app.use('/api/tasks', taskRoutes);
 app.use('/api/submissions', submissionRoutes);
 app.use('/api/schedules', scheduleRoutes);
 app.use('/api/messages', messageRoutes);
+app.use('/api', reviewRoutes);
 
 
 app.get('/', (req, res) => {

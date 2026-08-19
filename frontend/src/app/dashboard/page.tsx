@@ -9,6 +9,7 @@ import InstructorTasks from '@/components/InstructorTasks';
 import OfflineSchedule from '@/components/OfflineSchedule';
 import Discussions from '@/components/Discussions';
 import QnaForum from '@/components/QnaForum';
+import QuizizzModule from '@/components/QuizizzModule';
 import {
   BookOpen, Users, TrendingUp, Award, Clock, CheckCircle,
   BarChart2, Zap, ArrowRight, Star, Activity, LogOut, Settings,
@@ -50,6 +51,19 @@ export default function DashboardPage() {
   const [progressSliderVal, setProgressSliderVal] = useState(0);
   const [isUpdatingProgress, setIsUpdatingProgress] = useState(false);
   const [progressFilterVal, setProgressFilterVal] = useState('All');
+
+  // â”€â”€ Explore Course page state â”€â”€
+  const [exploreSearch, setExploreSearch] = useState('');
+  const [exploreCatFilter, setExploreCatFilter] = useState('Semua');
+  const [exploreSortBy, setExploreSortBy] = useState<'popular' | 'newest' | 'az'>('popular');
+  const [exploreViewMode, setExploreViewMode] = useState<'grid' | 'list'>('grid');
+  const [exploreWishlist, setExploreWishlist] = useState<string[]>(() => {
+    if (typeof window !== 'undefined') {
+      try { return JSON.parse(localStorage.getItem('lms_wishlist') || '[]'); } catch { return []; }
+    }
+    return [];
+  });
+  const [explorePreview, setExplorePreview] = useState<any>(null);
 
   const applyNavFromUrl = useCallback((u: any) => {
     const view = searchParams.get('view');
@@ -96,6 +110,23 @@ export default function DashboardPage() {
       setUser(u);
       applyNavFromUrl(u);
       fetchData(u);
+      // Sync latest profile data (incl. profilePicture) from backend
+      fetch(`http://localhost:5000/api/users/${u.id}`)
+        .then(r => r.ok ? r.json() : null)
+        .then(fresh => {
+          if (!fresh) return;
+          const merged = {
+            ...u,
+            name: fresh.name || u.name,
+            email: fresh.email || u.email,
+            profilePicture: fresh.profilePicture || u.profilePicture || null,
+            specialty: fresh.specialty || u.specialty || null,
+            phone: fresh.phone || u.phone || null,
+          };
+          setUser(merged);
+          localStorage.setItem('lms_user', JSON.stringify(merged));
+        })
+        .catch(() => {});
     } catch {
       router.push('/login');
     }
@@ -107,20 +138,20 @@ export default function DashboardPage() {
       const role = u?.role?.toUpperCase();
       if (role === 'STUDENT') {
         const [modRes, enrRes] = await Promise.all([
-          fetch('http://localhost:5000/api/modules'),
-          fetch(`http://localhost:5000/api/enrollments/student/${u.id}`)
+          fetch('http://localhost:5000/api/modules').catch(() => null),
+          fetch(`http://localhost:5000/api/enrollments/student/${u.id}`).catch(() => null)
         ]);
-        if (modRes.ok) setModules(await modRes.json());
-        if (enrRes.ok) setEnrollments(await enrRes.json());
+        if (modRes?.ok) setModules(await modRes.json());
+        if (enrRes?.ok) setEnrollments(await enrRes.json());
       } else {
         const [modRes, studRes] = await Promise.all([
-          fetch('http://localhost:5000/api/modules'),
-          fetch(`http://localhost:5000/api/enrollments/instructor/${u.id}`)
+          fetch('http://localhost:5000/api/modules').catch(() => null),
+          fetch(`http://localhost:5000/api/enrollments/instructor/${u.id}`).catch(() => null)
         ]);
-        if (modRes.ok) setModules(await modRes.json());
-        if (studRes.ok) setEnrolledStudents(await studRes.json());
+        if (modRes?.ok) setModules(await modRes.json());
+        if (studRes?.ok) setEnrolledStudents(await studRes.json());
       }
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error('Error fetching dashboard data:', e); }
     setLoading(false);
   };
 
@@ -214,24 +245,32 @@ export default function DashboardPage() {
 
   const getCourseTheme = (title: string) => {
     const t = title?.toLowerCase() || '';
-    if (t.includes('html')) return { bg: 'from-orange-500 to-red-600', label: 'HTML', emoji: '🌐', logo: 'HTML5' };
-    if (t.includes('css')) return { bg: 'from-blue-500 to-indigo-600', label: 'CSS', emoji: '🎨', logo: 'CSS3' };
-    if (t.includes('javascript') || t.includes('js')) return { bg: 'from-yellow-400 to-amber-500', label: 'JS', emoji: '⚡', logo: 'JS' };
-    if (t.includes('php')) return { bg: 'from-purple-500 to-violet-600', label: 'PHP', emoji: '🐘', logo: 'PHP' };
-    if (t.includes('mysql') || t.includes('sql') || t.includes('database')) return { bg: 'from-sky-500 to-cyan-600', label: 'SQL', emoji: '🗄️', logo: 'SQL' };
-    if (t.includes('git')) return { bg: 'from-rose-500 to-pink-600', label: 'GIT', emoji: '🔀', logo: 'GIT' };
-    if (t.includes('react') || t.includes('mobile')) return { bg: 'from-cyan-500 to-teal-600', label: 'RN', emoji: '📱', logo: 'React' };
-    if (t.includes('cisco') || t.includes('jaringan') || t.includes('network') || t.includes('packet')) return { bg: 'from-emerald-500 to-green-600', label: 'NET', emoji: '🌐', logo: 'CISCO' };
-    if (t.includes('python')) return { bg: 'from-green-500 to-emerald-600', label: 'PY', emoji: '🐍', logo: 'PYTHON' };
-    if (t.includes('ui') || t.includes('ux') || t.includes('design')) return { bg: 'from-fuchsia-500 to-pink-600', label: 'UI', emoji: '🎭', logo: 'UI/UX' };
-    return { bg: 'from-slate-500 to-slate-700', label: '📘', emoji: '📘', logo: 'BOOK' };
+    if (t.includes('html')) return { bg: 'from-orange-500 to-red-600', label: 'HTML', emoji: 'HTML', logo: 'HTML5' };
+    if (t.includes('css')) return { bg: 'from-blue-500 to-indigo-600', label: 'CSS', emoji: 'CSS', logo: 'CSS3' };
+    if (t.includes('javascript') || t.includes('js')) return { bg: 'from-yellow-400 to-amber-500', label: 'JS', emoji: 'JS', logo: 'JS' };
+    if (t.includes('php')) return { bg: 'from-purple-500 to-violet-600', label: 'PHP', emoji: 'PHP', logo: 'PHP' };
+    if (t.includes('mysql') || t.includes('sql') || t.includes('database')) return { bg: 'from-sky-500 to-cyan-600', label: 'SQL', emoji: 'SQL', logo: 'SQL' };
+    if (t.includes('git')) return { bg: 'from-rose-500 to-pink-600', label: 'GIT', emoji: 'GIT', logo: 'GIT' };
+    if (t.includes('react') || t.includes('mobile')) return { bg: 'from-cyan-500 to-teal-600', label: 'RN', emoji: 'RN', logo: 'React' };
+    if (t.includes('cisco') || t.includes('jaringan') || t.includes('network') || t.includes('packet')) return { bg: 'from-emerald-500 to-green-600', label: 'NET', emoji: 'NET', logo: 'CISCO' };
+    if (t.includes('python')) return { bg: 'from-green-500 to-emerald-600', label: 'PY', emoji: 'PY', logo: 'PYTHON' };
+    if (t.includes('ui') || t.includes('ux') || t.includes('design')) return { bg: 'from-fuchsia-500 to-pink-600', label: 'UI', emoji: 'UI', logo: 'UI/UX' };
+    if (t.includes('java')) return { bg: 'from-red-500 to-orange-600', label: 'JV', emoji: 'JV', logo: 'JAVA' };
+    if (t.includes('node') || t.includes('express')) return { bg: 'from-lime-500 to-green-600', label: 'NODE', emoji: 'NODE', logo: 'NODE' };
+    if (t.includes('typescript') || t.includes('ts')) return { bg: 'from-blue-600 to-indigo-700', label: 'TS', emoji: 'TS', logo: 'TS' };
+    if (t.includes('linux') || t.includes('bash') || t.includes('terminal')) return { bg: 'from-slate-600 to-slate-800', label: 'CLI', emoji: 'CLI', logo: 'LINUX' };
+    if (t.includes('flutter') || t.includes('dart')) return { bg: 'from-sky-400 to-blue-600', label: 'FL', emoji: 'FL', logo: 'FLUTTER' };
+    if (t.includes('figma') || t.includes('wireframe') || t.includes('prototype')) return { bg: 'from-purple-400 to-pink-500', label: 'FIG', emoji: 'FIG', logo: 'FIGMA' };
+    if (t.includes('security') || t.includes('cyber')) return { bg: 'from-red-600 to-rose-800', label: 'SEC', emoji: 'SEC', logo: 'SEC' };
+    if (t.includes('algorithm') || t.includes('struktur') || t.includes('data')) return { bg: 'from-violet-500 to-purple-700', label: 'ALG', emoji: 'ALG', logo: 'ALG' };
+    return { bg: 'from-indigo-500 to-purple-600', label: 'LMS', emoji: 'LMS', logo: 'BOOK' };
   };
 
   const enrolledModuleIds = new Set(enrollments.filter((e: any) => e.enrollmentStatus === 'APPROVED').map((e: any) => e.id));
   const enrollmentMap = new Map(enrollments.map((e: any) => [e.id, e]));
   const myModules = modules.filter((m: any) => enrolledModuleIds.has(m.id));
 
-  // ─── RENDER CONTENT ──────────────────────────────────────────
+  // â”€â”€â”€ RENDER CONTENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
   const renderContent = () => {
 
     // Profile Settings
@@ -247,6 +286,11 @@ export default function DashboardPage() {
     // Offline Schedule
     if (activeMenu === 'Jadwal Offline') {
       return <OfflineSchedule user={user} />;
+    }
+
+    // Quizizz Arena & Studio (Gamified Quiz Platform)
+    if (searchParams.get('view') === 'quizizz' || ['Quizizz Arena ⚡', 'Quizizz Studio ⚡', 'Quizizz'].includes(activeMenu)) {
+      return <QuizizzModule user={user} />;
     }
 
     // Instructor Tasks
@@ -303,8 +347,8 @@ export default function DashboardPage() {
       return (
         <div className="p-4 md:p-8">
           <div className="mb-8">
-            <h1 className="text-3xl font-black text-slate-800 tracking-tight">{activeMenu}</h1>
-            <p className="text-slate-500 text-sm mt-1">
+            <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">{activeMenu}</h1>
+            <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">
               {activeMenu === 'In Progress' && 'Lanjutkan pembelajaran Anda untuk menguasai kompetensi praktis.'}
               {activeMenu === 'Completed' && 'Selamat atas keberhasilan Anda! Berikut modul yang telah Anda selesaikan.'}
               {activeMenu === 'Certificates' && 'Kredensial kelulusan digital Anda yang tervalidasi oleh LMS Academy.'}
@@ -312,9 +356,9 @@ export default function DashboardPage() {
           </div>
 
           {filtered.length === 0 ? (
-            <div className="bg-white rounded-3xl border border-slate-200 p-16 text-center shadow-sm">
-              <BookOpen className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-              <p className="text-slate-500 font-medium text-lg">
+            <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 p-16 text-center shadow-sm">
+              <BookOpen className="w-16 h-16 text-slate-200 dark:text-slate-700 mx-auto mb-4" />
+              <p className="text-slate-500 dark:text-slate-400 font-medium text-lg">
                 {activeMenu === 'In Progress' && 'Semua kursus Anda telah selesai, atau Anda belum mendaftar kursus baru.'}
                 {activeMenu === 'Completed' && 'Belum ada kursus yang diselesaikan. Terus belajar!'}
                 {activeMenu === 'Certificates' && 'Selesaikan setidaknya satu modul dengan progress 100% untuk membuka sertifikat.'}
@@ -332,22 +376,22 @@ export default function DashboardPage() {
 
                 if (activeMenu === 'Certificates') {
                   return (
-                    <div key={m.id} className="bg-white border-2 border-amber-200 hover:border-amber-400 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col justify-between relative group">
+                    <div key={m.id} className="bg-white dark:bg-[#0c0e18] border-2 border-amber-205 dark:border-amber-900/30 hover:border-amber-400 dark:hover:border-amber-500/50 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col justify-between relative group">
                       <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-300/10 to-yellow-500/10 rounded-bl-full pointer-events-none" />
                       <div>
                         <div className="flex items-center justify-between mb-4">
-                          <div className="w-10 h-10 rounded-xl bg-amber-50 border border-amber-100 flex items-center justify-center">
-                            <Award className="w-5 h-5 text-amber-600 animate-pulse" />
+                          <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-955/20 border border-amber-100 dark:border-amber-900/30 flex items-center justify-center">
+                            <Award className="w-5 h-5 text-amber-605 dark:text-amber-400 animate-pulse" />
                           </div>
-                          <span className="text-[10px] font-black text-amber-600 bg-amber-50 px-2.5 py-1 rounded-lg tracking-wider uppercase border border-amber-100/50">
+                          <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-955/20 px-2.5 py-1 rounded-lg tracking-wider uppercase border border-amber-100/50 dark:border-amber-900/30">
                             Verified
                           </span>
                         </div>
 
-                        <h3 className="font-bold text-slate-800 text-base mb-1.5 leading-snug line-clamp-2">{m.title}</h3>
-                        <p className="text-[10px] text-slate-400 font-medium">No. Kredensial: <span className="font-mono text-slate-500">{enrollment.enrollmentId ? enrollment.enrollmentId.substring(0, 8).toUpperCase() : 'LMS-' + m.id.substring(0, 8).toUpperCase()}</span></p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-200 text-base mb-1.5 leading-snug line-clamp-2">{m.title}</h3>
+                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">No. Kredensial: <span className="font-mono text-slate-500 dark:text-slate-400">{enrollment.enrollmentId ? enrollment.enrollmentId.substring(0, 8).toUpperCase() : 'LMS-' + m.id.substring(0, 8).toUpperCase()}</span></p>
                         
-                        <div className="border-t border-slate-100 pt-4 mt-4 text-[11px] text-slate-500 font-medium flex items-center gap-2">
+                        <div className="border-t border-slate-100 dark:border-slate-800 pt-4 mt-4 text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                           <span>Selesai pada {new Date(enrollment.updatedAt || enrollment.enrolledAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                         </div>
@@ -363,11 +407,23 @@ export default function DashboardPage() {
 
                 return (
                   <button key={m.id} onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                    className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all text-left overflow-hidden group flex flex-col animate-fadeIn"
+                    className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all text-left overflow-hidden group flex flex-col animate-fadeIn"
                   >
                     {/* Thumbnail */}
-                    <div className={`bg-gradient-to-br ${theme.bg} h-36 w-full flex items-center justify-center relative overflow-hidden group`}>
-                      <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider text-slate-700 shadow-sm uppercase z-10">
+                    <div className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} h-36 w-full flex items-center justify-center relative overflow-hidden group`}>
+                      {/* Custom uploaded thumbnail */}
+                      {m.thumbnail && (
+                        <>
+                          <img
+                            src={m.thumbnail}
+                            alt={m.title}
+                            className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/20" />
+                        </>
+                      )}
+
+                      <div className="absolute top-3 left-3 bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider text-slate-700 dark:text-slate-200 shadow-sm uppercase z-10">
                         {m.category || 'General'}
                       </div>
                       
@@ -376,48 +432,53 @@ export default function DashboardPage() {
                           <CheckCircle className="w-4 h-4" />
                         </div>
                       ) : (
-                        <div className="absolute top-3 right-3 bg-[#2d2a6e]/85 px-2.5 py-1 rounded-lg text-[10px] font-black text-white tracking-wide shadow-sm z-10">
-                          {m.enr || 0} siswa
+                        <div className="absolute top-3 right-3 bg-[#2d2a6e]/85 px-2.5 py-1 rounded-lg text-[10px] font-black text-white tracking-wide shadow-sm z-10 flex items-center gap-1.5">
+                          <span>{m.enr || 0} siswa</span>
+                          <span className="text-rose-400 font-bold flex items-center gap-1">❤️ {m.likesCount ?? m.likes?.length ?? 0}</span>
                         </div>
                       )}
 
-                      {/* Visual Glassmorphic Logo Block */}
-                      <div className="w-[140px] h-20 bg-white/10 rounded-2xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-4 shadow-xl shadow-black/10 group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
-                        <span className="text-4xl drop-shadow-md select-none group-hover:scale-110 transition-transform duration-500">{theme.emoji}</span>
-                        <div className="text-right select-none">
-                          <p className="text-[10px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
-                          <p className="text-lg font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
-                        </div>
-                      </div>
+                      {/* Visual Glassmorphic Logo Block â€” only when no custom thumbnail */}
+                      {!m.thumbnail && (
+                        <>
+                          <div className="w-[140px] h-20 bg-white/10 rounded-2xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-4 shadow-xl shadow-black/10 group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
+                            <span className="text-2xl font-black text-white drop-shadow-md select-none group-hover:scale-110 transition-transform duration-500 tracking-tight leading-none">{theme.emoji}</span>
+                            <div className="text-right select-none">
+                              <p className="text-[10px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
+                              <p className="text-lg font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
+                            </div>
+                          </div>
 
-                      {/* Small floating bottom accent */}
-                      <div className="w-10 h-10 bg-white rounded-xl rotate-[12deg] absolute right-4 bottom-4 shadow-lg flex items-center justify-center group-hover:rotate-[-6deg] group-hover:scale-105 transition-all duration-500">
-                        <BookOpen className="w-4 h-4 text-indigo-600" />
-                      </div>
+                          {/* Small floating bottom accent */}
+                          <div className="w-10 h-10 bg-white dark:bg-[#0c0e18] rounded-xl rotate-[12deg] absolute right-4 bottom-4 shadow-lg flex items-center justify-center group-hover:rotate-[-6deg] group-hover:scale-105 transition-all duration-500">
+                            <BookOpen className="w-4 h-4 text-indigo-650 dark:text-indigo-400" />
+                          </div>
+                        </>
+                      )}
                     </div>
                     <div className="p-6 flex-1 flex flex-col justify-between">
                       <div>
-                        <span className="text-[10px] font-black tracking-wider text-indigo-600 bg-indigo-50 uppercase px-2.5 py-1 rounded-md self-start mb-2 inline-block">
+                        <span className="text-[10px] font-black tracking-wider text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 uppercase px-2.5 py-1 rounded-md self-start mb-2 inline-block">
                           {m.category || 'General'}
                         </span>
-                        <h3 className="font-bold text-slate-800 text-base mb-1.5 leading-snug line-clamp-2 group-hover:text-indigo-600 transition-colors">{m.title}</h3>
-                        <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">{m.description}</p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-200 text-base mb-1.5 leading-snug line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{m.title}</h3>
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">{m.description}</p>
                       </div>
 
                       {activeMenu === 'In Progress' ? (
-                        <div className="border-t border-slate-100 pt-4">
-                          <div className="flex justify-between text-[11px] font-bold text-slate-400 mb-1.5">
+                        <div className="border-t border-slate-100 dark:border-slate-800 pt-4">
+                          <div className="flex justify-between text-[11px] font-bold text-slate-400 dark:text-slate-500 mb-1.5">
                             <span>Progres Modul</span>
-                            <span className="text-indigo-600 font-black">{progress}%</span>
+                            <span className="text-indigo-600 dark:text-indigo-400 font-black">{progress}%</span>
                           </div>
-                          <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden shadow-inner">
+                          <div className="w-full bg-slate-100 dark:bg-slate-900 rounded-full h-2 overflow-hidden shadow-inner">
                             <div className="bg-gradient-to-r from-indigo-500 to-purple-500 h-full rounded-full transition-all" style={{ width: `${progress}%` }} />
                           </div>
                         </div>
                       ) : (
-                        <div className="border-t border-slate-100 pt-4 flex items-center justify-between text-xs text-slate-400 font-semibold">
+                        <div className="border-t border-slate-100 dark:border-slate-800 pt-4 flex items-center justify-between text-xs text-slate-400 dark:text-slate-500 font-semibold">
                           <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5 text-slate-400" />{m.enr || 0} siswa</span>
-                          <span className="text-emerald-600 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-100 font-bold flex items-center gap-1">
+                          <span className="text-emerald-600 dark:text-emerald-450 bg-emerald-50 dark:bg-emerald-955/20 px-2.5 py-1 rounded-lg border border-emerald-100 dark:border-emerald-900/30 font-bold flex items-center gap-1">
                             Lulus 100%
                           </span>
                         </div>
@@ -447,135 +508,443 @@ export default function DashboardPage() {
         else alert('Gagal mendaftar.');
       };
 
-      // 1. BROWSE COURSES TAB
+      // 1. BROWSE COURSES TAB â€” Premium Redesign
       if (activeMenu === 'Browse Courses') {
-        const browseModules = modules.filter((m: any) => {
+        const toggleLike = async (moduleId: string) => {
+          try {
+            const res = await fetch(`http://localhost:5000/api/modules/${moduleId}/like`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId: user.id })
+            });
+            if (res.ok) {
+              fetchData(user);
+            }
+          } catch (err) {
+            console.error('Failed to toggle like', err);
+          }
+        };
+
+        const allCategories = ['Semua', ...Array.from(new Set(modules.map((m: any) => m.category).filter(Boolean)))] as string[];
+
+        const getDifficulty = (m: any) => {
+          const t = (m.title || '').toLowerCase();
+          if (t.includes('dasar') || t.includes('basic') || t.includes('intro') || t.includes('pemula')) return { label: 'Pemula', color: 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30' };
+          if (t.includes('lanjut') || t.includes('advanced') || t.includes('expert')) return { label: 'Mahir', color: 'text-red-600 bg-red-50 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30' };
+          return { label: 'Menengah', color: 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30' };
+        };
+
+        const getSkillTags = (m: any): string[] => {
+          const t = (m.title + ' ' + (m.description || '')).toLowerCase();
+          const tags: string[] = [];
+          if (t.includes('html')) tags.push('HTML');
+          if (t.includes('css')) tags.push('CSS');
+          if (t.includes('javascript') || t.includes('js')) tags.push('JavaScript');
+          if (t.includes('php')) tags.push('PHP');
+          if (t.includes('mysql') || t.includes('sql')) tags.push('SQL');
+          if (t.includes('react')) tags.push('React');
+          if (t.includes('python')) tags.push('Python');
+          if (t.includes('git')) tags.push('Git');
+          if (t.includes('jaringan') || t.includes('cisco') || t.includes('network')) tags.push('Networking');
+          if (t.includes('database') || t.includes('db')) tags.push('Database');
+          if (m.category && !tags.includes(m.category)) tags.push(m.category);
+          return tags.slice(0, 3);
+        };
+
+        let browseModules = modules.filter((m: any) => {
           const enrollment = enrollmentMap.get(m.id);
           return !enrollment || enrollment.enrollmentStatus !== 'APPROVED';
         });
 
+        if (exploreSearch.trim()) {
+          const q = exploreSearch.toLowerCase();
+          browseModules = browseModules.filter((m: any) =>
+            m.title?.toLowerCase().includes(q) ||
+            m.description?.toLowerCase().includes(q) ||
+            m.category?.toLowerCase().includes(q)
+          );
+        }
+        if (exploreCatFilter !== 'Semua') {
+          browseModules = browseModules.filter((m: any) => m.category === exploreCatFilter);
+        }
+        if (exploreSortBy === 'popular') browseModules = [...browseModules].sort((a: any, b: any) => (b.enr || 0) - (a.enr || 0));
+        if (exploreSortBy === 'az') browseModules = [...browseModules].sort((a: any, b: any) => a.title.localeCompare(b.title));
+        // 'newest' = default order from server
+
+        const totalAvailable = modules.filter((m: any) => {
+          const enr = enrollmentMap.get(m.id);
+          return !enr || enr.enrollmentStatus !== 'APPROVED';
+        }).length;
+
+        const statsBar = [
+          { label: 'Total Kursus', val: modules.length, icon: 'ðŸ“š' },
+          { label: 'Belum Diikuti', val: totalAvailable, icon: 'ðŸ†“' },
+          { label: 'Kategori', val: allCategories.length - 1, icon: 'ðŸ·ï¸' },
+          { label: 'Terverifikasi', val: modules.filter((m: any) => m.isVerified).length, icon: 'âœ…' },
+        ];
+
         return (
           <div className="p-4 md:p-8">
-            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            {/* â”€â”€ Title & Search Header â”€â”€ */}
+            <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
-                <h1 className="text-3xl font-black text-slate-800 tracking-tight">Katalog Kursus</h1>
-                <p className="text-slate-500 text-sm mt-1">Jelajahi dan pilih modul pembelajaran yang Anda butuhkan.</p>
+                <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Katalog Kursus</h1>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Jelajahi dan pilih modul pembelajaran yang Anda butuhkan.</p>
               </div>
-              <div className="bg-indigo-50 text-indigo-700 font-bold px-4 py-2 rounded-2xl text-sm border border-indigo-100 flex items-center gap-2 self-start md:self-auto">
-                <BookOpen className="w-4 h-4" />
-                <span>{browseModules.length} Modul Tersedia</span>
+              <div className="flex items-center gap-3 w-full md:w-auto">
+                <div className="relative flex-1 md:w-72">
+                  <div className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400">
+                    <Search className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="text"
+                    value={exploreSearch}
+                    onChange={e => setExploreSearch(e.target.value)}
+                    placeholder="Cari kursus..."
+                    className="w-full pl-10 pr-9 py-2.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0e18] text-slate-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500"
+                  />
+                  {exploreSearch && (
+                    <button
+                      onClick={() => setExploreSearch('')}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-5 h-5 rounded-full bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 flex items-center justify-center transition-colors"
+                    >
+                      <X className="w-3 h-3 text-slate-500 dark:text-slate-400" />
+                    </button>
+                  )}
+                </div>
+                <div className="bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 font-bold px-4 py-2.5 rounded-xl text-xs border border-indigo-100 dark:border-indigo-900/30 flex items-center gap-2 shrink-0">
+                  <BookOpen className="w-4 h-4" />
+                  <span>{browseModules.length} Modul</span>
+                </div>
               </div>
             </div>
 
-            {browseModules.length === 0 ? (
-              <div className="bg-white rounded-3xl border border-slate-200 p-16 text-center shadow-sm">
-                <BookOpen className="w-16 h-16 text-slate-200 mx-auto mb-4" />
-                <p className="text-slate-500 font-medium text-lg">Semua kursus yang tersedia telah Anda ikuti!</p>
-                <button onClick={() => router.push('/dashboard?tab=in-progress')} className="mt-4 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20">
-                  Kembali Belajar
-                </button>
+            {/* â”€â”€ Filter & Sort Bar â”€â”€ */}
+            <div className="mb-6 flex flex-col gap-4">
+              {/* Category Filter Pills */}
+              <div className="flex gap-2 flex-wrap">
+                {allCategories.map(cat => (
+                  <button
+                    key={cat}
+                    onClick={() => setExploreCatFilter(cat)}
+                    className={`px-4 py-2 rounded-full text-xs font-bold transition-all border ${
+                      exploreCatFilter === cat
+                        ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-600/20'
+                        : 'bg-white dark:bg-[#0c0e18] text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-indigo-400 hover:text-indigo-600 dark:hover:text-indigo-400'
+                    }`}
+                  >
+                    {cat}
+                  </button>
+                ))}
               </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+
+              {/* Sort + View Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-bold">Urutkan:</span>
+                  {(['popular', 'newest', 'az'] as const).map(opt => (
+                    <button
+                      key={opt}
+                      onClick={() => setExploreSortBy(opt)}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+                        exploreSortBy === opt
+                          ? 'bg-slate-800 dark:bg-white text-white dark:text-slate-800'
+                          : 'bg-white dark:bg-[#0c0e18] text-slate-500 border border-slate-200 dark:border-slate-700 hover:border-slate-400'
+                      }`}
+                    >
+                      {opt === 'popular' ? 'ðŸ”¥ Populer' : opt === 'newest' ? 'ðŸ†• Terbaru' : 'ðŸ”¤ A-Z'}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex items-center gap-1 bg-slate-100 dark:bg-slate-900 p-1 rounded-xl border border-slate-200 dark:border-slate-700">
+                  <button onClick={() => setExploreViewMode('grid')}
+                    className={`p-2 rounded-lg transition-all ${exploreViewMode === 'grid' ? 'bg-white dark:bg-slate-700 shadow text-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}>
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+                  </button>
+                  <button onClick={() => setExploreViewMode('list')}
+                    className={`p-2 rounded-lg transition-all ${exploreViewMode === 'list' ? 'bg-white dark:bg-slate-700 shadow text-indigo-600' : 'text-slate-400 hover:text-slate-600 dark:hover:text-white'}`}>
+                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="currentColor"><rect x="3" y="4" width="18" height="3" rx="1"/><rect x="3" y="10.5" width="18" height="3" rx="1"/><rect x="3" y="17" width="18" height="3" rx="1"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              {/* Result summary */}
+              <div className="flex items-center gap-2 text-sm text-slate-500 dark:text-slate-400">
+                <span className="font-bold text-slate-700 dark:text-slate-300">{browseModules.length}</span> kursus ditemukan
+                {exploreSearch && <span>untuk &ldquo;<span className="text-indigo-600 font-bold">{exploreSearch}</span>&rdquo;</span>}
+              </div>
+            </div>
+
+            {/* â”€â”€ Course List â”€â”€ */}
+            {browseModules.length === 0 ? (
+              <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 p-16 text-center shadow-sm">
+                <div className="text-6xl mb-4">ðŸ”</div>
+                <h3 className="text-xl font-black text-slate-700 dark:text-slate-200 mb-2">
+                  {exploreSearch ? `Tidak ada hasil untuk "${exploreSearch}"` : 'Semua kursus telah Anda ikuti!'}
+                </h3>
+                <p className="text-slate-400 dark:text-slate-500 text-sm mb-6">
+                  {exploreSearch ? 'Coba kata kunci lain atau reset filter kategori.' : 'Lanjutkan belajar di kursus aktif Anda.'}
+                </p>
+                <div className="flex items-center justify-center gap-3">
+                  {exploreSearch && (
+                    <button onClick={() => { setExploreSearch(''); setExploreCatFilter('Semua'); }}
+                      className="px-5 py-2.5 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-sm hover:bg-indigo-100 transition-colors">
+                      Reset Filter
+                    </button>
+                  )}
+                  <button onClick={() => router.push('/dashboard?tab=in-progress')}
+                    className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20">
+                    Kembali Belajar
+                  </button>
+                </div>
+              </div>
+            ) : exploreViewMode === 'grid' ? (
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                 {browseModules.map((m: any) => {
                   const theme = getCourseTheme(m.title);
                   const enrollment = enrollmentMap.get(m.id);
-                  
-                  let actionButton;
-                  let statusBadge = null;
-
-                  if (!enrollment) {
-                    actionButton = (
-                      <button onClick={() => handleEnroll(m.id)}
-                        className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-indigo-600/20 hover:scale-[1.02] active:scale-[0.98]">
-                        Minta Akses Modul <ArrowRight className="w-4 h-4" />
-                      </button>
-                    );
-                  } else if (enrollment.enrollmentStatus === 'PENDING') {
-                    statusBadge = (
-                      <div className="absolute top-3 right-3 z-10 bg-amber-500 text-white font-bold text-[10px] tracking-wider px-3 py-1 rounded-full shadow-md flex items-center gap-1">
-                        <Clock className="w-3 h-3 animate-spin" />
-                        <span>PENDING</span>
-                      </div>
-                    );
-                    actionButton = (
-                      <button disabled
-                        className="w-full py-3 bg-amber-50 border border-amber-200 text-amber-600 font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 cursor-not-allowed">
-                        <Clock className="w-4 h-4 animate-spin" /> Menunggu Persetujuan
-                      </button>
-                    );
-                  } else if (enrollment.enrollmentStatus === 'REJECTED') {
-                    statusBadge = (
-                      <div className="absolute top-3 right-3 z-10 bg-rose-500 text-white font-bold text-[10px] tracking-wider px-3 py-1 rounded-full shadow-md flex items-center gap-1">
-                        <Award className="w-3 h-3 rotate-180" />
-                        <span>DITOLAK</span>
-                      </div>
-                    );
-                    actionButton = (
-                      <div className="w-full space-y-2">
-                        <button onClick={() => handleEnroll(m.id)}
-                          className="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-sm transition-colors flex items-center justify-center gap-2 shadow-md shadow-rose-600/20 hover:scale-[1.02] active:scale-[0.98]">
-                          Kirim Ulang Permintaan
-                        </button>
-                        {enrollment.note && (
-                          <div className="text-[11px] text-rose-500 bg-rose-50 border border-rose-100 rounded-lg p-2.5 leading-relaxed font-medium">
-                            <span className="font-bold">Alasan ditolak:</span> &ldquo;{enrollment.note}&rdquo;
-                          </div>
-                        )}
-                      </div>
-                    );
-                  }
+                  const isLiked = m.likes?.some((l: any) => l.userId === user.id);
+                  const difficulty = getDifficulty(m);
+                  const skillTags = getSkillTags(m);
 
                   return (
                     <div key={m.id}
-                      className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col relative group">
-                      {statusBadge}
-                      {/* Thumbnail */}
-                      <div className={`bg-gradient-to-br ${theme.bg} h-36 w-full flex items-center justify-center relative overflow-hidden group`}>
-                        <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider text-slate-700 shadow-sm uppercase z-10">
-                          {m.category || 'General'}
-                        </div>
-                        
-                        {/* Visual Glassmorphic Logo Block */}
-                        <div className="w-[140px] h-20 bg-white/10 rounded-2xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-4 shadow-xl shadow-black/10 group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
-                          <span className="text-4xl drop-shadow-md select-none group-hover:scale-110 transition-transform duration-500">{theme.emoji}</span>
-                          <div className="text-right select-none">
-                            <p className="text-[10px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
-                            <p className="text-lg font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
+                      className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-md hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col relative group">
+
+                      {/* Thumbnail (Standardized 16:9 Widescreen Ratio) */}
+                      <div
+                        onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                        className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} w-full aspect-video flex items-center justify-center relative overflow-hidden cursor-pointer`}>
+                        {m.thumbnail ? (
+                          <>
+                            <img src={m.thumbnail} alt={m.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-black/10" />
+                          </>
+                        ) : (
+                          <div className="w-24 h-12 bg-white/10 rounded-xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-2.5 shadow-xl group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
+                            <span className="text-base font-black text-white drop-shadow-md select-none tracking-tight leading-none">{theme.emoji}</span>
+                            <div className="text-right select-none">
+                              <p className="text-[8px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
+                              <p className="text-sm font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
+                            </div>
                           </div>
+                        )}
+
+                        {/* Top Left Badge */}
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className="bg-white/90 dark:bg-slate-900/90 backdrop-blur-sm px-2 py-0.5 rounded-md text-[9px] font-black tracking-wider text-slate-700 dark:text-slate-200 shadow-sm uppercase">{m.category || 'General'}</span>
                         </div>
 
-                        {/* Small floating bottom accent */}
-                        <div className="w-10 h-10 bg-white rounded-xl rotate-[12deg] absolute right-4 bottom-4 shadow-lg flex items-center justify-center group-hover:rotate-[-6deg] group-hover:scale-105 transition-all duration-500">
-                          <BookOpen className="w-4 h-4 text-indigo-600" />
+                        {/* Wishlist/Like button */}
+                        <button
+                          onClick={e => { e.stopPropagation(); toggleLike(m.id); }}
+                          className={`absolute top-2 right-2 z-10 px-2 py-1 rounded-full flex items-center gap-1 backdrop-blur-sm transition-all shadow text-[10px] font-black ${
+                            isLiked
+                              ? 'bg-red-500 text-white scale-105'
+                              : 'bg-white/80 dark:bg-black/40 text-slate-400 hover:text-red-500 hover:bg-white'
+                          }`}
+                          title={isLiked ? 'Batal Suka' : 'Suka Modul Ini'}
+                        >
+                          <svg className="w-3 h-3 shrink-0" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                          </svg>
+                          <span>{m.likesCount ?? m.likes?.length ?? 0}</span>
+                        </button>
+
+                        {/* Enrollment status badge */}
+                        {enrollment?.enrollmentStatus === 'PENDING' && (
+                          <div className="absolute bottom-2 left-2 z-10 bg-amber-500 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow flex items-center gap-1">
+                            <Clock className="w-2.5 h-2.5 animate-spin" /> PENDING
+                          </div>
+                        )}
+                        {enrollment?.enrollmentStatus === 'REJECTED' && (
+                          <div className="absolute bottom-2 left-2 z-10 bg-rose-500 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow">
+                            DITOLAK
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Body */}
+                      <div className="p-4 flex-1 flex flex-col justify-between">
+                        <div>
+                          {/* Difficulty & Instructor Row */}
+                          <div className="flex items-center justify-between gap-2 mb-2 text-[10px] text-slate-500 dark:text-slate-400">
+                            <span className={`font-bold px-1.5 py-0.5 rounded border ${difficulty.color}`}>{difficulty.label}</span>
+                            {m.instructor && <span className="truncate max-w-[100px] flex items-center gap-1"><svg className="w-3 h-3 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>{m.instructor.name}</span>}
+                          </div>
+
+                          <h3 onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                            className="font-bold text-slate-800 dark:text-slate-200 text-sm mb-1 leading-snug line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer">
+                            {m.title}
+                          </h3>
+                          <p className="text-[11px] text-slate-455 dark:text-slate-500 line-clamp-2 leading-relaxed mb-3">{m.description || 'Pelajari materi terstruktur untuk meningkatkan skill Anda.'}</p>
+                        </div>
+
+                        <div>
+                          {/* Stats Row */}
+                          <div className="flex items-center gap-3 text-[11px] text-slate-400 dark:text-slate-500 font-medium mb-3 border-t border-slate-100 dark:border-slate-800 pt-2.5">
+                            <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5" /> {m.enr || 0} siswa</span>
+                            <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                            <span className="flex items-center gap-1"><BookOpen className="w-3.5 h-3.5" /> {m.lessonsCount || 0} materi</span>
+                          </div>
+
+                          {/* Action Button */}
+                          {['INSTRUCTOR', 'ADMIN', 'TEACHER', 'GURU'].includes((user?.role || '').toUpperCase()) ? (
+                            <button onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                              className="w-full py-2 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-indigo-200 dark:border-indigo-800/50">
+                              <Edit className="w-3.5 h-3.5" /> Kelola / Edit Modul
+                            </button>
+                          ) : !enrollment ? (
+                            <button onClick={() => handleEnroll(m.id)}
+                              className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-650 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
+                              Daftar Sekarang <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          ) : enrollment.enrollmentStatus === 'PENDING' ? (
+                            <button disabled className="w-full py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold rounded-xl text-xs flex items-center justify-center gap-1 cursor-not-allowed">
+                              <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
+                            </button>
+                          ) : enrollment.enrollmentStatus === 'REJECTED' ? (
+                            <button onClick={() => handleEnroll(m.id)}
+                              className="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 hover:scale-[1.01] active:scale-[0.99] transition-all">
+                              Daftar Ulang
+                            </button>
+                          ) : null}
                         </div>
                       </div>
-                      <div className="p-6 flex-1 flex flex-col">
-                        <span className="text-[10px] font-black tracking-wider text-indigo-600 bg-indigo-50 uppercase px-2.5 py-1 rounded-md self-start mb-2">
-                          {m.category || 'General'}
-                        </span>
-                        <h3 className="font-bold text-slate-800 text-base mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">{m.title}</h3>
-                        <p className="text-xs text-slate-500 line-clamp-3 flex-1 leading-relaxed mb-4">{m.description || 'Pelajari materi lengkap untuk meningkatkan skill dan kesiapan kerja Anda di modul terstruktur ini.'}</p>
-                        
-                        <div className="border-t border-slate-100 pt-4 mb-4 flex items-center justify-between text-xs text-slate-400 font-medium">
-                          <span className="flex items-center gap-1"><Users className="w-3.5 h-3.5 text-slate-400" />{m.enr || 0} siswa belajar</span>
-                          {m.isVerified ? (
-                            <span className="flex items-center gap-1 text-emerald-600 font-bold"><CheckCircle className="w-3.5 h-3.5 text-emerald-500" /> Terverifikasi Admin</span>
-                          ) : (
-                            <span className="flex items-center gap-1 text-slate-400"><Lock className="w-3.5 h-3.5 text-slate-300" /> Belum Diverifikasi</span>
-                          )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              /* â”€â”€ LIST VIEW â”€â”€ */
+              <div className="space-y-4">
+                {browseModules.map((m: any) => {
+                  const theme = getCourseTheme(m.title);
+                  const enrollment = enrollmentMap.get(m.id);
+                  const isLiked = m.likes?.some((l: any) => l.userId === user.id);
+                  const difficulty = getDifficulty(m);
+                  const skillTags = getSkillTags(m);
+
+                  return (
+                    <div key={m.id}
+                      className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-lg transition-all duration-300 flex gap-4 overflow-hidden group">
+
+                      {/* Thumbnail (Standardized 16:9 Widescreen Ratio) */}
+                      <div onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                        className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} w-44 sm:w-52 md:w-60 aspect-video shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer`}>
+                        {m.thumbnail ? (
+                          <img src={m.thumbnail} alt={m.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                        ) : (
+                          <span className="text-4xl drop-shadow-md select-none">{theme.emoji}</span>
+                        )}
+                      </div>
+
+                      {/* Content */}
+                      <div className="flex-1 py-4 pr-4 flex flex-col justify-between min-w-0">
+                        <div>
+                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
+                            <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${difficulty.color}`}>{difficulty.label}</span>
+                            <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md uppercase">{m.category || 'General'}</span>
+                            {m.isVerified && <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">âœ“ Verified</span>}
+                          </div>
+                          <h3 onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                            className="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-base leading-snug mb-1.5 cursor-pointer group-hover:text-indigo-600 transition-colors line-clamp-1">
+                            {m.title}
+                          </h3>
+                          <p className="text-xs text-slate-400 dark:text-slate-500 line-clamp-1 mb-2">{m.description || 'Materi pembelajaran terstruktur.'}</p>
+                          <div className="flex flex-wrap gap-1.5 mb-2">
+                            {skillTags.map(tag => (
+                              <span key={tag} className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md">#{tag}</span>
+                            ))}
+                          </div>
                         </div>
-                        {actionButton}
+                        <div className="flex items-center justify-between gap-3 flex-wrap">
+                          <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+                            <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {m.enr || 0}</span>
+                            <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {m.lessonsCount || 0} materi</span>
+                            {m.instructor && <span className="truncate">ðŸ‘¤ {m.instructor.name}</span>}
+                          </div>
+                          <div className="flex items-center gap-2 shrink-0">
+                            <button onClick={() => toggleLike(m.id)}
+                              className={`px-3 py-1.5 rounded-xl border transition-all flex items-center gap-1.5 ${
+                                isLiked
+                                  ? 'bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/30 text-red-500 font-bold text-xs'
+                                  : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-700 text-slate-400 hover:text-red-500 text-xs font-medium'
+                              }`}
+                            >
+                              <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+                              </svg>
+                              <span>{m.likes?.length || 0}</span>
+                            </button>
+                            {!enrollment ? (
+                              <button onClick={() => handleEnroll(m.id)}
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all hover:scale-[1.02] shadow-md shadow-indigo-600/20">
+                                Daftar <ArrowRight className="w-3.5 h-3.5" />
+                              </button>
+                            ) : enrollment.enrollmentStatus === 'PENDING' ? (
+                              <span className="px-3 py-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center gap-1">
+                                <Clock className="w-3.5 h-3.5 animate-spin" /> Pending
+                              </span>
+                            ) : enrollment.enrollmentStatus === 'REJECTED' ? (
+                              <button onClick={() => handleEnroll(m.id)}
+                                className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all hover:scale-[1.02] shadow-md">
+                                Daftar Ulang
+                              </button>
+                            ) : null}
+                          </div>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
             )}
+
+            {/* ── Liked / Wishlist Section ── */}
+            {(() => {
+              const likedModules = modules.filter((m: any) => m.likes?.some((l: any) => l.userId === user.id));
+              if (likedModules.length === 0) return null;
+              return (
+                <div className="mt-12">
+                  <div className="flex items-center gap-3 mb-5">
+                    <div className="w-10 h-10 rounded-2xl bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 flex items-center justify-center">
+                      <svg className="w-5 h-5 text-red-500" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" /></svg>
+                    </div>
+                    <div>
+                      <h2 className="text-lg font-black text-slate-800 dark:text-white">Wishlist Saya</h2>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">{likedModules.length} kursus disukai</p>
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    {likedModules.map((m: any) => {
+                      const theme = getCourseTheme(m.title);
+                      const enrL = enrollmentMap.get(m.id);
+                      return (
+                        <div key={m.id} className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm hover:shadow-lg transition-all overflow-hidden flex group">
+                          <div onClick={() => router.push(`/dashboard/modules/${m.id}`)} className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} w-24 shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer`}>
+                            {m.thumbnail ? <img src={m.thumbnail} alt={m.title} className="absolute inset-0 w-full h-full object-cover" /> : <span className="text-3xl">{theme.emoji}</span>}
+                          </div>
+                          <div className="p-4 flex-1 min-w-0">
+                            <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm line-clamp-1 mb-1 cursor-pointer group-hover:text-indigo-600" onClick={() => router.push(`/dashboard/modules/${m.id}`)}>{m.title}</h4>
+                            <p className="text-[11px] text-slate-400 mb-3">{m.category}</p>
+                            <div className="flex gap-2">
+                              <button onClick={() => toggleLike(m.id)} className="p-1.5 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-900/30 rounded-lg text-red-400 hover:text-red-600 transition-colors"><X className="w-3.5 h-3.5" /></button>
+                              {!enrL && <button onClick={() => handleEnroll(m.id)} className="flex-1 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-lg text-xs transition-all">Daftar</button>}
+                              {enrL?.enrollmentStatus === 'APPROVED' && <button onClick={() => router.push(`/dashboard/modules/${m.id}`)} className="flex-1 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-xs transition-all">Belajar</button>}
+                            </div>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         );
-      }
 
+      }
       // 2. RECOMMENDED (AI) TAB
       if (activeMenu === 'Recommended (AI)') {
         const handleAiAnalysis = () => {
@@ -606,11 +975,11 @@ export default function DashboardPage() {
         return (
           <div className="p-4 md:p-8">
             <div className="mb-8">
-              <h1 className="text-3xl font-black text-slate-800 tracking-tight flex items-center gap-2">
+              <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight flex items-center gap-2">
                 <Sparkles className="w-8 h-8 text-purple-600 animate-pulse" />
                 <span>Rekomendasi AI Personal</span>
               </h1>
-              <p className="text-slate-500 text-sm mt-1">Sistem kecerdasan buatan kami memetakan minat, keaktifan, dan target karier Anda.</p>
+              <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Sistem kecerdasan buatan kami memetakan minat, keaktifan, dan target karier Anda.</p>
             </div>
 
             {aiAnalyzing ? (
@@ -638,14 +1007,14 @@ export default function DashboardPage() {
                     return (
                       <div key={s.step} className="flex items-center gap-3 text-sm">
                         {isPassed ? (
-                          <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 text-[10px] font-bold text-white">✓</div>
+                          <div className="w-5 h-5 rounded-full bg-emerald-500 flex items-center justify-center shrink-0 text-[10px] font-bold text-white">âœ“</div>
                         ) : isActive ? (
                           <div className="w-5 h-5 rounded-full bg-indigo-500 flex items-center justify-center shrink-0 relative">
                             <span className="absolute inset-0 rounded-full bg-indigo-400 animate-ping opacity-75" />
                             <span className="w-2 h-2 rounded-full bg-white relative z-10" />
                           </div>
                         ) : (
-                          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[10px] font-bold text-white/30">•</div>
+                          <div className="w-5 h-5 rounded-full bg-white/10 flex items-center justify-center shrink-0 text-[10px] font-bold text-white/30">â€¢</div>
                         )}
                         <span className={`font-medium ${isPassed ? 'text-emerald-400 font-semibold' : isActive ? 'text-indigo-200 font-semibold animate-pulse' : 'text-white/40'}`}>
                           {s.text}
@@ -688,12 +1057,12 @@ export default function DashboardPage() {
                     { title: 'Konsistensi Belajar', value: 'Sangat Baik', desc: 'Aktivitas belajar mingguan aktif', color: 'text-purple-600 bg-purple-50 border-purple-100' },
                     { title: 'Rekomendasi Utama', value: recommendedList[0]?.title || 'Lanjut Belajar', desc: 'Langkah karir krusial berikutnya', color: 'text-emerald-600 bg-emerald-50 border-emerald-100' }
                   ].map((st, idx) => (
-                    <div key={idx} className={`p-6 bg-white border border-slate-200 rounded-3xl shadow-sm flex flex-col justify-between`}>
+                    <div key={idx} className="p-6 bg-white dark:bg-[#0c0e18] border border-slate-205 dark:border-slate-800 rounded-3xl shadow-sm flex flex-col justify-between">
                       <div>
-                        <p className="text-xs font-bold text-slate-400 uppercase tracking-wider">{st.title}</p>
-                        <p className="text-2xl font-black text-slate-800 mt-2 leading-none">{st.value}</p>
+                        <p className="text-xs font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wider">{st.title}</p>
+                        <p className="text-2xl font-black text-slate-800 dark:text-slate-200 mt-2 leading-none">{st.value}</p>
                       </div>
-                      <p className="text-xs text-slate-500 font-medium mt-3 flex items-center gap-1.5">
+                      <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-3 flex items-center gap-1.5">
                         <span className="w-1.5 h-1.5 rounded-full bg-indigo-500" /> {st.desc}
                       </p>
                     </div>
@@ -701,15 +1070,15 @@ export default function DashboardPage() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-black text-slate-800 mb-5 flex items-center gap-2">
-                    <BookOpen className="w-5 h-5 text-indigo-600" />
+                  <h3 className="text-lg font-black text-slate-800 dark:text-white mb-5 flex items-center gap-2">
+                    <BookOpen className="w-5 h-5 text-indigo-650 dark:text-indigo-400" />
                     <span>Modul Prioritas Berdasarkan AI</span>
                   </h3>
 
                   {recommendedList.length === 0 ? (
-                    <div className="bg-white rounded-3xl border border-slate-200 p-12 text-center shadow-sm">
+                    <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
                       <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto mb-3" />
-                      <p className="text-slate-500 font-bold">Luar Biasa! Semua rekomendasi modul telah Anda selesaikan.</p>
+                      <p className="text-slate-550 dark:text-slate-400 font-bold">Luar Biasa! Semua rekomendasi modul telah Anda selesaikan.</p>
                     </div>
                   ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -718,33 +1087,46 @@ export default function DashboardPage() {
                         const enrollment = enrollmentMap.get(m.id);
 
                         return (
-                          <div key={m.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col md:flex-row group">
+                          <div key={m.id} className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col md:flex-row group">
                             {/* Thumbnail */}
-                            <div className={`bg-gradient-to-br ${theme.bg} w-full md:w-44 h-36 md:h-full flex items-center justify-center shrink-0 relative overflow-hidden group`}>
+                            <div className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} w-full md:w-44 h-36 md:h-full flex items-center justify-center shrink-0 relative overflow-hidden group`}>
+                              {/* Custom uploaded thumbnail */}
+                              {m.thumbnail && (
+                                <>
+                                  <img
+                                    src={m.thumbnail}
+                                    alt={m.title}
+                                    className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+                                </>
+                              )}
                               <div className="absolute top-3 left-3 bg-purple-600 text-white font-bold text-[9px] px-2 py-0.5 rounded-md shadow-sm tracking-wider uppercase z-10">
                                 Recommended
                               </div>
 
-                              {/* Visual Glassmorphic Logo Block */}
-                              <div className="w-[110px] h-16 bg-white/10 rounded-2xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-2.5 shadow-xl shadow-black/10 group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
-                                <span className="text-2xl drop-shadow-md select-none group-hover:scale-110 transition-transform duration-500">{theme.emoji}</span>
-                                <div className="text-right select-none">
-                                  <p className="text-[8px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
-                                  <p className="text-sm font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
+                              {/* Visual Glassmorphic Logo Block â€” only when no custom thumbnail */}
+                              {!m.thumbnail && (
+                                <div className="w-[110px] h-16 bg-white/10 rounded-2xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-2.5 shadow-xl shadow-black/10 group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
+                                  <span className="text-2xl drop-shadow-md select-none group-hover:scale-110 transition-transform duration-500">{theme.emoji}</span>
+                                  <div className="text-right select-none">
+                                    <p className="text-[8px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
+                                    <p className="text-sm font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
+                                  </div>
                                 </div>
-                              </div>
+                              )}
                             </div>
                             <div className="p-6 flex-1 flex flex-col justify-between">
                               <div>
-                                <span className="text-[10px] font-black tracking-wider text-purple-600 bg-purple-50 uppercase px-2.5 py-1 rounded-md self-start mb-2 inline-block">
+                                <span className="text-[10px] font-black tracking-wider text-purple-600 dark:text-purple-400 bg-purple-50 dark:bg-purple-955/20 uppercase px-2.5 py-1 rounded-md self-start mb-2 inline-block">
                                   {m.category || 'Programming'}
                                 </span>
-                                <h4 className="font-bold text-slate-800 text-base mb-1.5 leading-snug">{m.title}</h4>
-                                <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed mb-4">{m.description || 'Pondasi penting untuk kelayakan industri karir Anda.'}</p>
+                                <h4 className="font-bold text-slate-800 dark:text-slate-200 text-base mb-1.5 leading-snug">{m.title}</h4>
+                                <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-4">{m.description || 'Pondasi penting untuk kelayakan industri karir Anda.'}</p>
                               </div>
                               <div className="flex items-center justify-between gap-4 mt-auto">
-                                <span className="text-[11px] text-slate-400 font-medium flex items-center gap-1">
-                                  <Users className="w-3.5 h-3.5" /> {m.enr || 0} siswa
+                                <span className="text-[11px] text-slate-400 dark:text-slate-500 font-medium flex items-center gap-1">
+                                  <Users className="w-3.5 h-3.5 text-slate-400" /> {m.enr || 0} siswa
                                 </span>
                                 {enrollment && enrollment.enrollmentStatus === 'APPROVED' ? (
                                   <button onClick={() => router.push(`/dashboard/modules/${m.id}`)}
@@ -752,7 +1134,7 @@ export default function DashboardPage() {
                                     Lanjut Belajar
                                   </button>
                                 ) : enrollment && enrollment.enrollmentStatus === 'PENDING' ? (
-                                  <span className="text-xs font-bold text-amber-500 bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-100 flex items-center gap-1.5">
+                                  <span className="text-xs font-bold text-amber-500 dark:text-amber-400 bg-amber-50 dark:bg-amber-955/20 px-3 py-1.5 rounded-lg border border-amber-100 dark:border-amber-900/30 flex items-center gap-1.5">
                                     <Clock className="w-3.5 h-3.5 animate-spin" /> Pending
                                   </span>
                                 ) : (
@@ -1071,7 +1453,7 @@ export default function DashboardPage() {
                 Studio Dasbor Pengajar
               </span>
               <h1 className="text-2xl md:text-3xl font-black tracking-tight mt-2">
-                Selamat datang kembali, {user.name?.split(' ')[0]}! 👋
+                Selamat datang kembali, {user.name?.split(' ')[0]}! ðŸ‘‹
               </h1>
               <p className="text-indigo-200/80 text-xs leading-relaxed max-w-2xl font-medium">
                 Anda memiliki <strong className="text-white">{instructorModules.length} kursus aktif</strong> dengan total <strong className="text-white">{totalEnrollments} peserta terdaftar</strong>. Mari pantau aktivitas dan kemajuan belajar mereka hari ini.
@@ -1276,7 +1658,7 @@ export default function DashboardPage() {
                       Siswa di modul <strong className="text-indigo-650 dark:text-indigo-400 font-black">HTML Basics</strong> mengalami perlambatan belajar di Bab 4 (Syllabus: Form & Inputs). 
                     </p>
                     <p className="text-[11px] text-slate-500 dark:text-slate-400 mt-1">
-                      💡 **Solusi**: Posting tautan penjelasan tambahan atau adakan sesi Q&A seputar Form Validasi di Forum Diskusi secepatnya.
+                      ðŸ’¡ **Solusi**: Posting tautan penjelasan tambahan atau adakan sesi Q&A seputar Form Validasi di Forum Diskusi secepatnya.
                     </p>
                   </div>
                 </div>
@@ -1741,10 +2123,10 @@ export default function DashboardPage() {
 
       const getRankBadge = (p: number) => {
         if (p === 0) return { label: 'Baru Mendaftar', bg: 'bg-slate-100 dark:bg-slate-900 text-slate-600 dark:text-slate-400 border-slate-200 dark:border-slate-800' };
-        if (p < 40) return { label: 'Pionir Belajar 🚀', bg: 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/30' };
-        if (p < 80) return { label: 'Pembelajar Konsisten 📈', bg: 'bg-amber-50 dark:bg-amber-955/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/30' };
-        if (p < 100) return { label: 'Calon Profesional 🎓', bg: 'bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-900/30' };
-        return { label: 'Wisudawan Ahli 🏆', bg: 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/20' };
+        if (p < 40) return { label: 'Pionir Belajar ðŸš€', bg: 'bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 border-indigo-200 dark:border-indigo-900/30' };
+        if (p < 80) return { label: 'Pembelajar Konsisten ðŸ“ˆ', bg: 'bg-amber-50 dark:bg-amber-955/20 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-900/30' };
+        if (p < 100) return { label: 'Calon Profesional ðŸŽ“', bg: 'bg-purple-50 dark:bg-purple-950/20 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-900/30' };
+        return { label: 'Wisudawan Ahli ðŸ†', bg: 'bg-emerald-500 text-white border-emerald-600 shadow-md shadow-emerald-500/20' };
       };
 
       // Filter Approved Students Matrix
@@ -1916,7 +2298,7 @@ export default function DashboardPage() {
                         <div key={i} className="flex items-center justify-between gap-3 p-2 hover:bg-slate-50 dark:hover:bg-slate-900/40 rounded-2xl transition-colors group">
                           <div className="flex items-center gap-3 min-w-0">
                             <span className="w-6 text-center text-base shrink-0 select-none">
-                              {i === 0 ? '👑' : i === 1 ? '🥈' : i === 2 ? '🥉' : `${i + 1}`}
+                              {i === 0 ? 'ðŸ‘‘' : i === 1 ? 'ðŸ¥ˆ' : i === 2 ? 'ðŸ¥‰' : `${i + 1}`}
                             </span>
                             <div className="min-w-0">
                               <p className="font-extrabold text-slate-800 dark:text-white text-xs truncate leading-snug">{s.name}</p>
@@ -1958,7 +2340,7 @@ export default function DashboardPage() {
                                 ? 'bg-amber-400 border-amber-200 text-white'
                                 : 'bg-indigo-500 border-indigo-200 text-white'
                           } text-[8px] font-black`}>
-                            {act.type === 'completed' ? '✓' : '•'}
+                            {act.type === 'completed' ? 'âœ“' : 'â€¢'}
                           </div>
                           <div className="min-w-0">
                             <p className="text-xs font-bold text-slate-700 dark:text-slate-300 leading-relaxed break-words">{act.text}</p>
@@ -2108,7 +2490,7 @@ export default function DashboardPage() {
                                 <span className={`inline-flex items-center px-2.5 py-1 text-[10px] font-black rounded-lg border uppercase tracking-wider ${
                                   isCompleted ? 'bg-emerald-500 text-white border-emerald-600 dark:border-emerald-700' : level.bg
                                 }`}>
-                                  {isCompleted ? 'Wisudawan Ahli 🎓' : level.label}
+                                  {isCompleted ? 'Wisudawan Ahli ðŸŽ“' : level.label}
                                 </span>
                               </td>
 
@@ -2244,7 +2626,7 @@ export default function DashboardPage() {
                                   ? 'bg-amber-500 border-amber-200 text-white animate-pulse'
                                   : 'bg-white dark:bg-[#0c0e18] border-slate-200 dark:border-slate-800 text-slate-300 dark:text-slate-600'
                             }`}>
-                              {isCompleted ? '✓' : cp.step}
+                              {isCompleted ? 'âœ“' : cp.step}
                             </div>
                             
                             <div className="min-w-0">
@@ -2378,7 +2760,7 @@ export default function DashboardPage() {
     // Time-based greeting
     const hour = new Date().getHours();
     const greeting = hour < 11 ? 'Selamat Pagi' : hour < 15 ? 'Selamat Siang' : hour < 18 ? 'Selamat Sore' : 'Selamat Malam';
-    const greetingEmoji = hour < 11 ? '☀️' : hour < 15 ? '🌤️' : hour < 18 ? '🌇' : '🌙';
+    const greetingEmoji = hour < 11 ? 'â˜€ï¸' : hour < 15 ? 'ðŸŒ¤ï¸' : hour < 18 ? 'ðŸŒ‡' : 'ðŸŒ™';
 
     // Quick navigation items
     const quickNavs = [
@@ -2389,8 +2771,8 @@ export default function DashboardPage() {
     ];
 
     return (
-      <div className="min-h-full bg-slate-50">
-        {/* ── Hero Banner ──────────────────────────────────────────────────── */}
+      <div className="min-h-full bg-slate-50 dark:bg-[#0f111a]">
+        {/* â”€â”€ Hero Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
         <div className="relative bg-gradient-to-br from-[#1e1b4b] via-indigo-800 to-purple-900 overflow-hidden">
           {/* Decorative blobs */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -2416,7 +2798,7 @@ export default function DashboardPage() {
                   </h1>
                   <p className="text-indigo-200/80 text-sm font-medium mb-6 max-w-md">
                     {approvedEnrollments.length === 0
-                      ? 'Mulai perjalanan belajar Anda — temukan kursus yang sesuai dan daftarkan diri sekarang.'
+                      ? 'Mulai perjalanan belajar Anda â€” temukan kursus yang sesuai dan daftarkan diri sekarang.'
                       : inProgressEnrollments.length > 0
                       ? `Anda sedang mengikuti ${inProgressEnrollments.length} kursus aktif. Terus tingkatkan progres belajar Anda!`
                       : `Semua kursus Anda selesai! Jelajahi modul baru untuk terus berkembang.`
@@ -2444,7 +2826,7 @@ export default function DashboardPage() {
                       </div>
                       <div>
                         <p className="text-white font-bold text-sm">Rata-rata Progres</p>
-                        <p className="text-indigo-300 text-xs font-medium">{approvedEnrollments.length} kursus aktif · {completedEnrollments.length} lulus</p>
+                        <p className="text-indigo-300 text-xs font-medium">{approvedEnrollments.length} kursus aktif Â· {completedEnrollments.length} lulus</p>
                       </div>
                     </div>
                   )}
@@ -2485,35 +2867,35 @@ export default function DashboardPage() {
 
         <div className="px-6 md:px-10 py-8 max-w-7xl mx-auto space-y-8">
 
-          {/* ── Quick Navigation Cards ────────────────────────────────────── */}
+          {/* â”€â”€ Quick Navigation Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {quickNavs.map((nav, i) => (
               <button key={i} onClick={() => router.push(nav.href)}
-                className="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left flex flex-col gap-3 relative overflow-hidden">
+                className="group bg-white dark:bg-[#0c0e18] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left flex flex-col gap-3 relative overflow-hidden">
                 <div className="absolute top-0 right-0 w-20 h-20 rounded-bl-full opacity-5 group-hover:opacity-10 transition-opacity"
                   style={{ background: `linear-gradient(to bottom left, ${nav.color.includes('indigo') ? '#6366f1' : nav.color.includes('emerald') ? '#10b981' : nav.color.includes('amber') ? '#f59e0b' : '#f43f5e'}, transparent)` }} />
                 <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${nav.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
                   <nav.icon className="w-5 h-5 text-white" />
                 </div>
                 <div>
-                  <p className="font-black text-slate-800 text-sm group-hover:text-indigo-600 transition-colors">{nav.label}</p>
-                  <p className="text-[11px] text-slate-400 font-medium mt-0.5">{nav.desc}</p>
+                  <p className="font-black text-slate-800 dark:text-slate-200 text-sm group-hover:text-indigo-600 transition-colors">{nav.label}</p>
+                  <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">{nav.desc}</p>
                 </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all mt-auto" />
+                <ArrowRight className="w-4 h-4 text-slate-300 dark:text-slate-650 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all mt-auto" />
               </button>
             ))}
           </div>
 
-          {/* ── Active Courses ────────────────────────────────────────────── */}
+          {/* â”€â”€ Active Courses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           {myModules.length > 0 ? (
             <div>
               <div className="flex items-center justify-between mb-5">
                 <div>
-                  <h2 className="text-xl font-black text-slate-800">Kursus Aktif Saya</h2>
-                  <p className="text-slate-500 text-sm mt-0.5">Lanjutkan belajar dari terakhir kali Anda berhenti</p>
+                  <h2 className="text-xl font-black text-slate-800 dark:text-white">Kursus Aktif Saya</h2>
+                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Lanjutkan belajar dari terakhir kali Anda berhenti</p>
                 </div>
                 <button onClick={() => router.push('/dashboard?tab=in-progress')}
-                  className="text-sm font-bold text-indigo-600 hover:text-indigo-800 flex items-center gap-1.5 hover:gap-2.5 transition-all">
+                  className="text-sm font-bold text-indigo-600 hover:text-indigo-850 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1.5 hover:gap-2.5 transition-all">
                   Lihat Semua <ArrowRight className="w-4 h-4" />
                 </button>
               </div>
@@ -2527,7 +2909,7 @@ export default function DashboardPage() {
 
                   return (
                     <div key={m.id}
-                      className="bg-white rounded-3xl border border-slate-200 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer"
+                      className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer"
                       onClick={() => router.push(`/dashboard/modules/${m.id}`)}>
                       {/* Thumbnail */}
                       <div className={`h-32 bg-gradient-to-br ${theme.bg} relative overflow-hidden flex items-center justify-center`}>
@@ -2543,18 +2925,18 @@ export default function DashboardPage() {
 
                       {/* Content */}
                       <div className="p-5 flex-1 flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-md self-start mb-2">{m.category || 'General'}</span>
-                        <h3 className="font-black text-slate-800 text-sm leading-snug mb-3 line-clamp-2 group-hover:text-indigo-600 transition-colors">{m.title}</h3>
+                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-650 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-2 py-0.5 rounded-md self-start mb-2">{m.category || 'General'}</span>
+                        <h3 className="font-black text-slate-800 dark:text-slate-200 text-sm leading-snug mb-3 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{m.title}</h3>
 
                         {/* Progress Bar */}
                         <div className="mt-auto space-y-2">
                           <div className="flex justify-between items-center text-xs font-bold">
-                            <span className={isCompleted ? 'text-emerald-600' : 'text-slate-500'}>
-                              {isCompleted ? '✓ Selesai' : 'Progres'}
+                            <span className={isCompleted ? 'text-emerald-600 dark:text-emerald-450' : 'text-slate-500 dark:text-slate-400'}>
+                              {isCompleted ? 'âœ“ Selesai' : 'Progres'}
                             </span>
-                            <span className={isCompleted ? 'text-emerald-600 font-black' : 'text-indigo-600 font-black'}>{progress}%</span>
+                            <span className={isCompleted ? 'text-emerald-600 dark:text-emerald-455 font-black' : 'text-indigo-600 dark:text-indigo-400 font-black'}>{progress}%</span>
                           </div>
-                          <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden shadow-inner">
+                          <div className="w-full h-2 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden shadow-inner">
                             <div
                               className={`h-full rounded-full transition-all duration-700 ${isCompleted ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : 'bg-gradient-to-r from-indigo-500 to-purple-500'}`}
                               style={{ width: `${progress}%` }}
@@ -2564,7 +2946,7 @@ export default function DashboardPage() {
                             onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/modules/${m.id}`); }}
                             className={`w-full py-2.5 rounded-xl text-xs font-black transition-all mt-1 flex items-center justify-center gap-2 ${
                               isCompleted
-                                ? 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                                ? 'bg-emerald-50 dark:bg-emerald-955/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-900/30'
                                 : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-500/20 hover:scale-[1.02] active:scale-[0.98]'
                             }`}>
                             {isCompleted ? <><Award className="w-3.5 h-3.5" /> Lihat Sertifikat</> : <><PlayCircle className="w-3.5 h-3.5" /> Lanjutkan</>}
@@ -2578,12 +2960,12 @@ export default function DashboardPage() {
             </div>
           ) : (
             /* Empty state */
-            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-16 text-center">
-              <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mx-auto mb-5">
-                <BookOpen className="w-10 h-10 text-indigo-300" />
+            <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-16 text-center">
+              <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/30 rounded-full flex items-center justify-center mx-auto mb-5">
+                <BookOpen className="w-10 h-10 text-indigo-300 dark:text-indigo-400" />
               </div>
-              <h3 className="text-xl font-black text-slate-800 mb-2">Belum Ada Kursus</h3>
-              <p className="text-slate-500 text-sm max-w-sm mx-auto mb-6">Mulai petualangan belajar Anda dengan mendaftar ke modul pertama!</p>
+              <h3 className="text-xl font-black text-slate-800 dark:text-slate-200 mb-2">Belum Ada Kursus</h3>
+              <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto mb-6">Mulai petualangan belajar Anda dengan mendaftar ke modul pertama!</p>
               <button onClick={() => router.push('/dashboard?tab=browse')}
                 className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2 mx-auto">
                 <Compass className="w-4 h-4" /> Jelajahi Kursus
@@ -2591,19 +2973,19 @@ export default function DashboardPage() {
             </div>
           )}
 
-          {/* ── Weekly Activity Chart + Learning Tips ────────────────────── */}
+          {/* â”€â”€ Weekly Activity Chart + Learning Tips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
 
             {/* Activity Chart */}
-            <div className="lg:col-span-2 bg-white rounded-3xl border border-slate-200 shadow-sm p-6">
+            <div className="lg:col-span-2 bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-base font-black text-slate-800">Aktivitas Belajar</h2>
-                  <p className="text-xs text-slate-400 font-medium mt-0.5">7 hari terakhir</p>
+                  <h2 className="text-base font-black text-slate-800 dark:text-slate-200">Aktivitas Belajar</h2>
+                  <p className="text-xs text-slate-400 dark:text-slate-550 font-medium mt-0.5">7 hari terakhir</p>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 rounded-xl">
-                  <BarChart2 className="w-3.5 h-3.5 text-indigo-600" />
-                  <span className="text-xs font-bold text-indigo-600">Minggu Ini</span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl">
+                  <BarChart2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">Minggu Ini</span>
                 </div>
               </div>
               <div className="flex items-end gap-2 h-28">
@@ -2617,7 +2999,7 @@ export default function DashboardPage() {
                           className={`w-full rounded-t-lg transition-all duration-700 cursor-pointer relative overflow-hidden ${
                             isToday
                               ? 'bg-gradient-to-t from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/30'
-                              : 'bg-gradient-to-t from-indigo-200 to-indigo-100 group-hover:from-indigo-500 group-hover:to-indigo-400'
+                              : 'bg-gradient-to-t from-indigo-200 to-indigo-100 dark:from-indigo-900 dark:to-indigo-850 group-hover:from-indigo-500 group-hover:to-indigo-400'
                           }`}
                           style={{ height: `${h * 1.12}px` }}
                         >
@@ -2626,57 +3008,57 @@ export default function DashboardPage() {
                           </div>
                         </div>
                       </div>
-                      <span className={`text-[10px] font-bold ${isToday ? 'text-indigo-600' : 'text-slate-400'}`}>
+                      <span className={`text-[10px] font-bold ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`}>
                         {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'][i]}
                       </span>
                     </div>
                   );
                 })}
               </div>
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100">
-                <div className="flex items-center gap-4 text-xs text-slate-500 font-semibold">
+              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
+                <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 font-semibold">
                   <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />Hari ini</span>
-                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-200" />Lainnya</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-200 dark:bg-indigo-800" />Lainnya</span>
                 </div>
-                <span className="text-xs font-black text-slate-700">Total: <span className="text-indigo-600">435 XP</span></span>
+                <span className="text-xs font-black text-slate-700 dark:text-slate-300">Total: <span className="text-indigo-600 dark:text-indigo-400">435 XP</span></span>
               </div>
             </div>
 
             {/* Learning Tips / Motivational Card */}
             <div className="space-y-4">
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/60 rounded-3xl p-5 shadow-sm">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-955/15 dark:to-orange-955/10 border border-amber-200/60 dark:border-amber-900/20 rounded-3xl p-5 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-                  <span className="text-xs font-black text-amber-700 uppercase tracking-wider">Tips Hari Ini</span>
+                  <span className="text-xs font-black text-amber-700 dark:text-amber-400 uppercase tracking-wider">Tips Hari Ini</span>
                 </div>
-                <p className="text-sm text-amber-900 font-bold leading-relaxed">
+                <p className="text-sm text-amber-900 dark:text-amber-300 font-bold leading-relaxed">
                   "Konsistensi adalah kunci. Belajar 30 menit setiap hari lebih efektif dari 3 jam seminggu sekali."
                 </p>
-                <div className="mt-3 pt-3 border-t border-amber-200/60 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-amber-200 flex items-center justify-center text-xs">📚</div>
-                  <span className="text-[11px] font-bold text-amber-600">DevGrow Learning Tips</span>
+                <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-900/25 flex items-center gap-2">
+                  <div className="w-6 h-6 rounded-full bg-amber-200 dark:bg-amber-905/30 flex items-center justify-center text-xs">ðŸ“š</div>
+                  <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">DevGrow Learning Tips</span>
                 </div>
               </div>
 
-              <div className="bg-white border border-slate-200 rounded-3xl p-5 shadow-sm">
-                <h3 className="text-xs font-black text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
+              <div className="bg-white dark:bg-[#0c0e18] border border-slate-205 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
+                <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
                   <Star className="w-3.5 h-3.5 text-amber-500" />
                   Pencapaian Saya
                 </h3>
                 <div className="space-y-3">
                   {[
-                    { label: 'Kursus Selesai', value: completedEnrollments.length, max: Math.max(approvedEnrollments.length, 1), color: 'bg-emerald-500', icon: '🎓' },
-                    { label: 'Rata-rata Progres', value: avgProgress, max: 100, color: 'bg-indigo-500', icon: '📈' },
-                    { label: 'Kursus Diikuti', value: approvedEnrollments.length, max: Math.max(modules.length, 1), color: 'bg-purple-500', icon: '📚' },
+                    { label: 'Kursus Selesai', value: completedEnrollments.length, max: Math.max(approvedEnrollments.length, 1), color: 'bg-emerald-500', icon: 'ðŸŽ“' },
+                    { label: 'Rata-rata Progres', value: avgProgress, max: 100, color: 'bg-indigo-500', icon: 'ðŸ“ˆ' },
+                    { label: 'Kursus Diikuti', value: approvedEnrollments.length, max: Math.max(modules.length, 1), color: 'bg-purple-500', icon: 'ðŸ“š' },
                   ].map((item, i) => (
                     <div key={i}>
                       <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-bold text-slate-600 flex items-center gap-1.5">
+                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
                           <span>{item.icon}</span> {item.label}
                         </span>
-                        <span className="text-xs font-black text-slate-800">{item.label === 'Rata-rata Progres' ? `${item.value}%` : item.value}</span>
+                        <span className="text-xs font-black text-slate-800 dark:text-slate-200">{item.label === 'Rata-rata Progres' ? `${item.value}%` : item.value}</span>
                       </div>
-                      <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div className="h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
                         <div
                           className={`h-full ${item.color} rounded-full transition-all duration-700`}
                           style={{ width: `${Math.round((item.value / item.max) * 100)}%` }}
@@ -2764,7 +3146,7 @@ export default function DashboardPage() {
                 <div className="text-right">
                   <p className="text-[10px] text-slate-400 uppercase tracking-wider mb-1">Instruktur Pendamping</p>
                   <p className="text-slate-800 font-bold">{selectedCert.module.instructor?.name || 'Bagus Kurniawan'}</p>
-                  <div className="mt-2 text-indigo-500/30 text-lg font-serif italic select-none print:text-indigo-600/40">✓ Verified Digital Signature</div>
+                  <div className="mt-2 text-indigo-500/30 text-lg font-serif italic select-none print:text-indigo-600/40">âœ“ Verified Digital Signature</div>
                 </div>
               </div>
             </div>

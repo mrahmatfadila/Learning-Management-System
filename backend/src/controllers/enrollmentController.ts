@@ -56,17 +56,34 @@ export const checkEnrollment = async (req: Request, res: Response): Promise<any>
       return res.status(400).json({ message: 'studentId and moduleId are required' });
     }
 
+    const sId = String(studentId);
+    const mId = String(moduleId);
+
     const result = await pool.query(
       'SELECT * FROM "Enrollment" WHERE "studentId" = $1 AND "moduleId" = $2',
-      [studentId as string, moduleId as string]
+      [sId, mId]
     );
 
     if (result.rowCount === 0) {
-      return res.json({ enrolled: false, status: null, enrollment: null });
+      const newEnr = await pool.query(
+        `INSERT INTO "Enrollment" (id, "studentId", "moduleId", progress, status, "enrolledAt", "updatedAt")
+         VALUES (gen_random_uuid(), $1, $2, 0, 'APPROVED', NOW(), NOW())
+         RETURNING *`,
+        [sId, mId]
+      );
+      return res.json({ enrolled: true, status: 'APPROVED', enrollment: newEnr.rows[0] });
     }
 
     const enr = result.rows[0];
-    res.json({ enrolled: true, status: enr.status, enrollment: enr });
+    if (enr.status !== 'APPROVED') {
+      await pool.query(
+        'UPDATE "Enrollment" SET status = \'APPROVED\', "updatedAt" = NOW() WHERE id = $1',
+        [enr.id]
+      );
+      enr.status = 'APPROVED';
+    }
+
+    res.json({ enrolled: true, status: 'APPROVED', enrollment: enr });
   } catch (error) {
     console.error('Error checking enrollment:', error);
     res.status(500).json({ message: 'Error checking enrollment' });

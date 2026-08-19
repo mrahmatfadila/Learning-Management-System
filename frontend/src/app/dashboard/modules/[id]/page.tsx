@@ -1,6 +1,6 @@
 'use client';
 
-import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock } from 'lucide-react';
+import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, use } from 'react';
 import { coursesData } from '@/data/lessonData';
@@ -24,6 +24,78 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const [newLessonData, setNewLessonData] = useState({ chapter: '', subChapter: '', title: '', type: 'code', content: '' });
   const [isSavingLesson, setIsSavingLesson] = useState(false);
 
+  // Reviews & Ratings State
+  const [reviewsData, setReviewsData] = useState<{
+    reviews: any[];
+    avgRating: number;
+    totalReviews: number;
+    ratingCounts: Record<number, number>;
+  }>({ reviews: [], avgRating: 0, totalReviews: 0, ratingCounts: { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 } });
+  const [userRating, setUserRating] = useState<number>(5);
+  const [userComment, setUserComment] = useState<string>('');
+  const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+  const [reviewHoverStar, setReviewHoverStar] = useState<number>(0);
+
+  const fetchReviews = async () => {
+    try {
+      const res = await fetch(`http://localhost:5000/api/modules/${id}/reviews`);
+      if (res.ok) {
+        const data = await res.json();
+        setReviewsData(data);
+        const stored = localStorage.getItem('lms_user');
+        if (stored) {
+          const u = JSON.parse(stored);
+          const myReview = data.reviews?.find((r: any) => r.userId === u.id);
+          if (myReview) {
+            setUserRating(myReview.rating);
+            setUserComment(myReview.comment);
+          }
+        }
+      }
+    } catch (err) {
+      console.error('Error fetching reviews:', err);
+    }
+  };
+
+  const handleSubmitReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!currentUser) return alert('Silakan login terlebih dahulu untuk memberikan ulasan.');
+    if (!userComment.trim()) return alert('Silakan tuliskan komentar ulasan Anda.');
+    setIsSubmittingReview(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/modules/${id}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: currentUser.id,
+          rating: userRating,
+          comment: userComment.trim()
+        })
+      });
+      if (res.ok) {
+        await fetchReviews();
+        alert('Terima kasih! Ulasan Anda telah berhasil disimpan.');
+      } else {
+        alert('Gagal menyimpan ulasan.');
+      }
+    } catch (err) {
+      console.error(err);
+      alert('Terjadi kesalahan saat mengirim ulasan.');
+    } finally {
+      setIsSubmittingReview(false);
+    }
+  };
+
+  const handleDeleteReview = async (reviewId: string) => {
+    if (!confirm('Apakah Anda yakin ingin menghapus ulasan ini?')) return;
+    try {
+      const res = await fetch(`http://localhost:5000/api/reviews/${reviewId}`, { method: 'DELETE' });
+      if (res.ok) fetchReviews();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   useEffect(() => {
     const stored = localStorage.getItem('lms_user');
     if (stored) {
@@ -39,7 +111,10 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         if (res.ok) setModuleData(await res.json());
       } catch {}
     };
-    if (id) fetchModule();
+    if (id) {
+      fetchModule();
+      fetchReviews();
+    }
     const savedProgress = localStorage.getItem(`progress_${id}`);
     if (savedProgress) {
       try { setCompletedLessons(new Set(JSON.parse(savedProgress))); } catch {}
@@ -526,6 +601,167 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
             id={id}
             router={router}
           />
+        </div>
+
+        {/* Rating & Ulasan Section */}
+        <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6 md:p-8 mt-6">
+          <div className="flex items-center justify-between gap-4 mb-6 pb-4 border-b border-slate-100 dark:border-slate-800 flex-wrap">
+            <div>
+              <h2 className="text-xl font-black text-slate-800 dark:text-white flex items-center gap-2">
+                <Star className="w-6 h-6 fill-amber-400 text-amber-400" /> Rating & Ulasan Modul
+              </h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">Ulasan dan masukan langsung dari siswa yang telah mempelajari modul ini</p>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            {/* Left: Summary Card */}
+            <div className="lg:col-span-5 bg-slate-50 dark:bg-slate-900/50 p-6 rounded-2xl border border-slate-200/80 dark:border-slate-800 flex flex-col items-center justify-center text-center">
+              <div className="text-5xl font-black text-slate-800 dark:text-white mb-2">
+                {reviewsData.avgRating > 0 ? reviewsData.avgRating.toFixed(1) : '0.0'}
+              </div>
+              <div className="flex items-center gap-1 mb-2">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star
+                    key={s}
+                    className={`w-5 h-5 ${
+                      s <= Math.round(reviewsData.avgRating)
+                        ? 'fill-amber-400 text-amber-400'
+                        : 'text-slate-300 dark:text-slate-700'
+                    }`}
+                  />
+                ))}
+              </div>
+              <div className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-6">
+                Berdasarkan {reviewsData.totalReviews} ulasan siswa
+              </div>
+
+              {/* Progress bars per rating */}
+              <div className="w-full space-y-2 text-xs">
+                {[5, 4, 3, 2, 1].map((star) => {
+                  const count = reviewsData.ratingCounts?.[star] || 0;
+                  const pct = reviewsData.totalReviews > 0 ? (count / reviewsData.totalReviews) * 100 : 0;
+                  return (
+                    <div key={star} className="flex items-center gap-2">
+                      <span className="w-3 font-bold text-slate-600 dark:text-slate-400">{star}</span>
+                      <Star className="w-3 h-3 fill-amber-400 text-amber-400 shrink-0" />
+                      <div className="flex-1 h-2 bg-slate-200 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${pct}%` }} />
+                      </div>
+                      <span className="w-8 text-right text-slate-400 text-[11px]">{count}</span>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Right: Write Review Form & Review List */}
+            <div className="lg:col-span-7 space-y-6">
+              {/* Form Input Rating */}
+              <form onSubmit={handleSubmitReview} className="bg-slate-50 dark:bg-slate-900/50 p-5 rounded-2xl border border-slate-200/80 dark:border-slate-800 space-y-4">
+                <h3 className="text-sm font-black text-slate-800 dark:text-white">Berikan Rating & Ulasan Anda</h3>
+                
+                {/* Star Picker */}
+                <div className="flex items-center gap-2">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 mr-2">Pilih Rating:</span>
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <button
+                      type="button"
+                      key={star}
+                      onMouseEnter={() => setReviewHoverStar(star)}
+                      onMouseLeave={() => setReviewHoverStar(0)}
+                      onClick={() => setUserRating(star)}
+                      className="p-1 transition-transform hover:scale-110 cursor-pointer focus:outline-none"
+                    >
+                      <Star
+                        className={`w-6 h-6 transition-colors ${
+                          star <= (reviewHoverStar || userRating)
+                            ? 'fill-amber-400 text-amber-400'
+                            : 'text-slate-300 dark:text-slate-700'
+                        }`}
+                      />
+                    </button>
+                  ))}
+                  <span className="text-xs font-bold text-amber-500 ml-2">{userRating} / 5</span>
+                </div>
+
+                {/* Comment Textarea */}
+                <div>
+                  <textarea
+                    value={userComment}
+                    onChange={(e) => setUserComment(e.target.value)}
+                    placeholder="Bagikan pengalaman dan pendapat Anda tentang materi modul ini..."
+                    rows={3}
+                    className="w-full p-3 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c0e18] text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
+                    required
+                  />
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-extrabold rounded-xl shadow-md transition-all cursor-pointer"
+                >
+                  {isSubmittingReview ? 'Menyimpan...' : 'Kirim Ulasan'}
+                </button>
+              </form>
+
+              {/* Reviews List */}
+              <div className="space-y-4">
+                <h3 className="text-sm font-black text-slate-800 dark:text-white">Ulasan Terkini ({reviewsData.reviews?.length || 0})</h3>
+                {(!reviewsData.reviews || reviewsData.reviews.length === 0) ? (
+                  <p className="text-xs text-slate-400 text-center py-6 bg-slate-50 dark:bg-slate-900/30 rounded-2xl border border-dashed border-slate-200 dark:border-slate-800">
+                    Belum ada ulasan untuk modul ini. Jadilah yang pertama memberikan penilaian!
+                  </p>
+                ) : (
+                  reviewsData.reviews.map((r: any) => (
+                    <div key={r.id} className="p-4 rounded-2xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-[#0c0e18] shadow-sm space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-400 font-bold flex items-center justify-center text-xs overflow-hidden">
+                            {r.user?.profilePicture ? (
+                              <img src={r.user.profilePicture} alt={r.user.name} className="w-full h-full object-cover" />
+                            ) : (
+                              r.user?.name?.slice(0, 2)?.toUpperCase() || 'US'
+                            )}
+                          </div>
+                          <div>
+                            <div className="text-xs font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                              {r.user?.name || 'Siswa'}
+                              <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-500 font-medium">
+                                {r.user?.role}
+                              </span>
+                            </div>
+                            <div className="flex items-center gap-1 mt-0.5">
+                              {[1, 2, 3, 4, 5].map((st) => (
+                                <Star
+                                  key={st}
+                                  className={`w-3 h-3 ${st <= r.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300 dark:text-slate-700'}`}
+                                />
+                              ))}
+                              <span className="text-[10px] text-slate-400 ml-1">
+                                {new Date(r.createdAt).toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' })}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        {currentUser?.id === r.userId && (
+                          <button
+                            onClick={() => handleDeleteReview(r.id)}
+                            className="text-slate-400 hover:text-rose-500 transition-colors p-1 cursor-pointer"
+                            title="Hapus Ulasan"
+                          >
+                            <Trash className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed pl-11">{r.comment}</p>
+                    </div>
+                  ))
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

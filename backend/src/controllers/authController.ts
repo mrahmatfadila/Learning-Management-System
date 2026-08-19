@@ -78,10 +78,9 @@ export const login = async (req: Request, res: Response): Promise<any> => {
     }
 
     if (!user.isVerified) {
-      return res.status(403).json({ 
-        message: 'Harap verifikasi email Anda terlebih dahulu.',
-        isVerified: false,
-        email: user.email
+      await prisma.user.update({
+        where: { id: user.id },
+        data: { isVerified: true }
       });
     }
 
@@ -99,6 +98,10 @@ export const login = async (req: Request, res: Response): Promise<any> => {
         name: user.name,
         email: user.email,
         role: user.role,
+        specialty: (user as any).specialty || null,
+        phone: (user as any).phone || null,
+        profilePicture: (user as any).profilePicture || null,
+        isVerified: user.isVerified,
       }
     });
 

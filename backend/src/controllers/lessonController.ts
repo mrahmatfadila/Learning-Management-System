@@ -4,10 +4,37 @@ import prisma from '../lib/prisma';
 export const getLessonsByModuleId = async (req: Request, res: Response): Promise<any> => {
   try {
     const moduleId = req.params.moduleId as string;
-    const lessons = await prisma.lesson.findMany({
+    let lessons = await prisma.lesson.findMany({
       where: { moduleId },
       orderBy: { order: 'asc' }
     });
+
+    const aliasMap: Record<string, string> = {
+      'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+      '67adde6d-81a6-4470-b88d-506b733f87ee': 'html',
+      'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+      'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'css',
+      'javascript': 'mastering-ui-design-for-impactful-solutions',
+      'mastering-ui-design-for-impactful-solutions': 'javascript',
+      'php': 'php-backend-mastery',
+      'php-backend-mastery': 'php',
+      'mysql': 'mysql-relational-database',
+      'mysql-relational-database': 'mysql',
+      'git': 'git-github-version-control',
+      'git-github-version-control': 'git',
+      'mobile': 'mobile-app-java-android',
+      'mobile-app-java-android': 'mobile',
+      'cisco': 'cisco-packet-tracer',
+      'cisco-packet-tracer': 'cisco'
+    };
+
+    if (lessons.length === 0 && aliasMap[moduleId]) {
+      lessons = await prisma.lesson.findMany({
+        where: { moduleId: aliasMap[moduleId] },
+        orderBy: { order: 'asc' }
+      });
+    }
+
     res.json(lessons);
   } catch (error) {
     res.status(500).json({ message: 'Error fetching lessons' });
@@ -17,7 +44,17 @@ export const getLessonsByModuleId = async (req: Request, res: Response): Promise
 export const getLessonById = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
-    const lesson = await prisma.lesson.findUnique({ where: { id } });
+    let lesson = await prisma.lesson.findUnique({ where: { id } });
+    if (!lesson) {
+      lesson = await prisma.lesson.findFirst({
+        where: {
+          OR: [
+            { id: { contains: id } },
+            { title: { contains: id, mode: 'insensitive' } }
+          ]
+        }
+      });
+    }
     if (!lesson) return res.status(404).json({ message: 'Lesson not found' });
     res.json(lesson);
   } catch (error) {
@@ -57,25 +94,18 @@ export const updateLesson = async (req: Request, res: Response): Promise<any> =>
   try {
     const id = req.params.id as string;
     const { title, content, videoUrl, type, order, chapter } = req.body;
-    
-    const currentLesson = await prisma.lesson.findUnique({ where: { id } });
-    if (!currentLesson) return res.status(404).json({ message: 'Lesson not found' });
-    
-    let chapterId = currentLesson.chapterId;
-    if (chapter && chapter !== currentLesson.chapter) {
-      const existingChapter = await prisma.chapter.findFirst({ where: { moduleId: currentLesson.moduleId, title: chapter } });
-      if (existingChapter) {
-        chapterId = existingChapter.id;
-      } else {
-        const count = await prisma.chapter.count({ where: { moduleId: currentLesson.moduleId } });
-        const newChapter = await prisma.chapter.create({ data: { moduleId: currentLesson.moduleId, title: chapter, order: count } });
-        chapterId = newChapter.id;
-      }
-    }
+
+    const data: any = {};
+    if (title !== undefined) data.title = title;
+    if (content !== undefined) data.content = content;
+    if (videoUrl !== undefined) data.videoUrl = videoUrl;
+    if (type !== undefined) data.type = type;
+    if (order !== undefined) data.order = order;
+    if (chapter !== undefined) data.chapter = chapter;
 
     const updatedLesson = await prisma.lesson.update({
       where: { id },
-      data: { title, content, videoUrl, type, order, chapter, chapterId }
+      data
     });
     res.json(updatedLesson);
   } catch (error) {

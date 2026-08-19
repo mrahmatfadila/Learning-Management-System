@@ -5,7 +5,7 @@ import {
   Home, Compass, CheckSquare, Trophy, Medal, Award, Activity, PlayCircle,
   TrendingUp, Sparkles, BarChart, Code, LogOut, ArrowRight, Star,
   LayoutDashboard, PenTool, MonitorPlay, Inbox, Folder, FileText,
-  DollarSign, Shield, Code2, Calendar
+  DollarSign, Shield, Code2, Calendar, Zap
 } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
@@ -20,15 +20,24 @@ export default function DashboardSidebar() {
   const [activeMenu, setActiveMenu] = useState('Dashboard');
 
   useEffect(() => {
-    const stored = localStorage.getItem('lms_user');
+    const loadAndSetUser = () => {
+      const stored = localStorage.getItem('lms_user');
+      if (stored) {
+        try {
+          const u = JSON.parse(stored);
+          setUser(u);
+          return u;
+        } catch { /* ignore */ }
+      }
+      return null;
+    };
+
     let uRole = 'STUDENT';
-    if (stored) {
-      try {
-        const u = JSON.parse(stored);
-        setUser(u);
-        uRole = u?.role?.toUpperCase() || 'STUDENT';
-      } catch { /* ignore */ }
-    }
+    const u = loadAndSetUser();
+    if (u) uRole = u?.role?.toUpperCase() || 'STUDENT';
+
+    // Poll every 3s to catch profilePicture updates
+    const interval = setInterval(() => { loadAndSetUser(); }, 3000);
 
     const view = searchParams.get('view');
     const tab  = searchParams.get('tab');
@@ -49,24 +58,37 @@ export default function DashboardSidebar() {
     }
     if (pathname.startsWith('/dashboard/users')) {
       setActiveGroup('users');
-      if (searchParams.get('tab') === 'roles') setActiveMenu('Roles & Permissions');
-      else if (role === 'ADMIN')      setActiveMenu('Admins');
-      else if (role === 'INSTRUCTOR') setActiveMenu('Instructors');
-      else if (role === 'STUDENT')    setActiveMenu('Students');
-      else                            setActiveMenu('All Users');
+      if (searchParams.get('tab') === 'roles')        setActiveMenu('Roles & Permissions');
+      else if (searchParams.get('tab') === 'security') setActiveMenu('Security & Audit');
+      else if (role === 'ADMIN')                      setActiveMenu('Admins');
+      else if (role === 'INSTRUCTOR')                 setActiveMenu('Instructors');
+      else if (role === 'STUDENT')                    setActiveMenu('Students');
+      else                                            setActiveMenu('All Users');
       return;
     }
     if (pathname.startsWith('/dashboard/manage-modules')) {
       setActiveGroup('courses');
-      if (action === 'create')        setActiveMenu('Create Course');
-      else if (filter === 'drafts')   setActiveMenu('Drafts');
-      else if (view === 'approvals')  setActiveMenu('Approvals');
-      else                            setActiveMenu('My Courses');
+      if (view === 'categories')           setActiveMenu('Categories');
+      else if (view === 'approvals')       setActiveMenu('Approvals');
+      else if (view === 'instructors')     setActiveMenu('Instructor Assignment');
+      else if (view === 'analytics')       setActiveMenu('Course Analytics');
+      else if (action === 'create')        setActiveMenu(uRole === 'ADMIN' ? 'Add New Course' : 'Create Course');
+      else if (filter === 'drafts')        setActiveMenu('Drafts');
+      else                                 setActiveMenu(uRole === 'ADMIN' ? 'All Courses' : 'My Courses');
       return;
     }
     if (pathname.startsWith('/dashboard/modules')) {
-      setActiveGroup('courses');
-      setActiveMenu('My Courses');
+      const fromParam = searchParams.get('from');
+      if (fromParam === 'in-progress' || fromParam === 'my-courses') {
+        setActiveGroup('courses');
+        setActiveMenu('In Progress');
+      } else if (uRole === 'STUDENT') {
+        setActiveGroup('explore');
+        setActiveMenu('Browse Courses');
+      } else {
+        setActiveGroup('courses');
+        setActiveMenu(uRole === 'ADMIN' ? 'All Courses' : 'My Courses');
+      }
       return;
     }
 
@@ -78,6 +100,7 @@ export default function DashboardSidebar() {
       if (view === 'enrolled-students')   { setActiveGroup('students');     setActiveMenu('Manajemen Siswa');    return; }
       if (view === 'progress-tracking')   { setActiveGroup('students');     setActiveMenu('Progress Siswa');     return; }
       if (view === 'discussions')         { setActiveGroup('community'); setActiveMenu(uRole === 'STUDENT' ? 'Discussions' : 'Diskusi & QA'); return; }
+      if (view === 'quizizz')             { setActiveGroup('assignments');  setActiveMenu(uRole === 'STUDENT' ? 'Quizizz Arena ⚡' : 'Quizizz Studio ⚡'); return; }
       if (view === 'manage-tasks')        { setActiveGroup('assignments');  setActiveMenu('Task & Grading');     return; }
       // Shared assignment views
       if (view === 'pending-tasks')       { setActiveGroup('assignments');  setActiveMenu('Pending Tasks');      return; }
@@ -111,6 +134,8 @@ export default function DashboardSidebar() {
     // Fallback for any other unmatched route — use first group/menu of the role
     if (uRole === 'STUDENT') { setActiveGroup('home'); setActiveMenu('Dashboard'); }
     else                     { setActiveGroup('overview'); setActiveMenu('Dashboard Overview'); }
+
+    return () => clearInterval(interval);
   }, [pathname, searchParams]);
 
 
@@ -194,6 +219,7 @@ export default function DashboardSidebar() {
     assignments: {
       title: 'Assessments',
       menus: [
+        { name: 'Quizizz Arena ⚡', icon: Zap, href: '/dashboard?view=quizizz' },
         { name: 'Pending Tasks', icon: Clock, href: '/dashboard?view=pending-tasks' },
         { name: 'Submitted', icon: CheckSquare, href: '/dashboard?view=submitted' },
         { name: 'Grades & Feedback', icon: BarChart, href: '/dashboard?view=grades' },
@@ -238,7 +264,8 @@ export default function DashboardSidebar() {
       { name: 'Code Sandbox', icon: Code, href: '/dashboard?view=code-sandbox' },
       { name: 'Resource Library', icon: Folder, href: '/dashboard?view=resource-library' }
     ]},
-    assignments: { title: 'Assignments', menus: [
+    assignments: { title: 'Assessments & Quiz', menus: [
+      { name: 'Quizizz Studio ⚡', icon: Zap, href: '/dashboard?view=quizizz' },
       { name: 'Task & Grading', icon: CheckSquare, href: '/dashboard?view=manage-tasks' }
     ]},
     schedule: { title: 'Schedule', menus: [
@@ -272,11 +299,15 @@ export default function DashboardSidebar() {
       { name: 'Admins', icon: Shield, href: '/dashboard/users?role=ADMIN' },
       { name: 'Instructors', icon: FileText, href: '/dashboard/users?role=INSTRUCTOR' },
       { name: 'Students', icon: Users, href: '/dashboard/users?role=STUDENT' },
-      { name: 'Roles & Permissions', icon: Shield, href: '/dashboard/users?tab=roles' }
+      { name: 'Roles & Permissions', icon: Shield, href: '/dashboard/users?tab=roles' },
+      { name: 'Security & Audit', icon: Activity, href: '/dashboard/users?tab=security' }
     ]},
     courses: { title: 'Course Management', menus: [
       { name: 'All Courses', icon: BookOpen, href: '/dashboard/manage-modules' },
-      { name: 'Categories', icon: Folder, href: '/dashboard?view=categories' }
+      { name: 'Categories', icon: Folder, href: '/dashboard/manage-modules?view=categories' },
+      { name: 'Approvals', icon: CheckCircle, href: '/dashboard/manage-modules?view=approvals' },
+      { name: 'Instructor Assignment', icon: Users, href: '/dashboard/manage-modules?view=instructors' },
+      { name: 'Course Analytics', icon: BarChart, href: '/dashboard/manage-modules?view=analytics' }
     ]},
     community: { title: 'Community', menus: [
       { name: 'Diskusi & QA', icon: MessageSquare, href: '/dashboard?view=discussions' },

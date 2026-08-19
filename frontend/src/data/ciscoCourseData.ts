@@ -504,8 +504,8 @@ type CiscoLessonEntry = {
 };
 
 export const ciscoLessonsData: Record<string, CiscoLessonEntry> = ciscoLessonFlow.reduce((acc, lesson, index) => {
-  const prev = index > 0 ? ciscoLessonFlow[index - 1].id : null;
-  const next = index < ciscoLessonFlow.length - 1 ? ciscoLessonFlow[index + 1].id : null;
+  const prev = index > 0 ? ciscoLessonFlow[index - 1]?.id || null : null;
+  const next = index < ciscoLessonFlow.length - 1 ? ciscoLessonFlow[index + 1]?.id || null : null;
 
   acc[lesson.id] = {
     courseId: 'cisco',
