@@ -892,67 +892,6 @@ export default function LessonPage() {
                   )}
                 </div>
               </div>
-
-              {/* Diskusi & Komentar Materi */}
-              <div className="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800">
-                <h3 className="text-sm font-black text-slate-800 dark:text-white flex items-center gap-2 mb-3">
-                  <MessageSquare className="w-4 h-4 text-indigo-500" /> Diskusi & Komentar Materi ({lessonComments.length})
-                </h3>
-
-                {/* Form Kirim Komentar */}
-                <form onSubmit={handlePostComment} className="mb-5 space-y-2">
-                  <textarea
-                    value={newCommentText}
-                    onChange={(e) => setNewCommentText(e.target.value)}
-                    placeholder="Tanyakan hal yang membingungkan atau berikan tanggapan Anda mengenai materi ini..."
-                    rows={2}
-                    className="w-full px-3.5 py-2.5 rounded-xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-[#0c0e18] text-xs text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/40"
-                    required
-                  />
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={isPostingComment}
-                      className="px-4 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white font-extrabold text-xs rounded-xl shadow-sm transition-all cursor-pointer"
-                    >
-                      {isPostingComment ? 'Mengirim...' : 'Kirim Komentar'}
-                    </button>
-                  </div>
-                </form>
-
-                {/* List Komentar */}
-                <div className="space-y-3">
-                  {lessonComments.length === 0 ? (
-                    <p className="text-xs text-slate-400 text-center py-4 bg-slate-50 dark:bg-slate-900/30 rounded-xl border border-dashed border-slate-200 dark:border-slate-800">
-                      Belum ada komentar pada materi ini. Tanyakan sesuatu atau berikan tanggapan!
-                    </p>
-                  ) : (
-                    lessonComments.map((c: any) => (
-                      <div key={c.id} className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-900/30 flex gap-3 text-xs">
-                        <div className="w-7 h-7 rounded-full bg-indigo-100 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-bold flex items-center justify-center text-[10px] shrink-0 overflow-hidden">
-                          {c.user?.profilePicture ? (
-                            <img src={c.user.profilePicture} alt={c.user.name} className="w-full h-full object-cover" />
-                          ) : (
-                            c.user?.name?.slice(0, 2)?.toUpperCase() || 'U'
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center justify-between gap-2 mb-0.5">
-                            <span className="font-bold text-slate-800 dark:text-white">{c.user?.name || 'Siswa'}</span>
-                            {c.userId === (typeof window !== 'undefined' && JSON.parse(localStorage.getItem('lms_user') || '{}').id) && (
-                              <button onClick={() => handleDeleteLessonComment(c.id)} className="text-slate-400 hover:text-rose-500 cursor-pointer">
-                                <Trash className="w-3 h-3" />
-                              </button>
-                            )}
-                          </div>
-                          <p className="text-slate-600 dark:text-slate-300 leading-relaxed">{c.content}</p>
-                          <span className="text-[9px] text-slate-400 mt-1 block">{new Date(c.createdAt).toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}</span>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
-              </div>
             </div>
           </div>
 
