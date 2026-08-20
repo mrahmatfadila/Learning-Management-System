@@ -2,6 +2,7 @@
 node_modules/
 backend/node_modules/
 frontend/node_modules/
+content-api-server/node_modules/
 
 # Next.js build output
 .next/
@@ -15,6 +16,7 @@ frontend/.next/
 .env.production.local
 backend/.env
 frontend/.env
+content-api-server/.env
 
 # IDE / VS Code
 .vscode/
@@ -33,4 +35,5 @@ Thumbs.db
 # Database Backups (Local Only)
 backups/
 backend/backups/
+content-api-server/backups/
 *.sql

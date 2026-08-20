@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Module {
+  id          String    @id
+  title       String
+  category    String
+  description String?   @db.Text
+  thumbnail   String?
+  level       String?   @default("Semua Level")
+  duration    String?   @default("4-6 Minggu")
+  order       Int       @default(0)
+  isPublished Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  chapters    Chapter[]
+  lessons     Lesson[]
+}
+
+model Chapter {
+  id        String   @id
+  moduleId  String
+  title     String
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  lessons   Lesson[]
+}
+
+model Lesson {
+  id         String   @id
+  moduleId   String
+  chapterId  String?
+  chapter    String?
+  title      String
+  type       String   @default("code") // code | theory | challenge | video
+  content    String?  @db.Text
+  starterCode String? @db.Text
+  videoUrl   String?
+  order      Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  module     Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  chapterRef Chapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+}
