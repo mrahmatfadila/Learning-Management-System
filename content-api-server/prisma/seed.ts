@@ -1599,6 +1599,1023 @@ export const htmlLessonsList = [
 </html>`,
       hint: 'Gunakan komentar <!-- Bagian Utama --> dan <!-- Bagian Kontak --> tepat di atas elemen masing-masing'
     }
+  },
+
+  // ── 13. HTML Colors ───────────────────────────────────────────────────────
+  {
+    title: 'HTML Colors - Color Names & Format RGB/RGBA',
+    chapter: 'HTML Colors',
+    type: 'code',
+    order: 31,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🎨 Model Pewarnaan HTML: Nama & RGB</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Warna dalam HTML dapat ditentukan menggunakan <strong>Nama Warna Standar</strong> (terdapat 140 nama warna standar seperti <code>DodgerBlue</code>, <code>Tomato</code>, <code>MediumSeaGreen</code>) atau menggunakan format nilai matematis <strong>RGB</strong>.
+        </p>
+
+        <div class="space-y-3 text-xs">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">RGB (Red, Green, Blue)</strong>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">
+              Format: <code>rgb(merah, hijau, biru)</code> dengan rentang nilai masing-masing dari <strong>0 hingga 255</strong>.<br>
+              Contoh: <code>rgb(255, 0, 0)</code> = Merah murni, <code>rgb(0, 0, 0)</code> = Hitam, <code>rgb(255, 255, 255)</code> = Putih.
+            </p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">RGBA (Red, Green, Blue, Alpha)</strong>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">
+              Menambahkan parameter <strong>Alpha</strong> (transparansi) dengan rentang dari <code>0.0</code> (transparan penuh) hingga <code>1.0</code> (padat/solid).<br>
+              Contoh: <code>rgba(255, 99, 71, 0.5)</code> = Warna Tomato dengan transparansi 50%.
+            </p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Warna RGB</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <h2 style="background-color: DodgerBlue; color: white; padding: 10px; border-radius: 8px;">Warna Nama Standar: DodgerBlue</h2>
+  <h2 style="background-color: rgb(255, 99, 71); color: white; padding: 10px; border-radius: 8px;">Warna RGB: rgb(255, 99, 71)</h2>
+  <h2 style="background-color: rgba(79, 70, 229, 0.4); color: #312e81; padding: 10px; border-radius: 8px;">Warna RGBA (40% Opasitas): rgba(79, 70, 229, 0.4)</h2>
+</body>
+</html>`,
+    quiz: {
+      question: 'Parameter apakah yang ditambahkan pada format RGBA yang membedakannya dengan format RGB standar?',
+      options: ['Brightness', 'Alpha (Tingkat Transparansi)', 'Saturation', 'Contrast'],
+      answer: 1,
+      explanation: 'Huruf "A" pada RGBA mewakili "Alpha", yaitu tingkat transparansi/opasitas warna bernilai 0.0 sampai 1.0.'
+    }
+  },
+
+  {
+    title: 'HTML Colors - Format Nilai HEX (Hexadecimal)',
+    chapter: 'HTML Colors',
+    type: 'code',
+    order: 32,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">#️⃣ Format Warna Heksadesimal (HEX)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Warna <strong>HEX</strong> adalah format paling populer yang digunakan oleh para web developer dan UI designer di seluruh dunia. Formatnya diawali dengan tanda pagar <code>#RRGGBB</code>, di mana RR (Red), GG (Green), dan BB (Blue) adalah nilai heksadesimal antara <code>00</code> dan <code>FF</code>.
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs font-mono">
+          <div class="p-3 rounded-xl bg-red-500 text-white text-center font-bold">#FF0000<br><span class="text-[10px] font-sans font-normal">Merah Murni</span></div>
+          <div class="p-3 rounded-xl bg-green-600 text-white text-center font-bold">#00FF00<br><span class="text-[10px] font-sans font-normal">Hijau Murni</span></div>
+          <div class="p-3 rounded-xl bg-blue-600 text-white text-center font-bold">#0000FF<br><span class="text-[10px] font-sans font-normal">Biru Murni</span></div>
+          <div class="p-3 rounded-xl bg-slate-900 text-white text-center font-bold">#0F172A<br><span class="text-[10px] font-sans font-normal">Dark Slate</span></div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Warna HEX</title>
+</head>
+<body style="background-color: #f8fafc; font-family: sans-serif; padding: 20px;">
+  <div style="background-color: #4f46e5; color: #ffffff; padding: 20px; border-radius: 12px; text-align: center;">
+    <h1>Indigo Modern (#4f46e5)</h1>
+    <p>Format HEX sangat ringkas dan mudah disalin dari Figma / Adobe XD!</p>
+  </div>
+</body>
+</html>`,
+    quiz: {
+      question: 'Kode warna HEX manakah yang merepresentasikan warna putih bersih?',
+      options: ['#000000', '#FFFFFF', '#FF0000', '#CCCCCC'],
+      answer: 1,
+      explanation: '#FFFFFF merepresentasikan nilai maksimal untuk komponen Red, Green, dan Blue sehingga menghasilkan warna putih bersih.'
+    }
+  },
+
+  {
+    title: 'HTML Colors - Format HSL & HSLA',
+    chapter: 'HTML Colors',
+    type: 'code',
+    order: 33,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🌈 Format HSL (Hue, Saturation, Lightness)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          <strong>HSL</strong> adalah format warna yang paling intuitif bagi manusia karena memisahkan corak warna (*Hue*), kepekatan (*Saturation*), dan tingkat terang-gelap (*Lightness*):
+        </p>
+
+        <div class="space-y-2 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong>Hue (Derajat Warna 0 - 360)</strong>: 0 = Merah, 120 = Hijau, 240 = Biru.
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong>Saturation (Persentase 0% - 100%)</strong>: 0% = Abu-abu pudar, 100% = Warna cerah penuh.
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong>Lightness (Persentase 0% - 100%)</strong>: 0% = Hitam pekat, 50% = Normal, 100% = Putih bersih.
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Warna HSL</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <div style="background-color: hsl(210, 100%, 56%); color: white; padding: 15px; border-radius: 8px;">
+    <h3>HSL Biru Cerah: hsl(210, 100%, 56%)</h3>
+  </div>
+  <br>
+  <div style="background-color: hsla(140, 80%, 45%, 0.6); color: #064e3b; padding: 15px; border-radius: 8px;">
+    <h3>HSLA Hijau Segar Transparan: hsla(140, 80%, 45%, 0.6)</h3>
+  </div>
+</body>
+</html>`,
+    quiz: {
+      question: 'Berapa nilai Lightness (%) pada HSL untuk menghasilkan warna yang seimbang (tidak terlalu gelap dan tidak terlalu pudar/putih)?',
+      options: ['0%', '25%', '50%', '100%'],
+      answer: 2,
+      explanation: 'Nilai Lightness 50% menghasilkan warna alami murni, sedangkan 0% menghasilkan hitam dan 100% menghasilkan putih.'
+    }
+  },
+
+  {
+    title: 'HTML Colors - Exercises (Eksperimen Warna Web)',
+    chapter: 'HTML Colors',
+    type: 'challenge',
+    order: 34,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Format Warna</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah elemen dengan warna latar belakang menggunakan kode HEX <code>#10b981</code> (Emerald) dan teks putih <code>#ffffff</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Warna</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat tag <div style="background-color: #10b981; color: #ffffff;"><h3>Sukses Terkirim</h3></div>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Warna</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Warna</title>
+</head>
+<body>
+  <div style="background-color: #10b981; color: #ffffff;">
+    <h3>Sukses Terkirim</h3>
+  </div>
+</body>
+</html>`,
+      hint: 'Gunakan style="background-color: #10b981; color: #ffffff;"'
+    }
+  },
+
+  {
+    title: 'HTML Colors - Code Challenge (Mendesain Kartu Palet Warna)',
+    chapter: 'HTML Colors',
+    type: 'challenge',
+    order: 35,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kartu Tiga Warna</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah 3 kotak warna sejajar dengan format Nama Warna (Tomato), Format HEX (#3b82f6), dan Format RGB (rgb(16, 185, 129)).
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Palet Warna</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah 3 paragraf: <p style="background-color: Tomato; color: white;">Merah</p>, <p style="background-color: #3b82f6; color: white;">Biru</p>, dan <p style="background-color: rgb(16, 185, 129); color: white;">Hijau</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Palet Warna</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Palet Warna</title>
+</head>
+<body>
+  <p style="background-color: Tomato; color: white;">Merah</p>
+  <p style="background-color: #3b82f6; color: white;">Biru</p>
+  <p style="background-color: rgb(16, 185, 129); color: white;">Hijau</p>
+</body>
+</html>`,
+      hint: 'Gunakan 3 tag <p> dengan background-color masing-masing Tomato, #3b82f6, dan rgb(16, 185, 129)'
+    }
+  },
+
+  // ── 14. HTML CSS ──────────────────────────────────────────────────────────
+  {
+    title: 'HTML CSS - 3 Cara Menyisipkan CSS ke Dokumen HTML',
+    chapter: 'HTML CSS',
+    type: 'code',
+    order: 36,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🎨 3 Metode Menghubungkan CSS</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          CSS (<strong>Cascading Style Sheets</strong>) digunakan untuk mengatur seluruh tampilan visual, tata letak, dan animasi web. Terdapat 3 cara memasang CSS ke dalam HTML:
+        </p>
+
+        <div class="space-y-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">1. Inline CSS</strong>: Ditulis langsung di dalam atribut elemen (<code>&lt;h1 style="color: blue;"&gt;</code>).
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">2. Internal CSS</strong>: Ditulis di dalam tag <code>&lt;style&gt;</code> di dalam seksi <code>&lt;head&gt;</code> file HTML.
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">3. External CSS (Best Practice Industri)</strong>: Ditulis dalam file terpisah <code>style.css</code> dan dihubungkan via tag <code>&lt;link rel="stylesheet" href="style.css"&gt;</code> di dalam tag <code>&lt;head&gt;</code>.
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Internal CSS</title>
+  <style>
+    body {
+      background-color: #f1f5f9;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+    .card {
+      background: white;
+      padding: 24px;
+      border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+      max-width: 400px;
+    }
+    .btn-primary {
+      background-color: #6366f1;
+      color: white;
+      padding: 10px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>Internal CSS Demo</h2>
+    <p>Semua gaya diatur rapi di dalam tag &lt;style&gt; pada bagian head!</p>
+    <button class="btn-primary">Tombol Keren</button>
+  </div>
+</body>
+</html>`,
+    quiz: {
+      question: 'Tag apakah yang digunakan di dalam tag <head> untuk menghubungkan file CSS eksternal (style.css)?',
+      options: ['<script>', '<link rel="stylesheet">', '<css src="...">', '<style href="...">'],
+      answer: 1,
+      explanation: 'Tag <link rel="stylesheet" href="style.css"> adalah cara standar untuk memanggil file CSS eksternal ke dalam dokumen HTML.'
+    }
+  },
+
+  {
+    title: 'HTML CSS - Exercises (Menyusun Tag Style Internal)',
+    chapter: 'HTML CSS',
+    type: 'challenge',
+    order: 37,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Internal CSS</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah aturan CSS internal di dalam tag <code>&lt;style&gt;</code> untuk mewarnai semua elemen <code>&lt;h1&gt;</code> menjadi biru (<code>color: blue;</code>).
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan CSS</title>
+  <!-- Tuliskan tag style di sini -->
+
+</head>
+<body>
+  <h1>Judul Halaman Biru</h1>
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Tambahkan tag <style> h1 { color: blue; } </style> di dalam tag <head>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan CSS</title>
+
+</head>
+<body>
+  <h1>Judul Halaman Biru</h1>
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan CSS</title>
+  <style>
+    h1 { color: blue; }
+  </style>
+</head>
+<body>
+  <h1>Judul Halaman Biru</h1>
+</body>
+</html>`,
+      hint: 'Letakkan <style> h1 { color: blue; } </style> di dalam <head>'
+    }
+  },
+
+  {
+    title: 'HTML CSS - Code Challenge (Mendesain Card Produk Berkelas)',
+    chapter: 'HTML CSS',
+    type: 'challenge',
+    order: 38,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kartu Produk Cantik</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Gunakan Internal CSS untuk mendesain kelas <code>.product-card</code> dengan latar belakang putih, garis batas halus, dan padding.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Produk</title>
+  <style>
+    /* Buat rule .product-card di sini */
+  </style>
+</head>
+<body>
+  <div class="product-card">
+    <h3>Sepatu Sneakers</h3>
+    <p>Harga: Rp 450.000</p>
+  </div>
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Tambahkan aturan CSS: .product-card { background: white; padding: 20px; border: 1px solid #ccc; } di dalam tag <style>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Produk</title>
+  <style>
+
+  </style>
+</head>
+<body>
+  <div class="product-card">
+    <h3>Sepatu Sneakers</h3>
+    <p>Harga: Rp 450.000</p>
+  </div>
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Produk</title>
+  <style>
+    .product-card {
+      background: white;
+      padding: 20px;
+      border: 1px solid #ccc;
+    }
+  </style>
+</head>
+<body>
+  <div class="product-card">
+    <h3>Sepatu Sneakers</h3>
+    <p>Harga: Rp 450.000</p>
+  </div>
+</body>
+</html>`,
+      hint: 'Isi bagian <style> dengan .product-card { background: white; padding: 20px; border: 1px solid #ccc; }'
+    }
+  },
+
+  // ── 15. HTML Links ────────────────────────────────────────────────────────
+  {
+    title: 'HTML Links - Sintaks Hyperlink & Atribut Target',
+    chapter: 'HTML Links',
+    type: 'code',
+    order: 39,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🔗 Navigasi Web dengan Tag &lt;a&gt;</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Hyperlink adalah inti dari jaringan internet (World Wide Web) yang memungkinkan pengguna berpindah dari satu halaman ke halaman lainnya secara instan.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">target="_self"</code> (Default):
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Membuka link di tab/jendela yang sama saat ini.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">target="_blank"</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Membuka tautan di tab peramban baru yang terpisah.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">mailto: & tel:</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Membuka aplikasi email (<code>href="mailto:halo@lms.test"</code>) atau melakukan panggilan telepon (<code>href="tel:08123456"</code>).</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">Link sebagai Gambar / Tombol</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Bungkus elemen <code>&lt;img&gt;</code> atau <code>&lt;button&gt;</code> di dalam tag <code>&lt;a&gt;</code> agar dapat diklik.</p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Links HTML</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <h2>Contoh Berbagai Jenis Link</h2>
+  
+  <p><a href="https://google.com" target="_blank">1. Link Tab Baru (Google)</a></p>
+  <p><a href="mailto:admin@lms.test">2. Kirim Email ke Admin</a></p>
+  <p><a href="tel:+628123456789">3. Hubungi via Telepon</a></p>
+  
+  <br>
+  <h3>Gambar yang Dapat Diklik:</h3>
+  <a href="https://w3schools.com" target="_blank">
+    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" alt="Matrix Code" width="200" style="border-radius: 8px;">
+  </a>
+</body>
+</html>`,
+    quiz: {
+      question: 'Nilai atribut target apakah yang digunakan untuk membuka halaman tautan di tab baru?',
+      options: ['_new', '_parent', '_blank', '_top'],
+      answer: 2,
+      explanation: 'Nilai target="_blank" secara universal memberitahu browser untuk membuka URL tujuan di tab atau jendela baru.'
+    }
+  },
+
+  {
+    title: 'HTML Links - Link Bookmarks (Navigasi Anchor Lompat Halaman)',
+    chapter: 'HTML Links',
+    type: 'code',
+    order: 40,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">📍 Link Bookmarks (Anchor Links)</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Link Bookmark digunakan untuk melompat langsung ke bagian tertentu pada halaman yang panjang tanpa perlu scroll manual.
+        </p>
+
+        <div class="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800">
+          <div class="text-amber-400 mb-2 font-bold">// 2 Langkah Membuat Anchor Link:</div>
+          <div>1. Beri atribut <code>id</code> pada target seksi: &lt;h2 <span class="text-emerald-400">id="faq"</span>&gt;Tanya Jawab&lt;/h2&gt;</div>
+          <div class="mt-2">2. Buat link dengan tanda pagar (<code>#</code>): &lt;a <span class="text-sky-400">href="#faq"</span>&gt;Lompat ke FAQ&lt;/a&gt;</div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Anchor Links</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <h1>Daftar Isi Artikel</h1>
+  <ul>
+    <li><a href="#bab1">Lompat ke Bab 1</a></li>
+    <li><a href="#bab2">Lompat ke Bab 2</a></li>
+    <li><a href="#bab3">Lompat ke Bab 3</a></li>
+  </ul>
+
+  <div style="height: 300px; background: #e2e8f0; margin: 20px 0; padding: 20px; border-radius: 8px;">
+    <h2 id="bab1">📖 Bab 1: Pengenalan</h2>
+    <p>Ini adalah isi dari Bab 1.</p>
+  </div>
+
+  <div style="height: 300px; background: #cbd5e1; margin: 20px 0; padding: 20px; border-radius: 8px;">
+    <h2 id="bab2">💻 Bab 2: Praktik Koding</h2>
+    <p>Ini adalah isi dari Bab 2.</p>
+  </div>
+
+  <div style="height: 300px; background: #94a3b8; color: white; margin: 20px 0; padding: 20px; border-radius: 8px;">
+    <h2 id="bab3">🎯 Bab 3: Kesimpulan</h2>
+    <p>Ini adalah isi dari Bab 3.</p>
+    <a href="#" style="color: yellow;">Kembali ke Paling Atas</a>
+  </div>
+</body>
+</html>`,
+    quiz: {
+      question: 'Karakter apakah yang wajib diawali pada nilai atribut href saat membuat anchor link menuju elemen dengan id tertentu?',
+      options: ['@', '#', '$', '/'],
+      answer: 1,
+      explanation: 'Karakter tanda pagar (#) menandakan bahwa link tersebut menargetkan ID elemen di dalam halaman yang sama (contoh: href="#seksi-1").'
+    }
+  },
+
+  {
+    title: 'HTML Links - Exercises (Membuat Menu Navigasi Anchor)',
+    chapter: 'HTML Links',
+    type: 'challenge',
+    order: 41,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Hyperlink & Anchor</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah tautan anchor yang mengarah ke seksi kontak dengan <code>id="kontak"</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Link</title>
+</head>
+<body>
+  <!-- Buat link menuju #kontak di sini -->
+
+  <br><br>
+  <h2 id="kontak">Hubungi Kami</h2>
+  <p>Email: support@example.com</p>
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah tag <a href="#kontak">Menuju Bagian Kontak</a> di bagian atas halaman.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Link</title>
+</head>
+<body>
+
+  <br><br>
+  <h2 id="kontak">Hubungi Kami</h2>
+  <p>Email: support@example.com</p>
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Link</title>
+</head>
+<body>
+  <a href="#kontak">Menuju Bagian Kontak</a>
+  <br><br>
+  <h2 id="kontak">Hubungi Kami</h2>
+  <p>Email: support@example.com</p>
+</body>
+</html>`,
+      hint: 'Gunakan <a href="#kontak">Menuju Bagian Kontak</a>'
+    }
+  },
+
+  {
+    title: 'HTML Links - Code Challenge (Navbar Header Lengkap)',
+    chapter: 'HTML Links',
+    type: 'challenge',
+    order: 42,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Menu Navigasi Website</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah navigasi bar horizontal dengan 3 menu: "Beranda" (href="/"), "Fitur" (href="#fitur"), dan "Bantuan" (href="https://help.com" target="_blank").
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Navbar</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat <nav><a href="/">Beranda</a> | <a href="#fitur">Fitur</a> | <a href="https://help.com" target="_blank">Bantuan</a></nav>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Navbar</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Navbar</title>
+</head>
+<body>
+  <nav>
+    <a href="/">Beranda</a> | 
+    <a href="#fitur">Fitur</a> | 
+    <a href="https://help.com" target="_blank">Bantuan</a>
+  </nav>
+</body>
+</html>`,
+      hint: 'Gunakan tag <nav> yang membungkus ketiga tag <a> tersebut'
+    }
+  },
+
+  // ── 16. HTML Images ───────────────────────────────────────────────────────
+  {
+    title: 'HTML Images - Format Gambar, Dimensi & Responsif',
+    chapter: 'HTML Images',
+    type: 'code',
+    order: 43,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🖼️ Mengoptimalkan Gambar dalam HTML</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Tag <code>&lt;img&gt;</code> digunakan untuk menyematkan gambar ke dalam dokumen. Gambar secara teknis tidak disisipkan langsung ke file HTML, melainkan ditautkan melalui URL alamat file sumber (<code>src</code>).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">Format Gambar Populer</strong>:
+            <ul class="mt-1 space-y-1 text-slate-600 dark:text-slate-400">
+              <li>• <strong>WebP / AVIF</strong>: Format modern paling ringan & kompresi terbaik.</li>
+              <li>• <strong>PNG</strong>: Mendukung latar belakang transparan.</li>
+              <li>• <strong>SVG</strong>: Grafis vektor tanpa pecah saat di-zoom.</li>
+              <li>• <strong>JPG/JPEG</strong>: Foto dengan gradasi warna kompleks.</li>
+            </ul>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">Gambar Responsif (CSS)</strong>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">
+              Gunakan aturan <code>style="max-width: 100%; height: auto;"</code> agar gambar otomatis menyesuaikan lebar layar smartphone secara proporsional.
+            </p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Gambar Responsif</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <h2>Gambar Responsif Modern</h2>
+  <img 
+    src="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=800" 
+    alt="Web Development Workspace" 
+    style="max-width: 100%; height: auto; border-radius: 12px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);" 
+  />
+  <p><small>Gambar akan otomatis mengecil saat layar dipersempit.</small></p>
+</body>
+</html>`,
+    quiz: {
+      question: 'Aturan CSS manakah yang membuat gambar tidak pernah melebihi lebar wadah pembungkusnya (responsif)?',
+      options: ['min-width: 100%;', 'max-width: 100%; height: auto;', 'width: 1000px;', 'display: none;'],
+      answer: 1,
+      explanation: 'max-width: 100%; height: auto; memastikan gambar fleksibel mengikuti lebar container dan menjaga rasio tinggi-lebar tetap proporsional.'
+    }
+  },
+
+  {
+    title: 'HTML Images - The Picture Element (<picture> & Art Direction)',
+    chapter: 'HTML Images',
+    type: 'code',
+    order: 44,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">📱 Elemen &lt;picture&gt; untuk Multi-Perangkat</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Elemen <code>&lt;picture&gt;</code> memberikan fleksibilitas penuh kepada pengembang web untuk menampilkan gambar yang berbeda berdasarkan ukuran layar perangkat (*Media Queries*).
+        </p>
+
+        <div class="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800">
+          <div class="text-amber-400 mb-2 font-bold">// Contoh Penggunaan Tag Picture:</div>
+          <div>&lt;<span class="text-rose-400">picture</span>&gt;</div>
+          <div class="ml-4">&lt;<span class="text-sky-400">source</span> media="(min-width: 800px)" srcset="desktop.jpg"&gt;</div>
+          <div class="ml-4">&lt;<span class="text-sky-400">source</span> media="(min-width: 480px)" srcset="tablet.jpg"&gt;</div>
+          <div class="ml-4">&lt;<span class="text-emerald-400">img</span> src="mobile.jpg" alt="Banner Responsif"&gt;</div>
+          <div>&lt;/<span class="text-rose-400">picture</span>&gt;</div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Picture Element</title>
+</head>
+<body style="font-family: sans-serif; padding: 20px;">
+  <h2>Art Direction dengan &lt;picture&gt;</h2>
+  
+  <picture>
+    <source media="(min-width: 650px)" srcset="https://images.unsplash.com/photo-1517694712202-14dd9538aa97?w=700">
+    <source media="(min-width: 450px)" srcset="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500">
+    <img src="https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=300" alt="Tech Setup" style="width: 100%; border-radius: 8px;">
+  </picture>
+</body>
+</html>`,
+    quiz: {
+      question: 'Tag child apakah di dalam <picture> yang digunakan untuk mendefinisikan sumber gambar alternatif beserta media query?',
+      options: ['<image>', '<source>', '<src>', '<media>'],
+      answer: 1,
+      explanation: 'Tag <source> di dalam <picture> menggunakan atribut media dan srcset untuk menentukan gambar yang cocok sesuai ukuran layar.'
+    }
+  },
+
+  {
+    title: 'HTML Images - Exercises (Menyusun Tag Gambar Lengkap)',
+    chapter: 'HTML Images',
+    type: 'challenge',
+    order: 45,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Tag Gambar</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah tag gambar lengkap dengan atribut <code>src</code>, <code>alt</code>, <code>width="300"</code>, dan <code>height="200"</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Gambar</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat tag <img src="pemandangan.jpg" alt="Gunung Bromo" width="300" height="200">.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Gambar</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Gambar</title>
+</head>
+<body>
+  <img src="pemandangan.jpg" alt="Gunung Bromo" width="300" height="200">
+</body>
+</html>`,
+      hint: 'Gunakan <img src="pemandangan.jpg" alt="Gunung Bromo" width="300" height="200">'
+    }
+  },
+
+  {
+    title: 'HTML Images - Code Challenge (Galeri Foto Kartu)',
+    chapter: 'HTML Images',
+    type: 'challenge',
+    order: 46,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kartu Profil Gambar</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buat kartu profil yang menggabungkan foto profil lingkaran, nama, dan deskripsi singkat.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Profil</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah <div style="text-align: center;"><img src="avatar.png" alt="Avatar" width="100" style="border-radius: 50%;"><h3>John Doe</h3><p>Software Engineer</p></div>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Profil</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Profil</title>
+</head>
+<body>
+  <div style="text-align: center;">
+    <img src="avatar.png" alt="Avatar" width="100" style="border-radius: 50%;">
+    <h3>John Doe</h3>
+    <p>Software Engineer</p>
+  </div>
+</body>
+</html>`,
+      hint: 'Gunakan div ber-style text-align: center yang membungkus img bulat (border-radius: 50%), h3, dan p'
+    }
+  },
+
+  // ── 17. HTML Project ──────────────────────────────────────────────────────
+  {
+    title: 'HTML Project - Membangun Web Landing Page Portfolio Lengkap',
+    chapter: 'HTML Project',
+    type: 'challenge',
+    order: 47,
+    theory: `
+      <div class="space-y-6">
+        <div class="p-6 rounded-2xl bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-transparent border border-indigo-500/20">
+          <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2">🏆 Mini Project: Website Portofolio Lengkap</h2>
+          <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+            Selamat! Anda telah mempelajari seluruh materi inti HTML5. Sekarang saatnya menggabungkan semua keahlian Anda (Headings, Paragraphs, Images, Links, Inline CSS, Formatting, dan Quotations) untuk membangun <strong>Halaman Web Portofolio Pribadi yang Lengkap & Memukau</strong>!
+          </p>
+        </div>
+
+        <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-xs space-y-2">
+          <h3 class="font-bold text-slate-800 dark:text-white text-sm mb-2">📋 Komponen Wajib dalam Proyek Ini:</h3>
+          <div>1. <strong>Header & Navigasi</strong>: Logo judul dan link navigasi anchor (#tentang, #keahlian, #kontak).</div>
+          <div>2. <strong>Hero Section</strong>: Foto profil, nama besar <code>&lt;h1&gt;</code>, dan status ketersediaan kerja ber-stabilo <code>&lt;mark&gt;</code>.</div>
+          <div>3. <strong>Seksi Tentang Saya</strong>: Paragraf deskripsi dengan teks tebal <code>&lt;strong&gt;</code> dan kutipan inspiratif <code>&lt;blockquote&gt;</code>.</div>
+          <div>4. <strong>Seksi Kontak</strong>: Tag <code>&lt;address&gt;</code> dengan email dan nomor WhatsApp.</div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Portofolio Pengembang Web</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      margin: 0;
+      background-color: #0f172a;
+      color: #f8fafc;
+      line-height: 1.6;
+    }
+    header {
+      background-color: #1e293b;
+      padding: 16px 30px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #334155;
+    }
+    nav a {
+      color: #38bdf8;
+      text-decoration: none;
+      margin-left: 20px;
+      font-weight: bold;
+    }
+    .container {
+      max-width: 750px;
+      margin: 30px auto;
+      padding: 0 20px;
+    }
+    .hero {
+      text-align: center;
+      padding: 40px 20px;
+      background: #1e293b;
+      border-radius: 16px;
+      border: 1px solid #334155;
+    }
+    .avatar {
+      width: 120px;
+      height: 120px;
+      border-radius: 50%;
+      border: 4px solid #6366f1;
+    }
+    blockquote {
+      background: #334155;
+      padding: 15px 20px;
+      border-left: 4px solid #38bdf8;
+      border-radius: 0 8px 8px 0;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER & NAVBAR -->
+  <header>
+    <h2 style="margin: 0; color: #6366f1;">DevGrow.id</h2>
+    <nav>
+      <a href="#tentang">Tentang</a>
+      <a href="#keahlian">Keahlian</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <!-- HERO SECTION -->
+    <div class="hero">
+      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300" alt="Foto Profil" class="avatar">
+      <h1 style="color: #ffffff; margin: 15px 0 5px;">Rian Pratama</h1>
+      <p style="color: #94a3b8; margin: 0;">Junior Web Developer &bull; <mark style="background: #fbbf24; padding: 2px 8px; border-radius: 4px; font-weight: bold;">Open for Hire</mark></p>
+    </div>
+
+    <!-- TENTANG SECTION -->
+    <h2 id="tentang" style="color: #38bdf8; margin-top: 40px;">👨‍💻 Tentang Saya</h2>
+    <p>Halo! Saya adalah seorang pengembang web yang bersemangat dalam membangun antarmuka web modern menggunakan <strong>HTML5, CSS3, dan JavaScript</strong>.</p>
+    
+    <blockquote>
+      "Kualitas kode yang baik adalah seni memecahkan masalah dengan sederhana."
+    </blockquote>
+
+    <hr style="border: 0; border-top: 1px solid #334155; margin: 40px 0;">
+
+    <!-- KONTAK SECTION -->
+    <h2 id="kontak" style="color: #38bdf8;">📬 Hubungi Saya</h2>
+    <address style="background: #1e293b; padding: 20px; border-radius: 12px; border: 1px solid #334155;">
+      Email: <a href="mailto:rian@devgrow.id" style="color: #38bdf8;">rian@devgrow.id</a><br>
+      GitHub: <a href="https://github.com" target="_blank" style="color: #38bdf8;">github.com/rianpratama</a><br>
+      Lokasi: Jakarta, Indonesia
+    </address>
+  </div>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Bangun dokumen portofolio lengkap yang memuat elemen <header>, <nav> dengan 3 tautan anchor (#tentang, #keahlian, #kontak), seksi hero dengan <img> dan <h1>, serta bagian <address> untuk kontak.',
+      starterCode: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Portofolio Saya</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Portofolio Saya</title>
+</head>
+<body>
+  <header>
+    <h2>Portofolio</h2>
+    <nav>
+      <a href="#tentang">Tentang</a>
+      <a href="#kontak">Kontak</a>
+    </nav>
+  </header>
+
+  <main>
+    <h1>Halo, Saya Web Developer</h1>
+    <p>Saya menguasai <strong>HTML5</strong> dan <strong>CSS3</strong>.</p>
+
+    <h2 id="tentang">Tentang Saya</h2>
+    <blockquote>Belajar coding dengan tekun setiap hari.</blockquote>
+
+    <h2 id="kontak">Kontak</h2>
+    <address>
+      Email: developer@lms.test<br>
+      Indonesia
+    </address>
+  </main>
+</body>
+</html>`,
+      hint: 'Gunakan kombinasi lengkap header, nav, main, h1, h2 dengan id anchor, blockquote, dan address'
+    }
   }
 ];
 
