@@ -48,9 +48,12 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
 };
 
 // GET /api/v1/modules/:id
+// Mendukung query ?full=true jika ingin memuat seluruh isi materi lengkap di daftar
 export const getModuleById = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
+    const isFull = req.query.full === 'true' || req.query.content === 'true';
+
     const moduleItem = await prisma.module.findUnique({
       where: { id },
       include: {
@@ -58,27 +61,12 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
           orderBy: { order: 'asc' },
           include: {
             lessons: {
-              orderBy: { order: 'asc' },
-              select: {
-                id: true,
-                title: true,
-                type: true,
-                order: true,
-                chapter: true
-              }
+              orderBy: { order: 'asc' }
             }
           }
         },
         lessons: {
-          orderBy: { order: 'asc' },
-          select: {
-            id: true,
-            title: true,
-            type: true,
-            order: true,
-            chapter: true,
-            chapterId: true
-          }
+          orderBy: { order: 'asc' }
         }
       }
     });
@@ -87,9 +75,62 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
       return res.status(404).json({ success: false, message: `Module with ID '${id}' not found` });
     }
 
+    // Helper untuk mem-parsing konten JSON jika ?full=true diminta
+    const formatLessonItem = (l: any) => {
+      let parsedContent: any = l.content;
+      try {
+        if (l.content && typeof l.content === 'string' && l.content.startsWith('{')) {
+          parsedContent = JSON.parse(l.content);
+        }
+      } catch {
+        parsedContent = l.content;
+      }
+
+      if (!isFull) {
+        return {
+          id: l.id,
+          title: l.title,
+          type: l.type,
+          order: l.order,
+          chapter: l.chapter,
+          chapterId: l.chapterId,
+          hasContent: !!l.content
+        };
+      }
+
+      return {
+        id: l.id,
+        title: l.title,
+        type: l.type,
+        order: l.order,
+        chapter: l.chapter,
+        chapterId: l.chapterId,
+        content: parsedContent
+      };
+    };
+
+    const formattedChapters = moduleItem.chapters.map((chap) => ({
+      id: chap.id,
+      title: chap.title,
+      order: chap.order,
+      lessons: chap.lessons.map(formatLessonItem)
+    }));
+
     res.json({
       success: true,
-      data: moduleItem
+      data: {
+        id: moduleItem.id,
+        title: moduleItem.title,
+        category: moduleItem.category,
+        description: moduleItem.description,
+        thumbnail: moduleItem.thumbnail,
+        level: moduleItem.level,
+        duration: moduleItem.duration,
+        totalChapters: formattedChapters.length,
+        totalLessons: moduleItem.lessons.length,
+        chapters: formattedChapters,
+        lessons: moduleItem.lessons.map(formatLessonItem)
+      }
     });
   } catch (error: any) {
     console.error('Error fetching module by ID:', error);
@@ -98,6 +139,7 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
 };
 
 // GET /api/v1/lessons/:id
+// Menghasilkan struktur ala W3Schools (Penjelasan judul, isi materi, coding, penjelasan coding satu per satu, pertanyaan kuis, dan codingan latihan)
 export const getLessonById = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
@@ -117,15 +159,28 @@ export const getLessonById = async (req: Request, res: Response): Promise<any> =
       return res.status(404).json({ success: false, message: `Lesson with ID '${id}' not found` });
     }
 
-    // Parse JSON payload inside content if applicable
-    let parsedContent: any = lesson.content;
+    let parsedContent: any = {};
     try {
       if (lesson.content && typeof lesson.content === 'string' && lesson.content.startsWith('{')) {
         parsedContent = JSON.parse(lesson.content);
+      } else {
+        parsedContent = { theory: lesson.content };
       }
     } catch {
-      parsedContent = lesson.content;
+      parsedContent = { theory: lesson.content };
     }
+
+    // Ekstrak bagian-bagian gaya W3Schools
+    const overview = parsedContent.overview || `Pelajari konsep fundamental dan praktik langsung mengenai ${lesson.title}.`;
+    const theory = parsedContent.theory || '';
+    const code = parsedContent.code || lesson.starterCode || '';
+    const codeExplanation = parsedContent.codeExplanation || [
+      'Struktur dokumen diawali dengan tag pembuka dan ditutup dengan tag penutup.',
+      'Konten di dalam tag akan dirender secara visual oleh browser.',
+      'Atribut memberikan konfigurasi dan konteks tambahan pada elemen terkait.'
+    ];
+    const quiz = parsedContent.quiz || null;
+    const exercise = parsedContent.challenge || parsedContent.exercise || null;
 
     res.json({
       success: true,
@@ -138,8 +193,15 @@ export const getLessonById = async (req: Request, res: Response): Promise<any> =
         title: lesson.title,
         type: lesson.type,
         order: lesson.order,
-        starterCode: lesson.starterCode,
-        videoUrl: lesson.videoUrl,
+        w3schoolStructure: {
+          penjelasanJudul: overview,
+          isiMateri: theory,
+          contohCoding: code,
+          penjelasanCodingSatuPerSatu: codeExplanation,
+          pertanyaanKuis: quiz,
+          codinganLatihan: exercise
+        },
+        // Backward compatibility payload
         content: parsedContent
       }
     });
