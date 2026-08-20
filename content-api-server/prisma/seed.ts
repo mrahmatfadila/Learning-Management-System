@@ -966,6 +966,639 @@ export const htmlLessonsList = [
 </html>`,
       hint: 'Gunakan <h1>, <p>, <hr>, dan <p>'
     }
+  },
+
+  // ── 9. HTML Styles ────────────────────────────────────────────────────────
+  {
+    title: 'HTML Styles - Inline Styling & Properti Desain Inti',
+    chapter: 'HTML Styles',
+    type: 'code',
+    order: 19,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🎨 Mengatur Tampilan dengan Atribut Style</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Atribut <code>style</code> digunakan untuk menambahkan gaya desain (CSS) langsung ke dalam elemen HTML secara instan (*inline styling*). Sintaksnya adalah <code>style="property: value;"</code>.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">background-color</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Mengatur warna latar belakang elemen, contoh: <code>style="background-color: #f1f5f9;"</code>.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">color</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Mengatur warna teks, contoh: <code>style="color: #4f46e5;"</code>.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">font-family & font-size</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Mengatur jenis huruf (font) dan ukuran huruf (misal <code>24px</code> atau <code>1.5rem</code>).</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">text-align</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Mengatur perataan horizontal teks (<code>left</code>, <code>center</code>, <code>right</code>, <code>justify</code>).</p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Styling HTML Demo</title>
+</head>
+<body style="background-color: #0f172a; color: #f8fafc; font-family: 'Segoe UI', sans-serif; padding: 20px;">
+  
+  <h1 style="color: #38bdf8; text-align: center; font-size: 32px;">Desain Modern dengan HTML Styles</h1>
+  
+  <p style="background-color: #1e293b; padding: 15px; border-radius: 10px; text-align: justify; line-height: 1.6;">
+    Dengan menambahkan atribut <code style="color: #f43f5e;">style</code>, kita dapat langsung mengubah warna latar belakang, warna teks, padding, serta tata letak elemen tanpa perlu file CSS terpisah!
+  </p>
+
+</body>
+</html>`,
+    quiz: {
+      question: 'Properti CSS manakah yang digunakan di dalam atribut style untuk mengubah warna teks?',
+      options: ['text-color', 'font-color', 'color', 'background-color'],
+      answer: 2,
+      explanation: 'Properti "color" digunakan untuk mengatur warna teks elemen HTML.'
+    }
+  },
+
+  {
+    title: 'HTML Styles - Exercises (Kustomisasi Warna Background & Teks)',
+    chapter: 'HTML Styles',
+    type: 'challenge',
+    order: 20,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Kustomisasi Gaya</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Uji pemahaman Anda menggunakan atribut <code>style</code> untuk memformat judul dengan warna merah marun dan perataan tengah.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Styles</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat tag <h1 style="color: red; text-align: center;">Judul Tengah Merah</h1> dan <p style="font-size: 20px;">Teks Ukuran Besar</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Styles</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Styles</title>
+</head>
+<body>
+  <h1 style="color: red; text-align: center;">Judul Tengah Merah</h1>
+  <p style="font-size: 20px;">Teks Ukuran Besar</p>
+</body>
+</html>`,
+      hint: 'Gunakan style="color: red; text-align: center;" pada h1 dan style="font-size: 20px;" pada p'
+    }
+  },
+
+  {
+    title: 'HTML Styles - Code Challenge (Mendesain Hero Banner Estetik)',
+    chapter: 'HTML Styles',
+    type: 'challenge',
+    order: 21,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kotak Notifikasi Berwarna</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah kotak notifikasi informasi sukses dengan latar belakang hijau muda, teks hijau tua, dan sudut membulat.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Notifikasi</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat tag <div style="background-color: lightgreen; color: darkgreen; text-align: center;"><h3>Pembayaran Berhasil!</h3><p>Terima kasih atas pesanan Anda.</p></div>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Notifikasi</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Notifikasi</title>
+</head>
+<body>
+  <div style="background-color: lightgreen; color: darkgreen; text-align: center;">
+    <h3>Pembayaran Berhasil!</h3>
+    <p>Terima kasih atas pesanan Anda.</p>
+  </div>
+</body>
+</html>`,
+      hint: 'Gunakan atribut style pada <div> dengan background-color: lightgreen; color: darkgreen; text-align: center;'
+    }
+  },
+
+  // ── 10. HTML Formatting ───────────────────────────────────────────────────
+  {
+    title: 'HTML Formatting - Tag Pemformatan Teks Semantik',
+    chapter: 'HTML Formatting',
+    type: 'code',
+    order: 22,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✨ Elemen Pemformatan Teks Khusus</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          HTML menyediakan elemen khusus untuk memformat teks dengan makna semantik tertentu tanpa harus menulis CSS:
+        </p>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-2.5 text-xs">
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold">&lt;b&gt; & &lt;strong&gt;</code>
+            <p class="text-slate-500 mt-1">Teks tebal. <code>&lt;strong&gt;</code> memiliki arti semantik "sangat penting".</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold">&lt;i&gt; & &lt;em&gt;</code>
+            <p class="text-slate-500 mt-1">Teks miring. <code>&lt;em&gt;</code> memberikan penekanan intonasi (*emphasis*).</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold">&lt;mark&gt;</code>
+            <p class="text-slate-500 mt-1">Menyorot teks dengan stabilo kuning (*highlight*).</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold">&lt;small&gt;</code>
+            <p class="text-slate-500 mt-1">Teks berukuran lebih kecil (biasa untuk hak cipta / disclaimer).</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold">&lt;del&gt; & &lt;ins&gt;</code>
+            <p class="text-slate-500 mt-1"><code>&lt;del&gt;</code> teks dicoret (harga lama), <code>&lt;ins&gt;</code> teks bergaris bawah (harga baru).</p>
+          </div>
+          <div class="p-3 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold">&lt;sub&gt; & &lt;sup&gt;</code>
+            <p class="text-slate-500 mt-1"><code>&lt;sub&gt;</code> indeks bawah (H<sub>2</sub>O), <code>&lt;sup&gt;</code> pangkat atas (X<sup>2</sup>).</p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo HTML Formatting</title>
+</head>
+<body>
+  <h2>Contoh Pemformatan Teks</h2>
+  <p>Peringatan: <strong>Dilarang keras merokok!</strong></p>
+  <p>Promo Spesial: <del>Rp 200.000</del> <ins>Rp 99.000</ins> saja!</p>
+  <p>Catatan penting ini telah di-<mark>stabilo kuning</mark> oleh instruktur.</p>
+  <p>Rumus Kimia Air: H<sub>2</sub>O dan Rumus Luas: r<sup>2</sup></p>
+  <p><small>&copy; 2026 Hak Cipta Dilindungi Undang-Undang.</small></p>
+</body>
+</html>`,
+    quiz: {
+      question: 'Tag manakah yang paling tepat digunakan untuk menuliskan rumus kimia H2O (angka 2 berada di bawah)?',
+      options: ['<sup>', '<sub>', '<small>', '<down>'],
+      answer: 1,
+      explanation: 'Tag <sub> (subscript) merender teks setengah karakter di bawah garis tulisan normal, cocok untuk rumus kimia.'
+    }
+  },
+
+  {
+    title: 'HTML Formatting - Exercises (Format Rumus Kimia & Diskon)',
+    chapter: 'HTML Formatting',
+    type: 'challenge',
+    order: 23,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Tag Formatting</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Gunakan tag <code>&lt;del&gt;</code>, <code>&lt;ins&gt;</code>, dan <code>&lt;mark&gt;</code> untuk memformat informasi promo produk.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Formatting</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah tag <p>Harga Normal: <del>Rp 50.000</del> Harga Promo: <ins>Rp 25.000</ins></p> dan tag <p>Status: <mark>TERLARIS</mark></p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Formatting</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Formatting</title>
+</head>
+<body>
+  <p>Harga Normal: <del>Rp 50.000</del> Harga Promo: <ins>Rp 25.000</ins></p>
+  <p>Status: <mark>TERLARIS</mark></p>
+</body>
+</html>`,
+      hint: 'Gunakan <del>Rp 50.000</del>, <ins>Rp 25.000</ins>, dan <mark>TERLARIS</mark>'
+    }
+  },
+
+  {
+    title: 'HTML Formatting - Code Challenge (Rumus Matematika & Kimia)',
+    chapter: 'HTML Formatting',
+    type: 'challenge',
+    order: 24,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Soal Sains Digital</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah dokumen soal sains yang menampilkan rumus kuadrat matematika dan rumus gas karbon dioksida dengan tag semantik yang tepat.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Soal Sains</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah <h2>Sains Web</h2>, lalu <p>Rumus Pythagoras: a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></p>, dan <p>Gas Buang: CO<sub>2</sub></p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Soal Sains</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Soal Sains</title>
+</head>
+<body>
+  <h2>Sains Web</h2>
+  <p>Rumus Pythagoras: a<sup>2</sup> + b<sup>2</sup> = c<sup>2</sup></p>
+  <p>Gas Buang: CO<sub>2</sub></p>
+</body>
+</html>`,
+      hint: 'Gunakan <sup>2</sup> untuk pangkat atas dan <sub>2</sub> untuk indeks bawah'
+    }
+  },
+
+  // ── 11. HTML Quotations ───────────────────────────────────────────────────
+  {
+    title: 'HTML Quotations - Kutipan, Singkatan & Kontak',
+    chapter: 'HTML Quotations',
+    type: 'code',
+    order: 25,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">💬 Elemen Kutipan & Informasi Rujukan</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          HTML menyediakan elemen semantik yang kaya untuk mengutip perkataan orang lain, menampilkan kontak penulis, dan mendefinisikan singkatan:
+        </p>
+
+        <div class="space-y-2.5 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">&lt;blockquote cite="..."&gt;</strong>: Blok kutipan panjang dari sumber eksternal. Biasanya otomatis memiliki margin indentasi ke dalam oleh browser.
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">&lt;q&gt;</strong>: Kutipan inline pendek. Browser secara otomatis membungkus teks di dalamnya dengan tanda petik ganda <code>"..."</code>.
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">&lt;abbr title="..."&gt;</strong>: Menandai singkatan (akronim). Saat pengguna mengarahkan mouse, balon petunjuk (*tooltip*) akan menampilkan kepanjangannya.
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <strong class="text-orange-500 font-mono">&lt;address&gt;</strong>: Informasi kontak pemilik/penulis dokumen (biasanya dirender dengan teks miring).
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Quotations HTML</title>
+</head>
+<body>
+  <h2>Kutipan Inspiratif</h2>
+  
+  <blockquote cite="https://id.wikipedia.org/wiki/Steve_Jobs">
+    "Satu-satunya cara untuk melakukan pekerjaan hebat adalah dengan mencintai apa yang Anda lakukan."
+  </blockquote>
+  
+  <p>Albert Einstein pernah berkata: <q>Imajinasi lebih penting daripada pengetahuan.</q></p>
+  
+  <p>Organisasi kesehatan dunia adalah <abbr title="World Health Organization">WHO</abbr>.</p>
+  
+  <hr>
+  <address>
+    Ditulis oleh: Bagus Rahmat<br>
+    Email: bagus@lms.test<br>
+    Jakarta, Indonesia
+  </address>
+</body>
+</html>`,
+    quiz: {
+      question: 'Tag manakah yang secara otomatis menambahkan tanda petik ganda (quotation marks) di sekitar teks kutipan pendek?',
+      options: ['<quote>', '<q>', '<blockquote>', '<cite>'],
+      answer: 1,
+      explanation: 'Tag <q> (inline quotation) otomatis menyisipkan tanda petik dua di sekitar teks yang dibungkus.'
+    }
+  },
+
+  {
+    title: 'HTML Quotations - Exercises (Membuat Kutipan & Kontak Penulis)',
+    chapter: 'HTML Quotations',
+    type: 'challenge',
+    order: 26,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Elemen Kutipan</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah blok kutipan menggunakan <code>&lt;blockquote&gt;</code> dan definisikan singkatan menggunakan <code>&lt;abbr&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Quotations</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah <blockquote>Belajar tanpa berpikir itu sia-sia.</blockquote> dan sebuah <p>Badan antariksa AS adalah <abbr title="National Aeronautics and Space Administration">NASA</abbr>.</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Quotations</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Quotations</title>
+</head>
+<body>
+  <blockquote>Belajar tanpa berpikir itu sia-sia.</blockquote>
+  <p>Badan antariksa AS adalah <abbr title="National Aeronautics and Space Administration">NASA</abbr>.</p>
+</body>
+</html>`,
+      hint: 'Gunakan <blockquote> dan <abbr title="National Aeronautics and Space Administration">NASA</abbr>'
+    }
+  },
+
+  {
+    title: 'HTML Quotations - Code Challenge (Kartu Testimoni Pelanggan)',
+    chapter: 'HTML Quotations',
+    type: 'challenge',
+    order: 27,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kartu Testimoni</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah kartu testimoni pelanggan lengkap dengan kutipan ulasan dan tag <code>&lt;address&gt;</code> sebagai identitas pengulas.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Testimoni Pelanggan</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat <h2>Testimoni Klien</h2>, lalu <blockquote>Layanan platform LMS ini sangat cepat dan mudah digunakan!</blockquote>, dan <address>Budi Santoso - CTO Tech Corp</address>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Testimoni Pelanggan</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Testimoni Pelanggan</title>
+</head>
+<body>
+  <h2>Testimoni Klien</h2>
+  <blockquote>Layanan platform LMS ini sangat cepat dan mudah digunakan!</blockquote>
+  <address>Budi Santoso - CTO Tech Corp</address>
+</body>
+</html>`,
+      hint: 'Gunakan <h2>, <blockquote>, dan <address>'
+    }
+  },
+
+  // ── 12. HTML Comments ─────────────────────────────────────────────────────
+  {
+    title: 'HTML Comments - Menulis Komentar Bersih & Debugging',
+    chapter: 'HTML Comments',
+    type: 'code',
+    order: 28,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">💬 Komentar dalam Kode HTML</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Komentar HTML digunakan untuk menyisipkan catatan pengingat bagi developer, memberi dokumentasi pada bagian kode, atau menyembunyikan elemen sementara waktu saat melakukan *debugging*. Komentar <strong>tidak akan ditampilkan oleh browser ke layar pengguna</strong>.
+        </p>
+
+        <div class="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800">
+          <div class="text-emerald-400 mb-1">&lt;!-- Ini adalah komentar satu baris --&gt;</div>
+          <div class="text-emerald-400">&lt;!-- </div>
+          <div class="text-emerald-400 ml-4">Ini komentar multi-baris</div>
+          <div class="text-emerald-400 ml-4">Browser akan mengabaikan seluruh isi blok ini</div>
+          <div class="text-emerald-400">--&gt;</div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/40 text-xs text-indigo-900 dark:text-indigo-300">
+          <strong>💡 Shortcut Keyboard VS Code:</strong> Tekan <code>Ctrl + /</code> (di Windows) atau <code>Cmd + /</code> (di Mac) untuk secara otomatis membuat komentar pada baris kode yang sedang Anda pilih!
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Tutorial Komentar HTML</title>
+</head>
+<body>
+  <!-- HEADER SECTION START -->
+  <h1>Website Perusahaan Kami</h1>
+  <p>Selamat datang di portal resmi perusahaan.</p>
+  <!-- HEADER SECTION END -->
+
+  <!-- 
+  <p>Paragraf promosi ini disembunyikan sementara untuk keperluan maintenance.</p> 
+  -->
+
+  <!-- FOOTER START -->
+  <p><small>&copy; 2026 Perusahaan Terpercaya.</small></p>
+  <!-- FOOTER END -->
+</body>
+</html>`,
+    quiz: {
+      question: 'Manakah sintaks yang benar untuk menuliskan komentar di dalam dokumen HTML?',
+      options: [
+        '// Ini komentar',
+        '/* Ini komentar */',
+        '<!-- Ini komentar -->',
+        '# Ini komentar'
+      ],
+      answer: 2,
+      explanation: 'Komentar HTML selalu diawali dengan <!-- dan diakhiri dengan -->'
+    }
+  },
+
+  {
+    title: 'HTML Comments - Exercises (Menyembunyikan Kode Sementara)',
+    chapter: 'HTML Comments',
+    type: 'challenge',
+    order: 29,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Komentar & Debugging</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Tambahkan komentar penanda seksi dan sembunyikan salah satu paragraf agar tidak tampil di layar browser.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Komentar</title>
+</head>
+<body>
+  <h1>Menu Utama</h1>
+  <p>Menu 1: Nasi Goreng</p>
+  <p>Menu 2: Mie Goreng (Habis)</p>
+  <p>Menu 3: Ayam Bakar</p>
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Sembunyikan paragraf "Menu 2: Mie Goreng (Habis)" dengan membungkusnya ke dalam komentar HTML <!-- ... -->.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Komentar</title>
+</head>
+<body>
+  <h1>Menu Utama</h1>
+  <p>Menu 1: Nasi Goreng</p>
+  <p>Menu 2: Mie Goreng (Habis)</p>
+  <p>Menu 3: Ayam Bakar</p>
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Komentar</title>
+</head>
+<body>
+  <h1>Menu Utama</h1>
+  <p>Menu 1: Nasi Goreng</p>
+  <!-- <p>Menu 2: Mie Goreng (Habis)</p> -->
+  <p>Menu 3: Ayam Bakar</p>
+</body>
+</html>`,
+      hint: 'Bungkus baris Menu 2 dengan <!-- <p>Menu 2: Mie Goreng (Habis)</p> -->'
+    }
+  },
+
+  {
+    title: 'HTML Comments - Code Challenge (Dokumentasi Seksi Halaman)',
+    chapter: 'HTML Comments',
+    type: 'challenge',
+    order: 30,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Dokumentasi Kode Rapi</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Dokumentasikan struktur halaman web sederhana dengan memberikan komentar penanda <code>&lt;!-- Bagian Utama --&gt;</code> sebelum <code>&lt;h1&gt;</code> dan <code>&lt;!-- Bagian Kontak --&gt;</code> sebelum <code>&lt;p&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Struktur Web</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Tulis <!-- Bagian Utama --> lalu <h1>Toko Online</h1> lalu <!-- Bagian Kontak --> lalu <p>Hubungi: 08123456789</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Struktur Web</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Struktur Web</title>
+</head>
+<body>
+  <!-- Bagian Utama -->
+  <h1>Toko Online</h1>
+  <!-- Bagian Kontak -->
+  <p>Hubungi: 08123456789</p>
+</body>
+</html>`,
+      hint: 'Gunakan komentar <!-- Bagian Utama --> dan <!-- Bagian Kontak --> tepat di atas elemen masing-masing'
+    }
   }
 ];
 
