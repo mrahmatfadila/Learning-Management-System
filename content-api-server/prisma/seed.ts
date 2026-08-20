@@ -331,6 +331,641 @@ export const htmlLessonsList = [
 </html>`,
       hint: 'Gunakan kombinasi <h1>, <p>, dan <a href="https://github.com">Lihat Portofolio</a>'
     }
+  },
+
+  // ── 5. HTML Elements ──────────────────────────────────────────────────────
+  {
+    title: 'HTML Elements - Anatomi & Elemen Bersarang (Nested Elements)',
+    chapter: 'HTML Elements',
+    type: 'code',
+    order: 7,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🧩 Memahami Elemen HTML Lebih Dalam</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Sebuah <strong>HTML Element</strong> didefinisikan oleh tag pembuka, konten di dalamnya, dan tag penutup. Elemen dapat dimasukkan ke dalam elemen lain (disebut <em>Nested Elements</em> atau elemen bersarang).
+        </p>
+
+        <div class="p-5 rounded-2xl bg-slate-900 text-slate-100 font-mono text-xs overflow-x-auto border border-slate-800">
+          <div class="text-amber-400 mb-2 font-bold">// Contoh Nested Elements:</div>
+          <div>&lt;<span class="text-rose-400">body</span>&gt;</div>
+          <div class="ml-4">&lt;<span class="text-sky-400">h1</span>&gt;Judul Blog &lt;<span class="text-emerald-400">span</span>&gt;Pribadi&lt;/<span class="text-emerald-400">span</span>&gt;&lt;/<span class="text-sky-400">h1</span>&gt;</div>
+          <div class="ml-4">&lt;<span class="text-sky-400">p</span>&gt;Ini adalah &lt;<span class="text-amber-300">strong</span>&gt;teks tebal&lt;/<span class="text-amber-300">strong</span>&gt; di dalam paragraf.&lt;/<span class="text-sky-400">p</span>&gt;</div>
+          <div>&lt;/<span class="text-rose-400">body</span>&gt;</div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-orange-50 dark:bg-orange-950/20 border border-orange-200 dark:border-orange-900/40">
+          <h3 class="font-bold text-orange-900 dark:text-orange-300 text-xs mb-1">⚠️ Empty Elements (Void Elements)</h3>
+          <p class="text-xs text-orange-800 dark:text-orange-300/80 leading-relaxed">
+            Ada beberapa elemen HTML yang <strong>tidak memiliki tag penutup dan tidak memiliki konten teks</strong>, contohnya: <code>&lt;br&gt;</code> (pindah baris), <code>&lt;hr&gt;</code> (garis horizontal), dan <code>&lt;img&gt;</code> (gambar).
+          </p>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Nested Elements Demo</title>
+</head>
+<body>
+  <div>
+    <h2>Belajar <em>Elemen Bersarang</em></h2>
+    <p>HTML memungkinkan kita menaruh tag <strong>&lt;strong&gt;</strong> atau <u>&lt;u&gt;</u> di dalam tag paragraf.</p>
+  </div>
+</body>
+</html>`,
+    quiz: {
+      question: 'Manakah di bawah ini yang merupakan contoh dari Empty Element (elemen tanpa tag penutup)?',
+      options: ['<p>', '<div>', '<br>', '<h1>'],
+      answer: 2,
+      explanation: 'Tag <br> (break line) adalah empty element yang tidak memerlukan tag penutup maupun konten teks di dalamnya.'
+    }
+  },
+
+  {
+    title: 'HTML Elements - Exercises (Latihan Bersarang & Empty Tags)',
+    chapter: 'HTML Elements',
+    type: 'challenge',
+    order: 8,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Elemen Bersarang</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Tunjukkan keahlian Anda dalam menyusun elemen bersarang. Buat sebuah paragraf yang di dalamnya terdapat kata penting bercetak tebal menggunakan tag <code>&lt;strong&gt;</code> dan garis pembatas horizontal <code>&lt;hr&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Elemen</title>
+</head>
+<body>
+  
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah elemen <h1>Info Produk</h1>, lalu garis pembatas <hr>, dan sebuah <p> dengan teks: "Produk ini <strong>Sangat Populer</strong> di pasaran."',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Elemen</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Elemen</title>
+</head>
+<body>
+  <h1>Info Produk</h1>
+  <hr>
+  <p>Produk ini <strong>Sangat Populer</strong> di pasaran.</p>
+</body>
+</html>`,
+      hint: 'Gunakan <h1>, <hr>, dan <p>Produk ini <strong>Sangat Populer</strong> di pasaran.</p>'
+    }
+  },
+
+  {
+    title: 'HTML Elements - Code Challenge (Membangun Kartu Berita)',
+    chapter: 'HTML Elements',
+    type: 'challenge',
+    order: 9,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kartu Cuplikan Berita</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Susun elemen HTML hierarkis yang bersih untuk kartu berita dengan heading, teks cuplikan, dan kata kunci yang diberi penekanan <code>&lt;em&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Berita</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat <h2>Berita Terkini</h2>, lalu <p>Teknologi AI berkembang dengan <em>sangat pesat</em> tahun ini.</p>, diakhiri dengan <hr>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Berita</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Kartu Berita</title>
+</head>
+<body>
+  <h2>Berita Terkini</h2>
+  <p>Teknologi AI berkembang dengan <em>sangat pesat</em> tahun ini.</p>
+  <hr>
+</body>
+</html>`,
+      hint: 'Gunakan <h2>, <p> dengan <em> di dalamnya, lalu <hr>'
+    }
+  },
+
+  // ── 6. HTML Attributes ────────────────────────────────────────────────────
+  {
+    title: 'HTML Attributes - Karakteristik & Atribut Inti',
+    chapter: 'HTML Attributes',
+    type: 'code',
+    order: 10,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🏷️ Mengenal Atribut HTML</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          <strong>Atribut HTML</strong> memberikan informasi atau konfigurasi tambahan pada elemen HTML. Atribut <strong>selalu dituliskan di dalam tag pembuka</strong> dan umumnya hadir dalam pasangan <code>nama="nilai"</code> (*name="value"*).
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">href</code> (Hyperlink Reference):
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Menentukan URL tujuan pada tag <code>&lt;a&gt;</code>.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">src & alt</code> (Source & Alt text):
+            <p class="text-slate-600 dark:text-slate-400 mt-1"><code>src</code> menentukan lokasi gambar, <code>alt</code> menyediakan teks alternatif jika gambar gagal dimuat (penting untuk SEO & pembaca tunanetra).</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">title</code> (Tooltip Text):
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Menampilkan balon petunjuk (*tooltip*) saat mouse diarahkan ke elemen.</p>
+          </div>
+          <div class="p-3.5 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono">width & height</code>:
+            <p class="text-slate-600 dark:text-slate-400 mt-1">Menentukan dimensi ukuran lebar dan tinggi gambar dalam piksel.</p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Contoh Atribut HTML</title>
+</head>
+<body>
+  <h1 title="Ini adalah judul utama website">Arahkan Kursor ke Sini!</h1>
+  
+  <a href="https://w3schools.com" target="_blank" title="Kunjungi W3Schools">
+    Belajar di W3Schools (Buka di Tab Baru)
+  </a>
+  <br><br>
+  <img 
+    src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=500" 
+    alt="Meja Kerja Web Developer" 
+    width="320" 
+    height="200"
+    style="border-radius: 8px;"
+  />
+</body>
+</html>`,
+    quiz: {
+      question: 'Manakah alasan utama mengapa atribut "alt" wajib disertakan pada setiap tag <img>?',
+      options: [
+        'Hanya untuk mengatur warna background gambar.',
+        'Menyediakan teks pengganti untuk aksesibilitas screen reader dan jika gambar gagal dimuat.',
+        'Mempercepat koneksi internet pengguna.',
+        'Mengubah format gambar dari PNG ke JPEG secara otomatis.'
+      ],
+      answer: 1,
+      explanation: 'Atribut "alt" sangat penting untuk aksesibilitas (pembaca tunanetra) dan SEO jika gambar tidak dapat ditampilkan.'
+    }
+  },
+
+  {
+    title: 'HTML Attributes - Exercises (Latihan Konfigurasi Atribut)',
+    chapter: 'HTML Attributes',
+    type: 'challenge',
+    order: 11,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Konfigurasi Atribut</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Uji kemampuan Anda memasang atribut wajib pada elemen link dan gambar.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Atribut</title>
+</head>
+<body>
+  
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah tag <a> dengan atribut href="https://example.com" dan target="_blank" bertuliskan "Kunjungi Example", serta tag <p title="Penjelasan Singkat">Arahkan ke paragraf ini</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Atribut</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Atribut</title>
+</head>
+<body>
+  <a href="https://example.com" target="_blank">Kunjungi Example</a>
+  <p title="Penjelasan Singkat">Arahkan ke paragraf ini</p>
+</body>
+</html>`,
+      hint: 'Gunakan <a href="https://example.com" target="_blank">Kunjungi Example</a> dan <p title="Penjelasan Singkat">Arahkan ke paragraf ini</p>'
+    }
+  },
+
+  {
+    title: 'HTML Attributes - Code Challenge (Banner Promosi Lengkap)',
+    chapter: 'HTML Attributes',
+    type: 'challenge',
+    order: 12,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Banner Promosi</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah banner promosi dengan gambar berukuran proporsional yang memiliki tautan menuju halaman pendaftaran.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Banner Promosi</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buat tag <img src="banner.jpg" alt="Diskon Kursus" width="400"> lalu di bawahnya buat tombol tautan <a href="/daftar" title="Daftar Sekarang">Daftar Sekarang</a>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Banner Promosi</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Banner Promosi</title>
+</head>
+<body>
+  <img src="banner.jpg" alt="Diskon Kursus" width="400">
+  <br>
+  <a href="/daftar" title="Daftar Sekarang">Daftar Sekarang</a>
+</body>
+</html>`,
+      hint: 'Gunakan kombinasi tag <img> dengan src, alt, width dan tag <a> dengan href, title'
+    }
+  },
+
+  // ── 7. HTML Headings ──────────────────────────────────────────────────────
+  {
+    title: 'HTML Headings - Struktur Hirarki & Best Practice SEO',
+    chapter: 'HTML Headings',
+    type: 'code',
+    order: 13,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">📑 Heading HTML: Dari &lt;h1&gt; sampai &lt;h6&gt;</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Heading HTML digunakan untuk menandai judul dan subjudul pada dokumen. Mesin pencari seperti Google menggunakan heading untuk mengindeks struktur dan topik artikel Anda.
+        </p>
+
+        <div class="space-y-2 p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+          <div class="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800">
+            <span class="text-lg font-black text-slate-800 dark:text-white">&lt;h1&gt; Heading Tingkat 1 (Paling Penting)</span>
+            <span class="text-[10px] font-mono text-orange-500 font-bold">Maksimal 1x per halaman</span>
+          </div>
+          <div class="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800">
+            <span class="text-base font-bold text-slate-800 dark:text-white">&lt;h2&gt; Heading Tingkat 2 (Bab Utama)</span>
+            <span class="text-[10px] font-mono text-slate-400">Seksi Utama Konten</span>
+          </div>
+          <div class="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800">
+            <span class="text-sm font-bold text-slate-700 dark:text-slate-300">&lt;h3&gt; Heading Tingkat 3 (Sub-bab)</span>
+            <span class="text-[10px] font-mono text-slate-400">Rincian Bab</span>
+          </div>
+          <div class="flex items-center justify-between py-1 border-b border-slate-200 dark:border-slate-800">
+            <span class="text-xs font-semibold text-slate-600 dark:text-slate-400">&lt;h4&gt; Heading Tingkat 4</span>
+            <span class="text-[10px] font-mono text-slate-400">Detail Pendukung</span>
+          </div>
+          <div class="flex items-center justify-between py-1">
+            <span class="text-[11px] font-medium text-slate-500">&lt;h5&gt; & &lt;h6&gt; Tingkat Terendah</span>
+            <span class="text-[10px] font-mono text-slate-400">Catatan kecil / footer widget</span>
+          </div>
+        </div>
+
+        <div class="p-4 rounded-xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/40 text-xs text-amber-900 dark:text-amber-300">
+          <strong>⚠️ Golden Rule SEO:</strong> Jangan pernah menggunakan tag heading hanya untuk membuat teks menjadi berukuran besar. Gunakan CSS jika tujuannya murni estetika, dan gunakan heading murni untuk hierarki makna konten.
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Hierarki Heading</title>
+</head>
+<body>
+  <h1>Panduan Lengkap Belajar Web Development</h1>
+  
+  <h2>1. Fondasi Frontend</h2>
+  <p>Frontend adalah bagian visual yang berinteraksi dengan pengguna.</p>
+  
+  <h3>1.1 Menguasai HTML5</h3>
+  <p>HTML5 adalah batu pertama yang wajib dipelajari.</p>
+  
+  <h3>1.2 Mempercantik dengan CSS3</h3>
+  <p>CSS membuat tampilan web menjadi modern dan estetik.</p>
+  
+  <h2>2. Logika Backend</h2>
+  <p>Backend mengelola database dan logika server.</p>
+</body>
+</html>`,
+    quiz: {
+      question: 'Berapa jumlah tag <h1> yang ideal dalam sebuah halaman web untuk optimasi SEO terbaik?',
+      options: ['Bebas sebanyak mungkin', 'Tepat 1 buah', 'Minimal 5 buah', 'Tidak boleh ada h1'],
+      answer: 1,
+      explanation: 'Satu halaman web sebaiknya hanya memiliki tepat satu tag <h1> sebagai judul utama halaman tersebut untuk kejelasan struktur SEO.'
+    }
+  },
+
+  {
+    title: 'HTML Headings - Exercises (Menentukan Tingkatan Judul)',
+    chapter: 'HTML Headings',
+    type: 'challenge',
+    order: 14,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Hierarki Heading</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Susun dokumen dengan 3 tingkatan judul yang berurutan secara logis: <code>&lt;h1&gt;</code>, <code>&lt;h2&gt;</code>, dan <code>&lt;h3&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Heading</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Tuliskan <h1>Belajar Coding</h1>, lalu <h2>Bahasa Web</h2>, lalu <h3>HTML dan CSS</h3> secara berurutan.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Heading</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Heading</title>
+</head>
+<body>
+  <h1>Belajar Coding</h1>
+  <h2>Bahasa Web</h2>
+  <h3>HTML dan CSS</h3>
+</body>
+</html>`,
+      hint: 'Tuliskan tag <h1>, <h2>, dan <h3> secara berurutan'
+    }
+  },
+
+  {
+    title: 'HTML Headings - Code Challenge (Merapikan Kerangka Artikel)',
+    chapter: 'HTML Headings',
+    type: 'challenge',
+    order: 15,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Kerangka Struktur Berita</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Lengkapi kerangka artikel berita teknologi dengan judul utama, subjudul, dan dua seksi pembahasan.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Artikel Teknologi</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah <h1>Peluncuran Smartphone Terbaru</h1>, lalu <h2>Spesifikasi Utama</h2> dengan sebuah <p>Kamera 200MP</p>, dan <h2>Harga & Ketersediaan</h2> dengan sebuah <p>Mulai Rp 10 Juta</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Artikel Teknologi</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Artikel Teknologi</title>
+</head>
+<body>
+  <h1>Peluncuran Smartphone Terbaru</h1>
+  <h2>Spesifikasi Utama</h2>
+  <p>Kamera 200MP</p>
+  <h2>Harga & Ketersediaan</h2>
+  <p>Mulai Rp 10 Juta</p>
+</body>
+</html>`,
+      hint: 'Gunakan <h1> lalu buat dua blok <h2> dengan masing-masing <p> di bawahnya'
+    }
+  },
+
+  // ── 8. HTML Paragraphs ────────────────────────────────────────────────────
+  {
+    title: 'HTML Paragraphs - Pemformatan Teks, Line Breaks & Divider',
+    chapter: 'HTML Paragraphs',
+    type: 'code',
+    order: 16,
+    theory: `
+      <div class="space-y-6">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">📝 Bekerja dengan Paragraf dan Baris</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Tag <code>&lt;p&gt;</code> digunakan untuk membuat blok paragraf teks. Browser secara otomatis menambahkan margin ruang kosong sebelum dan sesudah setiap elemen paragraf.
+        </p>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono block mb-1">&lt;p&gt; (Paragraph)</code>
+            <p class="text-slate-600 dark:text-slate-400">Blok teks mandiri. Spasi ganda atau tombol Enter berkali-kali di dalam HTML akan digabungkan (<em>collapsed</em>) menjadi 1 spasi oleh browser.</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono block mb-1">&lt;br&gt; (Line Break)</code>
+            <p class="text-slate-600 dark:text-slate-400">Pindah ke baris baru tanpa memulai paragraf baru (sangat cocok untuk alamat surat atau baris puisi).</p>
+          </div>
+          <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800">
+            <code class="text-orange-500 font-bold font-mono block mb-1">&lt;pre&gt; (Preformatted)</code>
+            <p class="text-slate-600 dark:text-slate-400">Mempertahankan seluruh spasi, spasi tab, dan baris baru persis seperti yang Anda ketikkan di editor.</p>
+          </div>
+        </div>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Demo Paragraf & Baris</title>
+</head>
+<body>
+  <h2>Paragraf Standar</h2>
+  <p>Ini adalah paragraf pertama. Meskipun kita tekan enter
+  di kode editor, browser tetap menggabungkannya menjadi satu baris mengalir.</p>
+
+  <p>Gunakan tag break:<br>
+  Jalan Merdeka No. 45<br>
+  Jakarta Pusat, Indonesia</p>
+
+  <hr>
+
+  <h2>Teks Preformatted (&lt;pre&gt;)</h2>
+  <pre>
+  Menulis puisi:
+     Bintang bersinar di angkasa,
+     Menerangi malam yang gulita.
+  </pre>
+</body>
+</html>`,
+    quiz: {
+      question: 'Tag manakah yang dapat mempertahankan format spasi ganda dan baris baru persis seperti yang diketikkan?',
+      options: ['<p>', '<pre>', '<text>', '<span>'],
+      answer: 1,
+      explanation: 'Tag <pre> (Preformatted Text) menampilkan teks dengan font monospace dan mempertahankan seluruh spasi dan baris baru yang diketikkan.'
+    }
+  },
+
+  {
+    title: 'HTML Paragraphs - Exercises (Mengatur Alamat & Baris Puisi)',
+    chapter: 'HTML Paragraphs',
+    type: 'challenge',
+    order: 17,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">✍️ Latihan Pemformatan Baris</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Buatlah format alamat kantor 3 baris menggunakan satu tag <code>&lt;p&gt;</code> dan tag line break <code>&lt;br&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Paragraf</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah tag <p> yang berisi 3 baris alamat dengan dipisahkan <br>: "PT Edukasi Indonesia<br>Gedung Cyber Lt. 5<br>Jakarta Selatan".',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Paragraf</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Latihan Paragraf</title>
+</head>
+<body>
+  <p>PT Edukasi Indonesia<br>Gedung Cyber Lt. 5<br>Jakarta Selatan</p>
+</body>
+</html>`,
+      hint: 'Gunakan satu tag <p> dan tempatkan <br> di antara baris-baris alamat'
+    }
+  },
+
+  {
+    title: 'HTML Paragraphs - Code Challenge (Studi Kasus Artikel Blog)',
+    chapter: 'HTML Paragraphs',
+    type: 'challenge',
+    order: 18,
+    theory: `
+      <div class="space-y-4">
+        <h2 class="text-2xl font-black text-slate-800 dark:text-white">🚀 Tantangan: Artikel Blog dengan Divider</h2>
+        <p class="text-sm text-slate-600 dark:text-slate-300">
+          Susun artikel blog dengan 2 paragraf cerita yang dipisahkan oleh garis batas horizontal <code>&lt;hr&gt;</code>.
+        </p>
+      </div>
+    `,
+    code: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog Saya</title>
+</head>
+<body>
+
+</body>
+</html>`,
+    challenge: {
+      instruction: 'Buatlah <h1>Cerita Hari Ini</h1>, lalu <p>Pagi ini saya mulai belajar HTML.</p>, lalu <hr>, lalu <p>Sangat seru dan mudah dipahami!</p>.',
+      starterCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog Saya</title>
+</head>
+<body>
+
+</body>
+</html>`,
+      solutionCode: `<!DOCTYPE html>
+<html>
+<head>
+  <title>Blog Saya</title>
+</head>
+<body>
+  <h1>Cerita Hari Ini</h1>
+  <p>Pagi ini saya mulai belajar HTML.</p>
+  <hr>
+  <p>Sangat seru dan mudah dipahami!</p>
+</body>
+</html>`,
+      hint: 'Gunakan <h1>, <p>, <hr>, dan <p>'
+    }
   }
 ];
 
