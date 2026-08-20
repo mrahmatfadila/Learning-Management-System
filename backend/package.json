@@ -6,7 +6,9 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon --watch src -e ts,js --exec ts-node src/server.ts",
-    "seed": "ts-node prisma/seed.ts"
+    "seed": "ts-node prisma/seed.ts",
+    "db:backup": "node scripts/backupDb.js",
+    "db:restore": "node scripts/restoreDb.js"
   },
   "prisma": {
     "seed": "ts-node prisma/seed.ts"

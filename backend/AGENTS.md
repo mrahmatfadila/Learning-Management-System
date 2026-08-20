@@ -423,7 +423,26 @@ Recommend a separate database backup before execution.
 
 ---
 
-# 24. INITIAL SETUP INSTRUCTION
+# 24. AUTOMATIC DATABASE BACKUP RULE
+
+AI WAJIB MENJALANKAN BACKUP DATABASE OTOMATIS:
+
+Setiap kali menyelesaikan prompt/task yang melibatkan perubahan schema atau data database (INSERT, UPDATE, DELETE, migration, seeding, dll.), AI WAJIB menjalankan:
+```bash
+npm run db:backup
+```
+pada direktori `backend/`.
+
+Fitur ini akan menghasilkan snapshot PostgreSQL bertanggal secara otomatis di `backend/backups/backup_YYYY-MM-DD_HH-mm-ss.sql` dan `backend/backups/latest.sql`.
+
+Untuk memulihkan data database kapan saja ke snapshot terakhir, cukup jalankan:
+```bash
+npm run db:restore
+```
+
+---
+
+# 25. INITIAL SETUP INSTRUCTION
 
 When initializing rules:
 1. Check project structure.
