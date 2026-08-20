@@ -2619,8 +2619,12 @@ export const htmlLessonsList = [
   }
 ];
 
+import { htmlLessonsPart2 } from './data/htmlPart2';
+
+const allHtmlLessons = [...htmlLessonsList, ...htmlLessonsPart2];
+
 async function main() {
-  console.log('🌱 Starting Master Curriculum Seeding into lms_content_db...');
+  console.log(`🌱 Starting Master Curriculum Seeding (${allHtmlLessons.length} total HTML lessons) into lms_content_db...`);
 
   // 1. SEED HTML MODULE
   await prisma.module.upsert({
@@ -2666,7 +2670,7 @@ async function main() {
   }
 
   // 3. SEED CHAPTERS & LESSONS FOR HTML
-  const chaptersSet = new Set(htmlLessonsList.map((l) => l.chapter));
+  const chaptersSet = new Set(allHtmlLessons.map((l) => l.chapter));
   const chapterIdMap: Record<string, string> = {};
 
   let chapterOrder = 1;
@@ -2686,13 +2690,16 @@ async function main() {
     chapterOrder++;
   }
 
-  for (const item of htmlLessonsList) {
+  for (const item of allHtmlLessons) {
     const lessonId = `html-lesson-${item.title.toLowerCase().replace(/[^a-z0-9]/g, '-').slice(0, 40)}`;
+    const anyItem = item as any;
     const contentPayload = JSON.stringify({
+      overview: anyItem.overview || null,
       theory: item.theory,
       code: item.code || '',
+      codeExplanation: anyItem.codeExplanation || null,
       quiz: item.quiz || null,
-      challenge: (item as any).challenge || null
+      challenge: anyItem.challenge || null
     });
 
     await prisma.lesson.upsert({
@@ -2719,7 +2726,7 @@ async function main() {
     });
   }
 
-  console.log(`✅ MASTER CURRICULUM SEEDING COMPLETED FOR lms_content_db!`);
+  console.log(`✅ MASTER CURRICULUM SEEDING COMPLETED FOR lms_content_db! Total: ${allHtmlLessons.length} lessons.`);
 }
 
 main()
@@ -2730,3 +2737,4 @@ main()
   .finally(async () => {
     await prisma.$disconnect();
   });
+
