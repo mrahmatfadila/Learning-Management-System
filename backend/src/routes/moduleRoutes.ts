@@ -8,7 +8,8 @@ import {
   verifyModule,
   duplicateModule,
   bulkVerifyModules,
-  bulkReassignModules
+  bulkReassignModules,
+  toggleModuleLike
 } from '../controllers/moduleController';
 
 const router = Router();
@@ -22,5 +23,6 @@ router.put('/:id', updateModule);
 router.delete('/:id', deleteModule);
 router.patch('/:id/verify', verifyModule);
 router.post('/:id/duplicate', duplicateModule);
+router.post('/:id/like', toggleModuleLike);
 
 export default router;

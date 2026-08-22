@@ -31,6 +31,7 @@ model User {
   messages              Message[]
   reviews               Review[]
   lessonComments        LessonComment[]
+  moduleLikes           ModuleLike[]
 }
 
 model Module {
@@ -50,6 +51,7 @@ model Module {
   tasks        Task[]
   schedules    Schedule[]
   reviews      Review[]
+  likes        ModuleLike[]
 }
 
 model Chapter {
@@ -190,3 +192,14 @@ model LessonComment {
   lesson    Lesson   @relation(fields: [lessonId], references: [id], onDelete: Cascade)
 }
 
+
+model ModuleLike {
+  id        String   @id @default(uuid())
+  userId    String
+  moduleId  String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  module    Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, moduleId])
+}

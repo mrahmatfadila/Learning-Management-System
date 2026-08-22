@@ -18,6 +18,9 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
         },
         reviews: {
           select: { id: true, rating: true }
+        },
+        likes: {
+          select: { id: true, userId: true }
         }
       },
       orderBy: { createdAt: 'desc' }
@@ -31,6 +34,7 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
       const avgRating = totalReviews > 0
         ? Math.round((m.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews) * 10) / 10
         : 0;
+      const likesCount = m.likes.length;
 
       return {
         ...m,
@@ -41,7 +45,7 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
         reviewsCount: totalReviews,
         avgRating,
         totalRatings: totalReviews,
-        likesCount: totalReviews > 0 ? totalReviews : approvedEnrollments.length
+        likesCount
       };
     });
 
@@ -404,3 +408,36 @@ export const bulkReassignModules = async (req: Request, res: Response): Promise<
     res.status(500).json({ message: 'Error bulk reassigning modules' });
   }
 };
+
+// POST /api/modules/:id/like — toggle like (heart) for a module
+export const toggleModuleLike = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const moduleId = req.params.id;
+    const { userId } = req.body;
+
+    if (!userId) {
+      res.status(400).json({ error: 'userId wajib diisi' });
+      return;
+    }
+
+    const existing = await prisma.moduleLike.findUnique({
+      where: { userId_moduleId: { userId, moduleId } }
+    });
+
+    if (existing) {
+      // Already liked → unlike
+      await prisma.moduleLike.delete({ where: { id: existing.id } });
+      res.json({ liked: false, message: 'Kursus dihapus dari wishlist' });
+    } else {
+      // Not liked → like
+      await prisma.moduleLike.create({
+        data: { userId, moduleId }
+      });
+      res.json({ liked: true, message: 'Kursus ditambahkan ke wishlist' });
+    }
+  } catch (error) {
+    console.error('Error toggling module like:', error);
+    res.status(500).json({ error: 'Gagal memproses like' });
+  }
+};
+
