@@ -2625,6 +2625,7 @@ import { htmlLessonsPart4Forms } from './data/htmlPart4Forms';
 import { htmlLessonsPart5Graphics } from './data/htmlPart5Graphics';
 import { htmlLessonsPart6Media } from './data/htmlPart6Media';
 import { htmlLessonsPart7APIs } from './data/htmlPart7APIs';
+import { htmlLessonsPart8Cert } from './data/htmlPart8Cert';
 
 const allHtmlLessons = [
   ...htmlLessonsList,
@@ -2633,7 +2634,8 @@ const allHtmlLessons = [
   ...htmlLessonsPart4Forms,
   ...htmlLessonsPart5Graphics,
   ...htmlLessonsPart6Media,
-  ...htmlLessonsPart7APIs
+  ...htmlLessonsPart7APIs,
+  ...htmlLessonsPart8Cert
 ];
 
 async function main() {
