@@ -3,7 +3,7 @@
 import {
   CheckCircle, ChevronLeft, ChevronRight, Code2, Play, Copy, RefreshCw,
   X, Zap, List, Moon, Sun, Sparkles, Send, ChevronDown, ChevronUp,
-  MonitorPlay, BookOpen, Trophy, Clock, Video, FileText, Users, Trash, MessageSquare
+  MonitorPlay, BookOpen, Trophy, Clock, Video, FileText, Users, Trash, MessageSquare, Lock
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef, Suspense } from 'react';
@@ -113,6 +113,9 @@ export default function LessonPage() {
   const [dbModuleData, setDbModuleData] = useState<any>(null);
   const [isDbLoaded, setIsDbLoaded] = useState(false);
   const [enrollmentProgress, setEnrollmentProgress] = useState<number>(0);
+  const [enrollmentStatus, setEnrollmentStatus] = useState<string>('APPROVED');
+  const [isStudentRole, setIsStudentRole] = useState(false);
+  const [enrollmentChecked, setEnrollmentChecked] = useState(false);
 
   // Lesson Comments State
   const [lessonComments, setLessonComments] = useState<any[]>([]);
@@ -179,22 +182,33 @@ export default function LessonPage() {
     };
     fetchDbData();
 
-    // Also fetch enrollment progress
+    // Fetch enrollment status & progress
     const stored = localStorage.getItem('lms_user');
     if (stored) {
       try {
         const user = JSON.parse(stored);
         if (user?.role?.toUpperCase() === 'STUDENT' && user.id) {
+          setIsStudentRole(true);
           fetch(`http://localhost:5000/api/enrollments/check?studentId=${user.id}&moduleId=${id}`)
             .then(r => r.ok ? r.json() : null)
             .then(data => {
-              if (data?.enrollment?.progress !== undefined) {
-                setEnrollmentProgress(data.enrollment.progress);
+              if (data) {
+                setEnrollmentStatus(data.status || (data.enrolled ? 'APPROVED' : 'NONE'));
+                if (data.enrollment?.progress !== undefined) {
+                  setEnrollmentProgress(data.enrollment.progress);
+                }
+              } else {
+                setEnrollmentStatus('NONE');
               }
+              setEnrollmentChecked(true);
             })
-            .catch(() => {});
+            .catch(() => { setEnrollmentChecked(true); });
+        } else {
+          setEnrollmentChecked(true);
         }
-      } catch {}
+      } catch { setEnrollmentChecked(true); }
+    } else {
+      setEnrollmentChecked(true);
     }
   }, [id, lessonId]);
 
@@ -591,6 +605,36 @@ export default function LessonPage() {
   const textPrimary = isDark ? 'text-white' : 'text-slate-900';
   const textMuted = isDark ? 'text-slate-400' : 'text-slate-500';
   const hover = isDark ? 'hover:bg-white/6' : 'hover:bg-slate-50';
+
+  if (isStudentRole && enrollmentChecked && enrollmentStatus !== 'APPROVED') {
+    return (
+      <div className="min-h-screen bg-[#0f172a] flex items-center justify-center p-4">
+        <div className="bg-slate-800/90 border border-slate-700 backdrop-blur-xl rounded-3xl p-8 max-w-md w-full text-center text-white shadow-2xl animate-fadeIn">
+          <div className={`w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4 border ${
+            enrollmentStatus === 'PENDING' ? 'bg-amber-500/10 border-amber-500/30 text-amber-400' : 'bg-rose-500/10 border-rose-500/30 text-rose-400'
+          }`}>
+            {enrollmentStatus === 'PENDING' ? <Clock className="w-8 h-8 animate-spin" /> : <Lock className="w-8 h-8" />}
+          </div>
+          <h2 className="text-xl font-black mb-2 text-white">
+            {enrollmentStatus === 'PENDING' ? 'Akses Menunggu Persetujuan' : 'Izin Akses Diperlukan'}
+          </h2>
+          <p className="text-xs text-slate-300 mb-6 leading-relaxed">
+            {enrollmentStatus === 'PENDING'
+              ? 'Permintaan izin belajar Anda untuk modul ini sedang ditinjau oleh instruktur pengampu. Silakan tunggu hingga instruktur menyetujui akses Anda.'
+              : 'Anda belum memiliki izin akses untuk mempelajari materi ini. Silakan ajukan permohonan izin di halaman detail kursus.'}
+          </p>
+          <div className="flex gap-3">
+            <Link href={`/dashboard/modules/${id}`} className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition-all shadow-lg shadow-indigo-600/20 text-center">
+              Lihat Status Modul
+            </Link>
+            <Link href="/dashboard?tab=browse" className="flex-1 py-3 bg-slate-700 hover:bg-slate-600 text-white font-bold rounded-xl text-xs transition-all text-center">
+              Katalog Kursus
+            </Link>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>

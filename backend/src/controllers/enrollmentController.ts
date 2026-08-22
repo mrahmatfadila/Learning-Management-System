@@ -9,9 +9,36 @@ export const enrollStudent = async (req: Request, res: Response): Promise<any> =
       return res.status(400).json({ message: 'studentId and moduleId are required' });
     }
 
-    // Cek modul exist
-    const modRes = await pool.query('SELECT id, title FROM "Module" WHERE id = $1', [moduleId]);
+    // Alias map for canonical IDs
+    const aliasMap: Record<string, string> = {
+      'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+      '67adde6d-81a6-4470-b88d-506b733f87ee': 'html',
+      'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+      'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'css',
+      'javascript': 'mastering-ui-design-for-impactful-solutions',
+      'mastering-ui-design-for-impactful-solutions': 'javascript',
+      'php': 'php-backend-mastery',
+      'php-backend-mastery': 'php',
+      'mysql': 'mysql-relational-database',
+      'mysql-relational-database': 'mysql',
+      'git': 'git-github-version-control',
+      'git-github-version-control': 'git',
+      'mobile': 'mobile-app-java-android',
+      'mobile-app-java-android': 'mobile',
+      'cisco': 'cisco-packet-tracer',
+      'cisco-packet-tracer': 'cisco'
+    };
+
+    const targetModuleId = String(moduleId);
+    const altModuleId = aliasMap[targetModuleId] || targetModuleId;
+
+    // Cek modul exist (either target or alt)
+    const modRes = await pool.query(
+      'SELECT id, title FROM "Module" WHERE id = $1 OR id = $2 LIMIT 1',
+      [targetModuleId, altModuleId]
+    );
     if (modRes.rowCount === 0) return res.status(404).json({ message: 'Module not found' });
+    const realModuleId = modRes.rows[0].id;
 
     // Cek student exist
     const stuRes = await pool.query('SELECT id, name FROM "User" WHERE id = $1', [studentId]);
@@ -19,15 +46,40 @@ export const enrollStudent = async (req: Request, res: Response): Promise<any> =
 
     // Cek apakah sudah ada enrollment
     const existing = await pool.query(
-      'SELECT id, status FROM "Enrollment" WHERE "studentId" = $1 AND "moduleId" = $2',
-      [studentId, moduleId]
+      'SELECT id, status FROM "Enrollment" WHERE "studentId" = $1 AND ("moduleId" = $2 OR "moduleId" = $3) LIMIT 1',
+      [studentId, targetModuleId, altModuleId]
     );
+
     if (existing.rowCount! > 0) {
-      return res.status(200).json({
-        message: 'Permintaan sudah ada sebelumnya.',
-        enrollment: existing.rows[0],
-        alreadyExists: true
-      });
+      const enr = existing.rows[0];
+      if (enr.status === 'REJECTED') {
+        // Ajukan ulang jika sebelumnya ditolak
+        const reApplied = await pool.query(
+          'UPDATE "Enrollment" SET status = \'PENDING\', note = NULL, "updatedAt" = NOW() WHERE id = $1 RETURNING *',
+          [enr.id]
+        );
+        return res.status(200).json({
+          message: 'Permintaan akses berhasil diajukan kembali! Menunggu persetujuan instruktur.',
+          enrollment: reApplied.rows[0],
+          status: 'PENDING'
+        });
+      }
+      if (enr.status === 'PENDING') {
+        return res.status(200).json({
+          message: 'Permintaan akses Anda sedang menunggu persetujuan instruktur.',
+          enrollment: enr,
+          status: 'PENDING',
+          alreadyExists: true
+        });
+      }
+      if (enr.status === 'APPROVED') {
+        return res.status(200).json({
+          message: 'Anda sudah memiliki akses penuh ke modul ini.',
+          enrollment: enr,
+          status: 'APPROVED',
+          alreadyExists: true
+        });
+      }
     }
 
     // Buat enrollment baru dengan status PENDING
@@ -35,12 +87,13 @@ export const enrollStudent = async (req: Request, res: Response): Promise<any> =
       `INSERT INTO "Enrollment" (id, "studentId", "moduleId", progress, status, "enrolledAt", "updatedAt")
        VALUES (gen_random_uuid(), $1, $2, 0, 'PENDING', NOW(), NOW())
        RETURNING *`,
-      [studentId, moduleId]
+      [studentId, realModuleId]
     );
 
     return res.status(201).json({
       message: 'Permintaan akses modul berhasil dikirim! Menunggu persetujuan instruktur.',
-      enrollment: result.rows[0]
+      enrollment: result.rows[0],
+      status: 'PENDING'
     });
   } catch (error) {
     console.error('Error enrolling student:', error);
@@ -59,31 +112,44 @@ export const checkEnrollment = async (req: Request, res: Response): Promise<any>
     const sId = String(studentId);
     const mId = String(moduleId);
 
+    const aliasMap: Record<string, string> = {
+      'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+      '67adde6d-81a6-4470-b88d-506b733f87ee': 'html',
+      'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+      'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'css',
+      'javascript': 'mastering-ui-design-for-impactful-solutions',
+      'mastering-ui-design-for-impactful-solutions': 'javascript',
+      'php': 'php-backend-mastery',
+      'php-backend-mastery': 'php',
+      'mysql': 'mysql-relational-database',
+      'mysql-relational-database': 'mysql',
+      'git': 'git-github-version-control',
+      'git-github-version-control': 'git',
+      'mobile': 'mobile-app-java-android',
+      'mobile-app-java-android': 'mobile',
+      'cisco': 'cisco-packet-tracer',
+      'cisco-packet-tracer': 'cisco'
+    };
+
+    const altId = aliasMap[mId] || mId;
+
     const result = await pool.query(
-      'SELECT * FROM "Enrollment" WHERE "studentId" = $1 AND "moduleId" = $2',
-      [sId, mId]
+      'SELECT * FROM "Enrollment" WHERE "studentId" = $1 AND ("moduleId" = $2 OR "moduleId" = $3) ORDER BY "updatedAt" DESC LIMIT 1',
+      [sId, mId, altId]
     );
 
     if (result.rowCount === 0) {
-      const newEnr = await pool.query(
-        `INSERT INTO "Enrollment" (id, "studentId", "moduleId", progress, status, "enrolledAt", "updatedAt")
-         VALUES (gen_random_uuid(), $1, $2, 0, 'APPROVED', NOW(), NOW())
-         RETURNING *`,
-        [sId, mId]
-      );
-      return res.json({ enrolled: true, status: 'APPROVED', enrollment: newEnr.rows[0] });
+      return res.json({ enrolled: false, status: 'NONE', enrollment: null });
     }
 
     const enr = result.rows[0];
-    if (enr.status !== 'APPROVED') {
-      await pool.query(
-        'UPDATE "Enrollment" SET status = \'APPROVED\', "updatedAt" = NOW() WHERE id = $1',
-        [enr.id]
-      );
-      enr.status = 'APPROVED';
-    }
+    const isApproved = enr.status === 'APPROVED';
 
-    res.json({ enrolled: true, status: 'APPROVED', enrollment: enr });
+    res.json({
+      enrolled: isApproved,
+      status: enr.status, // 'PENDING' | 'APPROVED' | 'REJECTED'
+      enrollment: enr
+    });
   } catch (error) {
     console.error('Error checking enrollment:', error);
     res.status(500).json({ message: 'Error checking enrollment' });

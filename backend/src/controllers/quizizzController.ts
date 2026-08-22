@@ -15,7 +15,7 @@ export const getAllQuizizz = async (req: Request, res: Response): Promise<any> =
       whereCondition.moduleId = moduleId;
     }
 
-    const quizzes = await prisma.quizizz.findMany({
+    const quizzes = await (prisma as any).quizizz.findMany({
       where: whereCondition,
       include: {
         creator: { select: { id: true, name: true, email: true, profilePicture: true } },
@@ -35,7 +35,7 @@ export const getAllQuizizz = async (req: Request, res: Response): Promise<any> =
 export const getQuizizzById = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
-    const quiz = await prisma.quizizz.findUnique({
+    const quiz = await (prisma as any).quizizz.findUnique({
       where: { id },
       include: {
         creator: { select: { id: true, name: true, email: true, profilePicture: true } },
@@ -69,7 +69,7 @@ export const createQuizizz = async (req: Request, res: Response): Promise<any> =
 
     const pinCode = generatePinCode();
 
-    const newQuizizz = await prisma.quizizz.create({
+    const newQuizizz = await (prisma as any).quizizz.create({
       data: {
         title,
         description: description || '',
@@ -106,7 +106,7 @@ export const createQuizizz = async (req: Request, res: Response): Promise<any> =
 export const deleteQuizizz = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
-    await prisma.quizizz.delete({ where: { id } });
+    await (prisma as any).quizizz.delete({ where: { id } });
     res.json({ message: 'Quizizz berhasil dihapus' });
   } catch (error) {
     console.error('Error deleting Quizizz:', error);
@@ -122,7 +122,7 @@ export const submitQuizizzAttempt = async (req: Request, res: Response): Promise
       return res.status(400).json({ message: 'quizizzId dan studentId diperlukan' });
     }
 
-    const attempt = await prisma.quizizzAttempt.create({
+    const attempt = await (prisma as any).quizizzAttempt.create({
       data: {
         quizizzId,
         studentId,
@@ -148,7 +148,7 @@ export const submitQuizizzAttempt = async (req: Request, res: Response): Promise
 export const getQuizizzLeaderboard = async (req: Request, res: Response): Promise<any> => {
   try {
     const quizizzId = req.params.id as string;
-    const leaderboard = await prisma.quizizzAttempt.findMany({
+    const leaderboard = await (prisma as any).quizizzAttempt.findMany({
       where: { quizizzId },
       include: {
         student: { select: { id: true, name: true, email: true, profilePicture: true } }

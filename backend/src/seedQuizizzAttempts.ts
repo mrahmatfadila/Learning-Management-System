@@ -3,7 +3,7 @@ import prisma from './lib/prisma';
 async function seedAttempts() {
   console.log('Seeding Quizizz student attempts...');
 
-  const htmlQuiz = await prisma.quizizz.findFirst({
+  const htmlQuiz = await (prisma as any).quizizz.findFirst({
     where: { pinCode: 'QZ-5821' }
   });
 
@@ -33,7 +33,7 @@ async function seedAttempts() {
   if (!student1) return;
   const student2 = students[1] || student1;
 
-  await prisma.quizizzAttempt.createMany({
+  await (prisma as any).quizizzAttempt.createMany({
     data: [
       {
         quizizzId: htmlQuiz.id,

@@ -32,7 +32,7 @@ async function seed() {
   const moduleId = htmlModule ? htmlModule.id : null;
 
   // 1. Create HTML5 Sample Quiz
-  const quiz1 = await prisma.quizizz.create({
+  const quiz1 = await (prisma as any).quizizz.create({
     data: {
       title: 'Kuis Kilat HTML5 & Web Fundamentals ⚡',
       description: 'Uji wawasan Anda tentang tag HTML5, elemen semantic, form, dan struktur dokumen web!',
@@ -103,7 +103,7 @@ async function seed() {
   });
 
   // 2. Create CSS Flexbox Sample Quiz
-  const quiz2 = await prisma.quizizz.create({
+  const quiz2 = await (prisma as any).quizizz.create({
     data: {
       title: 'Mastery Test: CSS Flexbox & Layouts 🎨',
       description: 'Tantangan kuis cepat tentang properti CSS Flexbox, Grid, dan media queries!',

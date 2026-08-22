@@ -531,16 +531,22 @@ export default function DashboardPage() {
     // Student: Browse / Explore
     if (role === 'STUDENT' && activeGroup === 'explore') {
       const handleEnroll = async (moduleId: string) => {
-        const res = await fetch('http://localhost:5000/api/enrollments', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ studentId: user.id, moduleId })
-        });
-        if (res.ok) {
-          alert('Pendaftaran berhasil! Menunggu persetujuan.');
-          fetchData(user);
+        try {
+          const res = await fetch('http://localhost:5000/api/enrollments', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ studentId: user.id, moduleId })
+          });
+          const data = await res.json();
+          if (res.ok) {
+            alert(data.message || 'Permintaan izin akses berhasil dikirim! Menunggu persetujuan instruktur.');
+            fetchData(user);
+          } else {
+            alert(data.message || 'Gagal mengirim permintaan izin.');
+          }
+        } catch {
+          alert('Terjadi kesalahan saat mengirim permintaan izin.');
         }
-        else alert('Gagal mendaftar.');
       };
 
       // 1. BROWSE COURSES TAB / DEFAULT CATALOG
@@ -787,18 +793,18 @@ export default function DashboardPage() {
 
                         {/* Enrollment status badges */}
                         {isApproved && (
-                          <div className="absolute bottom-2 left-2 z-10 bg-emerald-600 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow flex items-center gap-1">
-                            <CheckCircle className="w-2.5 h-2.5" /> TERDAFTAR {enrollment.progress !== undefined ? `(${enrollment.progress}%)` : ''}
+                          <div className="absolute bottom-2 left-2 z-10 bg-emerald-600 text-white font-black text-[9px] tracking-wider px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 backdrop-blur-sm">
+                            <CheckCircle className="w-3 h-3" /> TERDAFTAR {enrollment.progress !== undefined ? `(${enrollment.progress}%)` : ''}
                           </div>
                         )}
                         {isPending && (
-                          <div className="absolute bottom-2 left-2 z-10 bg-amber-500 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow flex items-center gap-1">
-                            <Clock className="w-2.5 h-2.5 animate-spin" /> PENDING
+                          <div className="absolute bottom-2 left-2 z-10 bg-amber-500 text-white font-black text-[9px] tracking-wider px-2.5 py-1 rounded-lg shadow-md flex items-center gap-1.5 backdrop-blur-sm animate-pulse">
+                            <Clock className="w-3 h-3 animate-spin" /> MENUNGGU PERSETUJUAN
                           </div>
                         )}
                         {isRejected && (
-                          <div className="absolute bottom-2 left-2 z-10 bg-rose-500 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow">
-                            DITOLAK
+                          <div className="absolute bottom-2 left-2 z-10 bg-rose-500 text-white font-black text-[9px] tracking-wider px-2.5 py-1 rounded-lg shadow-md">
+                            ❌ PERMINTAAN DITOLAK
                           </div>
                         )}
                       </div>
@@ -835,22 +841,22 @@ export default function DashboardPage() {
                             </button>
                           ) : isApproved ? (
                             <button onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                              className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
+                              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
                               <BookOpen className="w-3.5 h-3.5" /> Lanjut Belajar <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           ) : isPending ? (
-                            <button disabled className="w-full py-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center justify-center gap-1 cursor-not-allowed">
+                            <button disabled className="w-full py-2.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed">
                               <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
                             </button>
                           ) : isRejected ? (
                             <button onClick={() => handleEnroll(m.id)}
-                              className="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 hover:scale-[1.01] active:scale-[0.99] transition-all">
-                              Daftar Ulang <ArrowRight className="w-3.5 h-3.5" />
+                              className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 hover:scale-[1.01] active:scale-[0.99] transition-all shadow">
+                              Ajukan Izin Ulang <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           ) : (
                             <button onClick={() => handleEnroll(m.id)}
-                              className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-650 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
-                              Daftar Sekarang <ArrowRight className="w-3.5 h-3.5" />
+                              className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-purple-650 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
+                              <Lock className="w-3.5 h-3.5" /> Minta Izin Akses <ArrowRight className="w-3.5 h-3.5" />
                             </button>
                           )}
                         </div>
@@ -931,18 +937,18 @@ export default function DashboardPage() {
                                 <BookOpen className="w-3.5 h-3.5" /> Lanjut Belajar <ArrowRight className="w-3.5 h-3.5" />
                               </button>
                             ) : isPending ? (
-                              <span className="px-3 py-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center gap-1">
-                                <Clock className="w-3.5 h-3.5 animate-spin" /> Pending
+                              <span className="px-3.5 py-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center gap-1.5 animate-pulse">
+                                <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
                               </span>
                             ) : isRejected ? (
                               <button onClick={() => handleEnroll(m.id)}
                                 className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all hover:scale-[1.02] shadow-md">
-                                Daftar Ulang
+                                Ajukan Izin Ulang <ArrowRight className="w-3.5 h-3.5" />
                               </button>
                             ) : (
                               <button onClick={() => handleEnroll(m.id)}
                                 className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all hover:scale-[1.02] shadow-md shadow-indigo-600/20">
-                                Daftar Sekarang <ArrowRight className="w-3.5 h-3.5" />
+                                <Lock className="w-3.5 h-3.5" /> Minta Izin Akses <ArrowRight className="w-3.5 h-3.5" />
                               </button>
                             )}
                           </div>

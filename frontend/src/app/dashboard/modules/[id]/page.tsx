@@ -568,24 +568,83 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 </div>
               )}
               {enrollmentStatus === 'NONE' && (
-                <button onClick={handleEnroll} disabled={enrolling} className="px-8 py-3 bg-white text-slate-800 font-black rounded-xl hover:bg-slate-100 transition-colors shadow-md disabled:opacity-50">
-                  {enrolling ? 'Mendaftar...' : 'Daftar Sekarang'}
+                <button onClick={handleEnroll} disabled={enrolling} className="px-8 py-3.5 bg-white text-indigo-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center gap-2 text-sm">
+                  <Lock className="w-4 h-4 text-indigo-600" />
+                  {enrolling ? 'Mengirim Izin...' : 'Minta Izin Akses'}
                 </button>
               )}
               {enrollmentStatus === 'PENDING' && (
-                <div className="px-6 py-3 bg-white/20 border border-white/30 text-white font-bold rounded-xl text-sm">⏳ Menunggu Persetujuan</div>
+                <div className="px-6 py-3 bg-amber-500/30 border border-amber-300/40 text-white font-bold rounded-2xl text-sm flex items-center gap-2 backdrop-blur-sm">
+                  <Clock className="w-4 h-4 animate-spin" /> Menunggu Persetujuan Instruktur
+                </div>
               )}
               {enrollmentStatus === 'APPROVED' && (
-                <button onClick={handleStart} className="px-8 py-3 bg-white text-slate-800 font-black rounded-xl hover:bg-slate-100 transition-colors shadow-md">
+                <button onClick={handleStart} className="px-8 py-3.5 bg-white text-emerald-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 flex items-center gap-2 text-sm">
+                  <BookOpen className="w-4 h-4 text-emerald-600" />
                   {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar →'}
                 </button>
               )}
               {enrollmentStatus === 'REJECTED' && (
-                <div className="px-6 py-3 bg-red-500/80 text-white font-bold rounded-xl text-sm">❌ Pendaftaran Ditolak</div>
+                <button onClick={handleEnroll} disabled={enrolling} className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-md">
+                  ❌ Ditolak · Ajukan Ulang
+                </button>
               )}
             </div>
           </div>
         </div>
+
+        {/* Enrollment Status Notice Banner */}
+        {role === 'STUDENT' && enrollmentStatus === 'PENDING' && (
+          <div className="bg-amber-50 border-2 border-amber-200 rounded-3xl p-6 mb-8 flex items-center gap-4 text-amber-900 shadow-sm animate-fadeIn">
+            <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
+              <Clock className="w-6 h-6 text-amber-600 animate-spin" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <h3 className="font-black text-base text-amber-900">Permintaan Izin Akses Sedang Ditinjau</h3>
+              <p className="text-xs text-amber-700 mt-1 leading-relaxed">
+                Anda telah mengirimkan permohonan izin untuk mempelajari modul ini. Mohon tunggu instruktur pengampu menyetujui akses Anda sebelum materi dapat dibuka dan dipelajari.
+              </p>
+            </div>
+          </div>
+        )}
+
+        {role === 'STUDENT' && enrollmentStatus === 'REJECTED' && (
+          <div className="bg-rose-50 border-2 border-rose-200 rounded-3xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-rose-900 shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-rose-100 border border-rose-300 flex items-center justify-center shrink-0">
+                <X className="w-6 h-6 text-rose-600" />
+              </div>
+              <div>
+                <h3 className="font-black text-base text-rose-900">Permintaan Izin Akses Ditolak</h3>
+                <p className="text-xs text-rose-700 mt-1 leading-relaxed">
+                  Instruktur belum memberikan izin akses untuk akun Anda pada modul ini. Anda dapat mencoba mengajukan izin kembali.
+                </p>
+              </div>
+            </div>
+            <button onClick={handleEnroll} disabled={enrolling} className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black text-xs rounded-xl transition-all shadow-md shrink-0">
+              {enrolling ? 'Mengirim...' : 'Ajukan Ulang Izin'}
+            </button>
+          </div>
+        )}
+
+        {role === 'STUDENT' && enrollmentStatus === 'NONE' && (
+          <div className="bg-indigo-50 border-2 border-indigo-200 rounded-3xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-indigo-900 shadow-sm animate-fadeIn">
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 rounded-2xl bg-indigo-100 border border-indigo-300 flex items-center justify-center shrink-0">
+                <Lock className="w-6 h-6 text-indigo-600" />
+              </div>
+              <div>
+                <h3 className="font-black text-base text-indigo-900">Modul Memerlukan Izin Instruktur</h3>
+                <p className="text-xs text-indigo-700 mt-1 leading-relaxed">
+                  Modul ini dibuat oleh instruktur. Silakan kirimkan permintaan izin akses terlebih dahulu agar instruktur dapat menyetujui dan materi dapat dipelajari di menu My Learning.
+                </p>
+              </div>
+            </div>
+            <button onClick={handleEnroll} disabled={enrolling} className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 shrink-0">
+              {enrolling ? 'Mengirim...' : 'Minta Izin Akses →'}
+            </button>
+          </div>
+        )}
 
         {/* Syllabus */}
         <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
