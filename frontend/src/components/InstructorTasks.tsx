@@ -543,9 +543,17 @@ export default function InstructorTasks({ user, activeMenu }: { user: any; activ
                     >
                       <div className="flex justify-between items-start gap-3">
                         <div className="flex items-center gap-3">
-                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-black text-xs flex items-center justify-center uppercase shadow-sm">
-                            {sub.student?.name?.slice(0, 2) || 'ST'}
-                          </div>
+                          {sub.student?.profilePicture ? (
+                            <img
+                              src={sub.student.profilePicture}
+                              alt={sub.student.name}
+                              className="w-10 h-10 rounded-2xl object-cover shrink-0 shadow-sm border border-slate-200 dark:border-slate-800"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 text-white font-black text-xs flex items-center justify-center uppercase shadow-sm">
+                              {sub.student?.name?.slice(0, 2) || 'ST'}
+                            </div>
+                          )}
                           <div>
                             <h4 className="font-extrabold text-slate-800 dark:text-white text-xs">
                               {sub.student?.name}

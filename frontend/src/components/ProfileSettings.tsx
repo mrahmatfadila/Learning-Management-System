@@ -88,6 +88,8 @@ export default function ProfileSettings({ user, setUser }: { user: any, setUser:
         const updatedUser = { ...user, ...data.user };
         setUser(updatedUser);
         localStorage.setItem('lms_user', JSON.stringify(updatedUser));
+        window.dispatchEvent(new Event('storage'));
+        window.dispatchEvent(new CustomEvent('profileUpdated', { detail: updatedUser }));
         setForm({ ...form, password: '' });
         setSaveMsg({ type: 'ok', text: 'Profil berhasil diperbarui!' });
         setTimeout(() => setSaveMsg(null), 3000);

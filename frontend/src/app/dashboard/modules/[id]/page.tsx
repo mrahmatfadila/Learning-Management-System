@@ -1089,9 +1089,17 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                       const isMyReview = currentUser && rev.userId === currentUser.id;
                       return (
                         <div key={rev.id} className="p-5 rounded-3xl bg-slate-50 border border-slate-200/80 hover:border-slate-300 transition-all flex items-start gap-4 shadow-2xs">
-                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-black flex items-center justify-center shrink-0 text-sm shadow-sm">
-                            {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'S'}
-                          </div>
+                          {rev.user?.profilePicture ? (
+                            <img
+                              src={rev.user.profilePicture}
+                              alt={rev.user.name}
+                              className="w-10 h-10 rounded-2xl object-cover shrink-0 shadow-sm border border-slate-200"
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-black flex items-center justify-center shrink-0 text-sm shadow-sm">
+                              {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'S'}
+                            </div>
+                          )}
                           <div className="flex-1 min-w-0">
                             <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
                               <div className="flex items-center gap-2">

@@ -5,7 +5,7 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
   try {
     const modules = await prisma.module.findMany({
       include: {
-        instructor: { select: { id: true, name: true, email: true, role: true } },
+        instructor: { select: { id: true, name: true, email: true, role: true, profilePicture: true } },
         chapters: { select: { id: true, title: true, order: true } },
         lessons: {
           select: { id: true, title: true, type: true, order: true, chapter: true }

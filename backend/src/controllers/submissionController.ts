@@ -33,7 +33,7 @@ export const getSubmissionsByTask = async (req: Request, res: Response): Promise
     const submissions = await prisma.submission.findMany({
       where: { taskId },
       include: {
-        student: { select: { name: true, email: true } }
+        student: { select: { id: true, name: true, email: true, profilePicture: true } }
       },
       orderBy: { submittedAt: 'desc' }
     });

@@ -8,7 +8,7 @@ export const getTasksByModule = async (req: Request, res: Response): Promise<any
       where: { moduleId },
       include: {
         submissions: true,
-        assignedStudents: { select: { id: true, name: true } }
+        assignedStudents: { select: { id: true, name: true, profilePicture: true } }
       },
       orderBy: { createdAt: 'desc' }
     });

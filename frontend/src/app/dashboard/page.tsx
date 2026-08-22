@@ -525,9 +525,17 @@ export default function DashboardPage() {
                           </span>
                           {m.instructor ? (
                             <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[100px]" title={m.instructor.name}>
-                              <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
-                                {m.instructor.name.charAt(0)}
-                              </div>
+                              {m.instructor.profilePicture ? (
+                                <img
+                                  src={m.instructor.profilePicture}
+                                  alt={m.instructor.name}
+                                  className="w-3.5 h-3.5 rounded-full object-cover shrink-0 border border-indigo-200 dark:border-indigo-800"
+                                />
+                              ) : (
+                                <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
+                                  {m.instructor.name.charAt(0)}
+                                </div>
+                              )}
                               <span className="truncate">{m.instructor.name}</span>
                             </div>
                           ) : (
@@ -917,9 +925,17 @@ export default function DashboardPage() {
                             </span>
                             {m.instructor ? (
                               <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[100px]" title={m.instructor.name}>
-                                <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
-                                  {m.instructor.name.charAt(0)}
-                                </div>
+                                {m.instructor.profilePicture ? (
+                                  <img
+                                    src={m.instructor.profilePicture}
+                                    alt={m.instructor.name}
+                                    className="w-3.5 h-3.5 rounded-full object-cover shrink-0 border border-indigo-200 dark:border-indigo-800"
+                                  />
+                                ) : (
+                                  <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
+                                    {m.instructor.name.charAt(0)}
+                                  </div>
+                                )}
                                 <span className="truncate">{m.instructor.name}</span>
                               </div>
                             ) : (
@@ -2674,9 +2690,17 @@ export default function DashboardPage() {
                               {/* Profile info */}
                               <td className="px-6 py-4">
                                 <div className="flex items-center gap-3">
-                                  <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 font-black text-indigo-700 dark:text-indigo-350 text-sm uppercase flex items-center justify-center shrink-0 border border-indigo-150 dark:border-indigo-900/30">
-                                    {s.name ? s.name.substring(0, 2) : 'ST'}
-                                  </div>
+                                  {s.studentProfilePicture || s.profilePicture ? (
+                                    <img
+                                      src={s.studentProfilePicture || s.profilePicture}
+                                      alt={s.name}
+                                      className="w-10 h-10 rounded-xl object-cover shrink-0 border border-indigo-150 dark:border-indigo-900/30"
+                                    />
+                                  ) : (
+                                    <div className="w-10 h-10 rounded-xl bg-indigo-50 dark:bg-indigo-950/40 font-black text-indigo-700 dark:text-indigo-350 text-sm uppercase flex items-center justify-center shrink-0 border border-indigo-150 dark:border-indigo-900/30">
+                                      {s.name ? s.name.substring(0, 2) : 'ST'}
+                                    </div>
+                                  )}
                                   <div className="min-w-0">
                                     <p className="font-extrabold text-slate-800 dark:text-white truncate leading-snug">{s.name}</p>
                                     <p className="text-xs text-slate-400 dark:text-slate-500 font-semibold truncate mt-0.5">{s.email}</p>
@@ -2762,9 +2786,17 @@ export default function DashboardPage() {
                 {/* Modal Header */}
                 <div className="p-6 border-b border-slate-150 dark:border-slate-850 flex items-start justify-between bg-slate-50/50 dark:bg-slate-950/40 shrink-0">
                   <div className="flex items-center gap-4">
-                    <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 font-black text-lg uppercase flex items-center justify-center border border-indigo-200/50 dark:border-indigo-900/30 shadow-sm">
-                      {selectedProgressStudent.name ? selectedProgressStudent.name.substring(0, 2) : 'ST'}
-                    </div>
+                    {selectedProgressStudent.studentProfilePicture || selectedProgressStudent.profilePicture ? (
+                      <img
+                        src={selectedProgressStudent.studentProfilePicture || selectedProgressStudent.profilePicture}
+                        alt={selectedProgressStudent.name}
+                        className="w-12 h-12 rounded-2xl object-cover border border-indigo-200/50 dark:border-indigo-900/30 shadow-sm shrink-0"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-2xl bg-indigo-100 dark:bg-indigo-950/30 text-indigo-700 dark:text-indigo-400 font-black text-lg uppercase flex items-center justify-center border border-indigo-200/50 dark:border-indigo-900/30 shadow-sm">
+                        {selectedProgressStudent.name ? selectedProgressStudent.name.substring(0, 2) : 'ST'}
+                      </div>
+                    )}
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
                         <h2 className="text-lg font-black text-slate-800 dark:text-white leading-snug">{selectedProgressStudent.name}</h2>

@@ -1091,9 +1091,17 @@ export default function UsersPage() {
                           </td>
                           <td className="p-4">
                             <div className="flex items-center gap-3">
-                              <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${getAvatarGradient(u.name)} text-white flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-sm`}>
-                                {u.name?.slice(0, 2) || 'US'}
-                              </div>
+                              {u.profilePicture ? (
+                                <img
+                                  src={u.profilePicture}
+                                  alt={u.name}
+                                  className="w-9 h-9 rounded-xl object-cover shrink-0 shadow-sm border border-slate-200 dark:border-slate-800"
+                                />
+                              ) : (
+                                <div className={`w-9 h-9 rounded-xl bg-gradient-to-br ${getAvatarGradient(u.name)} text-white flex items-center justify-center font-black text-xs uppercase shrink-0 shadow-sm`}>
+                                  {u.name?.slice(0, 2) || 'US'}
+                                </div>
+                              )}
                               <div className="min-w-0">
                                 <div className="font-extrabold text-slate-800 dark:text-white text-xs truncate flex items-center gap-1.5">
                                   {u.name}
@@ -1222,9 +1230,17 @@ export default function UsersPage() {
                             onChange={() => handleToggleSelect(u.id)}
                             className="rounded cursor-pointer"
                           />
-                          <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${getAvatarGradient(u.name)} text-white flex items-center justify-center font-black text-sm uppercase shrink-0 shadow-md`}>
-                            {u.name?.slice(0, 2) || 'US'}
-                          </div>
+                          {u.profilePicture ? (
+                            <img
+                              src={u.profilePicture}
+                              alt={u.name}
+                              className="w-11 h-11 rounded-2xl object-cover shrink-0 shadow-md border border-slate-200 dark:border-slate-800"
+                            />
+                          ) : (
+                            <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${getAvatarGradient(u.name)} text-white flex items-center justify-center font-black text-sm uppercase shrink-0 shadow-md`}>
+                              {u.name?.slice(0, 2) || 'US'}
+                            </div>
+                          )}
                           <div className="min-w-0">
                             <h3 className="font-black text-slate-800 dark:text-white text-xs truncate flex items-center gap-1">
                               {u.name}
@@ -1559,9 +1575,17 @@ export default function UsersPage() {
           <div className="bg-white dark:bg-[#0f111a] rounded-3xl shadow-2xl w-full max-w-lg overflow-hidden border border-slate-100 dark:border-slate-800 animate-scaleIn">
             <div className="p-6 pb-4 border-b border-slate-100 dark:border-slate-800 flex items-start justify-between bg-slate-50/50 dark:bg-slate-950/40">
               <div className="flex items-center gap-3">
-                <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${getAvatarGradient(detailUser.name)} text-white font-black text-base flex items-center justify-center uppercase shadow-md`}>
-                  {detailUser.name?.slice(0, 2) || 'US'}
-                </div>
+                {detailUser.profilePicture ? (
+                  <img
+                    src={detailUser.profilePicture}
+                    alt={detailUser.name}
+                    className="w-12 h-12 rounded-2xl object-cover shrink-0 shadow-md border border-slate-200 dark:border-slate-800"
+                  />
+                ) : (
+                  <div className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${getAvatarGradient(detailUser.name)} text-white font-black text-base flex items-center justify-center uppercase shadow-md`}>
+                    {detailUser.name?.slice(0, 2) || 'US'}
+                  </div>
+                )}
                 <div>
                   <h2 className="text-base font-black text-slate-800 dark:text-white">{detailUser.name}</h2>
                   <p className="text-xs text-slate-400">{detailUser.email}</p>

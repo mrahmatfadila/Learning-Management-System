@@ -101,7 +101,7 @@ async function main() {
   // 2. SEED COURSES & LESSONS FROM COURSESDATA
   for (const course of coursesData) {
     const primaryId = moduleIdMap[course.id] || course.id;
-    const instructorId = course.id === 'php' || course.id === 'mysql' || course.id === 'cisco' ? raihanRahmat.id : bagusRahmat.id;
+    const instructorId = course.id === 'php' || course.id === 'mysql' || course.id === 'cisco' ? raihanRahmat.id : devgrowAcademy.id;
     const category = categoryMap[course.id] || 'Programming';
 
     // Create primary module
@@ -222,7 +222,7 @@ async function main() {
         title: am.title,
         category: am.category,
         description: am.description,
-        instructorId: bagusRahmat.id,
+        instructorId: devgrowAcademy.id,
         isVerified: true
       }
     });

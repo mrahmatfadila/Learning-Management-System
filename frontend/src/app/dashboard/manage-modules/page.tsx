@@ -722,9 +722,17 @@ export default function ManageModulesPage() {
                 <div key={ins.id} className="bg-white dark:bg-[#0c0e18] border border-slate-200 dark:border-slate-800 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all flex flex-col justify-between">
                   <div>
                     <div className="flex items-center gap-3 mb-4">
-                      <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center uppercase shadow-md shrink-0">
-                        {ins.name?.slice(0, 2) || 'IN'}
-                      </div>
+                      {ins.profilePicture ? (
+                        <img
+                          src={ins.profilePicture}
+                          alt={ins.name}
+                          className="w-12 h-12 rounded-2xl object-cover shadow-md shrink-0 border border-slate-200 dark:border-slate-800"
+                        />
+                      ) : (
+                        <div className="w-12 h-12 rounded-2xl bg-indigo-600 text-white font-black text-sm flex items-center justify-center uppercase shadow-md shrink-0">
+                          {ins.name?.slice(0, 2) || 'IN'}
+                        </div>
+                      )}
                       <div className="min-w-0">
                         <h3 className="font-extrabold text-slate-800 dark:text-white text-sm truncate">{ins.name}</h3>
                         <p className="text-xs text-slate-400 dark:text-slate-500 truncate">{ins.email}</p>
@@ -890,9 +898,17 @@ export default function ManageModulesPage() {
                 <div key={enr.id} className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm p-5 flex flex-col sm:flex-row sm:items-center gap-4">
                   {/* Student info */}
                   <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="w-11 h-11 rounded-xl bg-indigo-100 dark:bg-indigo-950/40 flex items-center justify-center font-black text-indigo-700 dark:text-indigo-300 text-sm shrink-0 uppercase">
-                      {enr.studentName?.slice(0, 2) || 'ST'}
-                    </div>
+                    {enr.studentProfilePicture ? (
+                      <img
+                        src={enr.studentProfilePicture}
+                        alt={enr.studentName}
+                        className="w-11 h-11 rounded-xl object-cover shrink-0 shadow-sm border border-slate-200 dark:border-slate-800"
+                      />
+                    ) : (
+                      <div className="w-11 h-11 rounded-xl bg-indigo-100 dark:bg-indigo-950/40 flex items-center justify-center font-black text-indigo-700 dark:text-indigo-300 text-sm shrink-0 uppercase">
+                        {enr.studentName?.slice(0, 2) || 'ST'}
+                      </div>
+                    )}
                     <div className="min-w-0">
                       <div className="font-bold text-slate-800 dark:text-slate-200 text-sm truncate">{enr.studentName}</div>
                       <div className="flex items-center gap-1 text-xs text-slate-500 dark:text-slate-400 truncate">
@@ -1214,9 +1230,17 @@ export default function ManageModulesPage() {
                           </span>
                           {mod.instructor ? (
                             <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[130px]" title={mod.instructor.name}>
-                              <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
-                                {mod.instructor.name.charAt(0)}
-                              </div>
+                              {mod.instructor.profilePicture ? (
+                                <img
+                                  src={mod.instructor.profilePicture}
+                                  alt={mod.instructor.name}
+                                  className="w-3.5 h-3.5 rounded-full object-cover shrink-0 border border-indigo-200 dark:border-indigo-800"
+                                />
+                              ) : (
+                                <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
+                                  {mod.instructor.name.charAt(0)}
+                                </div>
+                              )}
                               <span className="truncate">👤 {mod.instructor.name}</span>
                             </div>
                           ) : (

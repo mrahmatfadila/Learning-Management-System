@@ -164,9 +164,9 @@ export const getAllEnrollmentsByInstructor = async (req: Request, res: Response)
 
     const result = await pool.query(
       `SELECT e.id, e."studentId", e."moduleId", e.status, e.note, e."enrolledAt", e."updatedAt",
-              u.name as "studentName", u.email as "studentEmail",
+              u.name as "studentName", u.email as "studentEmail", u."profilePicture" as "studentProfilePicture",
               m.title as "moduleTitle", m.category as "moduleCategory",
-              inst.name as "instructorName"
+              inst.name as "instructorName", inst."profilePicture" as "instructorProfilePicture"
        FROM "Enrollment" e
        JOIN "User" u ON u.id = e."studentId"
        JOIN "Module" m ON m.id = e."moduleId"
@@ -187,9 +187,9 @@ export const getPendingEnrollments = async (req: Request, res: Response): Promis
   try {
     const { instructorId } = req.query;
     let query = `SELECT e.id, e."studentId", e."moduleId", e.status, e.note, e."enrolledAt",
-              u.name as "studentName", u.email as "studentEmail",
+              u.name as "studentName", u.email as "studentEmail", u."profilePicture" as "studentProfilePicture",
               m.title as "moduleTitle", m.category as "moduleCategory",
-              inst.name as "instructorName"
+              inst.name as "instructorName", inst."profilePicture" as "instructorProfilePicture"
        FROM "Enrollment" e
        JOIN "User" u ON u.id = e."studentId"
        JOIN "Module" m ON m.id = e."moduleId"
@@ -255,7 +255,7 @@ export const getStudentsByModule = async (req: Request, res: Response): Promise<
   try {
     const { moduleId } = req.params;
     const result = await pool.query(
-      `SELECT u.id, u.name, u.email, u."createdAt", e.progress, e.status, e."enrolledAt"
+      `SELECT u.id, u.name, u.email, u."profilePicture", u."createdAt", e.progress, e.status, e."enrolledAt"
        FROM "Enrollment" e
        JOIN "User" u ON u.id = e."studentId"
        WHERE e."moduleId" = $1
@@ -274,7 +274,7 @@ export const getStudentsByInstructor = async (req: Request, res: Response): Prom
   try {
     const { instructorId } = req.params;
     const result = await pool.query(
-      `SELECT e.id as "enrollmentId", e."studentId", u.name, u.email, u."createdAt",
+      `SELECT e.id as "enrollmentId", e."studentId", u.name, u.email, u."profilePicture" as "studentProfilePicture", u."createdAt",
               e.progress, e.status, e."enrolledAt",
               e."moduleId", m.title as "moduleTitle", m.category as "moduleCategory"
        FROM "Enrollment" e
