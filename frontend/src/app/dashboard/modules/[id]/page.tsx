@@ -2,7 +2,7 @@
 
 import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star, Sparkles, GraduationCap, Award, Subtitles, Infinity, Send } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useState, use } from 'react';
+import { useEffect, useState, use, useRef } from 'react';
 import { coursesData } from '@/data/lessonData';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import { useRouter } from 'next/navigation';
@@ -36,6 +36,20 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const [isSubmittingReview, setIsSubmittingReview] = useState(false);
   const [reviewHoverStar, setReviewHoverStar] = useState<number>(0);
   const [isEditingReview, setIsEditingReview] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' | 'info' }>({
+    show: false,
+    message: '',
+    type: 'success'
+  });
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ show: true, message, type });
+    toastTimerRef.current = setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 3500);
+  };
 
   const fetchReviews = async () => {
     try {
@@ -51,8 +65,8 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
   const handleSubmitReview = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!currentUser) return alert('Silakan login terlebih dahulu untuk memberikan ulasan.');
-    if (!userComment.trim()) return alert('Silakan tuliskan komentar ulasan Anda.');
+    if (!currentUser) return triggerToast('Silakan login terlebih dahulu untuk memberikan ulasan.', 'error');
+    if (!userComment.trim()) return triggerToast('Silakan tuliskan komentar ulasan Anda.', 'error');
     setIsSubmittingReview(true);
     try {
       const res = await fetch(`http://localhost:5000/api/modules/${id}/reviews`, {
@@ -67,14 +81,14 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
       if (res.ok) {
         setIsEditingReview(false);
         await fetchReviews();
-        alert(isEditingReview ? 'Ulasan Anda telah berhasil diperbarui!' : 'Terima kasih! Ulasan Anda telah berhasil disimpan.');
+        triggerToast(isEditingReview ? 'Ulasan Anda telah berhasil diperbarui!' : 'Ulasan Anda telah berhasil disimpan!', 'success');
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Gagal menyimpan ulasan.');
+        triggerToast(data.error || 'Gagal menyimpan ulasan.', 'error');
       }
     } catch (err) {
       console.error(err);
-      alert('Terjadi kesalahan saat mengirim ulasan.');
+      triggerToast('Terjadi kesalahan saat mengirim ulasan.', 'error');
     } finally {
       setIsSubmittingReview(false);
     }
@@ -89,13 +103,13 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         setUserComment('');
         setUserRating(5);
         await fetchReviews();
-        alert('Ulasan Anda telah berhasil dihapus.');
+        triggerToast('Ulasan Anda telah berhasil dihapus.', 'info');
       } else {
-        alert('Gagal menghapus ulasan.');
+        triggerToast('Gagal menghapus ulasan.', 'error');
       }
     } catch (err) {
       console.error(err);
-      alert('Terjadi kesalahan saat menghapus ulasan.');
+      triggerToast('Terjadi kesalahan saat menghapus ulasan.', 'error');
     }
   };
 
@@ -1508,6 +1522,51 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 Mengerti, Terima Kasih 👍
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Toast Notification (Pojok Kanan Bawah) ── */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce-short">
+          <div className={`flex items-center gap-3.5 px-5 py-4 rounded-2xl shadow-2xl border backdrop-blur-xl transition-all duration-300 transform translate-y-0 ${
+            toast.type === 'success'
+              ? 'bg-slate-900/95 text-white border-emerald-500/40 shadow-emerald-950/40'
+              : toast.type === 'error'
+                ? 'bg-slate-900/95 text-white border-rose-500/40 shadow-rose-950/40'
+                : 'bg-slate-900/95 text-white border-indigo-500/40 shadow-indigo-950/40'
+          }`}>
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+              toast.type === 'success'
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                : toast.type === 'error'
+                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                  : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+            }`}>
+              {toast.type === 'success' ? (
+                <CheckCircle className="w-5 h-5" />
+              ) : toast.type === 'error' ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Sparkles className="w-5 h-5" />
+              )}
+            </div>
+
+            <div className="pr-2">
+              <h5 className="text-xs font-bold text-slate-200">
+                {toast.type === 'success' ? 'Berhasil!' : toast.type === 'error' ? 'Pemberitahuan' : 'Informasi'}
+              </h5>
+              <p className="text-sm font-semibold text-white">
+                {toast.message}
+              </p>
+            </div>
+
+            <button
+              onClick={() => setToast(prev => ({ ...prev, show: false }))}
+              className="p-1 text-slate-400 hover:text-white rounded-lg transition-colors ml-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}

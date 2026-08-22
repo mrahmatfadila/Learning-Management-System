@@ -174,6 +174,20 @@ export default function LessonPage() {
   const [moduleUserComment, setModuleUserComment] = useState('');
   const [isSubmittingModuleReview, setIsSubmittingModuleReview] = useState(false);
   const [moduleReviewSuccess, setModuleReviewSuccess] = useState(false);
+  const [toast, setToast] = useState<{ show: boolean; message: string; type: 'success' | 'error' | 'info' }>({
+    show: false,
+    message: '',
+    type: 'success'
+  });
+  const toastTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const triggerToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
+    if (toastTimerRef.current) clearTimeout(toastTimerRef.current);
+    setToast({ show: true, message, type });
+    toastTimerRef.current = setTimeout(() => {
+      setToast(prev => ({ ...prev, show: false }));
+    }, 3500);
+  };
 
   const fetchExistingReview = async () => {
     try {
@@ -193,9 +207,9 @@ export default function LessonPage() {
   const handlePostModuleReview = async (e: React.FormEvent) => {
     e.preventDefault();
     const stored = localStorage.getItem('lms_user');
-    if (!stored) return alert('Silakan login terlebih dahulu.');
+    if (!stored) return triggerToast('Silakan login terlebih dahulu.', 'error');
     const user = JSON.parse(stored);
-    if (!moduleUserComment.trim()) return alert('Silakan tuliskan komentar ulasan Anda.');
+    if (!moduleUserComment.trim()) return triggerToast('Silakan tuliskan komentar ulasan Anda.', 'error');
 
     setIsSubmittingModuleReview(true);
     try {
@@ -212,16 +226,17 @@ export default function LessonPage() {
         setModuleReviewSuccess(true);
         setIsEditingModuleReview(false);
         await fetchExistingReview();
+        triggerToast(isEditingModuleReview ? 'Ulasan Anda telah berhasil diperbarui!' : 'Ulasan Anda telah berhasil disimpan!', 'success');
         setTimeout(() => {
           setIsReviewModalOpen(false);
           setModuleReviewSuccess(false);
-        }, 1500);
+        }, 1200);
       } else {
         const data = await res.json().catch(() => ({}));
-        alert(data.error || 'Gagal menyimpan ulasan.');
+        triggerToast(data.error || 'Gagal menyimpan ulasan.', 'error');
       }
     } catch (err) {
-      alert('Terjadi kesalahan saat mengirim ulasan.');
+      triggerToast('Terjadi kesalahan saat mengirim ulasan.', 'error');
     } finally {
       setIsSubmittingModuleReview(false);
     }
@@ -237,12 +252,12 @@ export default function LessonPage() {
         setIsEditingModuleReview(false);
         setModuleUserComment('');
         setModuleUserRating(5);
-        alert('Ulasan Anda telah berhasil dihapus.');
+        triggerToast('Ulasan Anda telah berhasil dihapus.', 'info');
       } else {
-        alert('Gagal menghapus ulasan.');
+        triggerToast('Gagal menghapus ulasan.', 'error');
       }
     } catch {
-      alert('Terjadi kesalahan saat menghapus ulasan.');
+      triggerToast('Terjadi kesalahan saat menghapus ulasan.', 'error');
     }
   };
 
@@ -1542,6 +1557,51 @@ export default function LessonPage() {
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {/* ── Toast Notification (Pojok Kanan Bawah) ── */}
+      {toast.show && (
+        <div className="fixed bottom-6 right-6 z-50 animate-bounce-short">
+          <div className={`flex items-center gap-3.5 px-5 py-4 rounded-2xl shadow-2xl border backdrop-blur-xl transition-all duration-300 transform translate-y-0 ${
+            toast.type === 'success'
+              ? 'bg-slate-900/95 text-white border-emerald-500/40 shadow-emerald-950/40'
+              : toast.type === 'error'
+                ? 'bg-slate-900/95 text-white border-rose-500/40 shadow-rose-950/40'
+                : 'bg-slate-900/95 text-white border-indigo-500/40 shadow-indigo-950/40'
+          }`}>
+            <div className={`w-9 h-9 rounded-xl flex items-center justify-center shrink-0 ${
+              toast.type === 'success'
+                ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
+                : toast.type === 'error'
+                  ? 'bg-rose-500/20 text-rose-400 border border-rose-500/30'
+                  : 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30'
+            }`}>
+              {toast.type === 'success' ? (
+                <CheckCircle className="w-5 h-5" />
+              ) : toast.type === 'error' ? (
+                <X className="w-5 h-5" />
+              ) : (
+                <Sparkles className="w-5 h-5" />
+              )}
+            </div>
+
+            <div className="pr-2">
+              <h5 className="text-xs font-bold text-slate-200">
+                {toast.type === 'success' ? 'Berhasil!' : toast.type === 'error' ? 'Pemberitahuan' : 'Informasi'}
+              </h5>
+              <p className="text-sm font-semibold text-white">
+                {toast.message}
+              </p>
+            </div>
+
+            <button
+              onClick={() => setToast(prev => ({ ...prev, show: false }))}
+              className="p-1 text-slate-400 hover:text-white rounded-lg transition-colors ml-1"
+            >
+              <X className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}
