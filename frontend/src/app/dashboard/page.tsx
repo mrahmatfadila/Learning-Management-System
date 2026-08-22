@@ -10,6 +10,7 @@ import OfflineSchedule from '@/components/OfflineSchedule';
 import Discussions from '@/components/Discussions';
 import QnaForum from '@/components/QnaForum';
 import QuizizzModule from '@/components/QuizizzModule';
+import DevGrowLoader from '@/components/DevGrowLoader';
 import {
   BookOpen, Users, TrendingUp, Award, Clock, CheckCircle,
   BarChart2, Zap, ArrowRight, Star, Activity, LogOut, Settings,
@@ -3283,9 +3284,11 @@ export default function DashboardPage() {
         <DashboardSidebar />
         <div className={`flex-1 overflow-hidden ${(activeMenu === 'Discussions' || activeMenu === 'Diskusi & QA' || activeMenu === 'Q&A Forum') ? 'flex flex-col' : 'overflow-y-auto pb-28 md:pb-0'}`}>
           {loading ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="w-10 h-10 border-4 border-indigo-200 border-t-indigo-600 rounded-full animate-spin" />
-            </div>
+            <DevGrowLoader
+              message="Memuat konten dashboard..."
+              subtitle="Menyiapkan data kursus & progress belajar Anda"
+              fullScreen={false}
+            />
           ) : (
             renderContent()
           )}
