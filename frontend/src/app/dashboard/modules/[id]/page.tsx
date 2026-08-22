@@ -904,31 +904,11 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
           </div>
         )}
 
-        {/* ── 2-COLUMN LAYOUT (LEFT: Syllabus + Reviews, RIGHT: Info + Action CTA) ── */}
+        {/* ── 2-COLUMN LAYOUT (LEFT: Syllabus, RIGHT: What you'll learn + Rating) ── */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
-          {/* ── LEFT COLUMN: 8 COLS ── */}
+          {/* ── LEFT COLUMN: 8 COLS (SYLLABUS) ── */}
           <div className="lg:col-span-8 space-y-8">
-            {/* SECTION 1: WHAT YOU'LL LEARN */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-              <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
-                <Sparkles className="w-5 h-5 text-indigo-600" />
-                Yang Akan Anda Pelajari (What you&apos;ll learn)
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {learningPoints.map((point, idx) => (
-                  <div key={idx} className="flex items-start gap-3">
-                    <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
-                      ✓
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
-                      {point}
-                    </p>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* SECTION 2: SYLLABUS */}
+            {/* SECTION 1: SYLLABUS */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <SyllabusAccordion
                 syllabus={syllabus}
@@ -941,7 +921,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
               />
             </div>
 
-            {/* SECTION 3: RATINGS & REVIEWS */}
+            {/* SECTION 2: RATINGS & REVIEWS FEED */}
             <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
               {/* Header & Rating Breakdown */}
               <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
@@ -1004,115 +984,6 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                   </div>
                 );
               })()}
-
-              {/* Add Review Form (For Students) */}
-              {role === 'STUDENT' && (
-                <div className="p-6 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 rounded-3xl border-2 border-indigo-100 shadow-sm space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                        <Sparkles className="w-4 h-4 text-indigo-600" />
-                        Beri Rating &amp; Komentar Modul Ini
-                      </h4>
-                      <p className="text-xs text-slate-500 font-medium mt-0.5">
-                        Bagikan pengalaman belajar Anda untuk membantu sesama siswa dan instruktur.
-                      </p>
-                    </div>
-                    {enrollmentStatus !== 'APPROVED' && (
-                      <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">
-                        Pratinjau Siswa
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Star Rating Interactive Selector */}
-                  <div className="p-4 bg-white rounded-2xl border border-indigo-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs font-bold text-slate-700">Pilih Skor Rating:</span>
-                      <div className="flex items-center gap-1">
-                        {[1, 2, 3, 4, 5].map((st) => (
-                          <button
-                            key={st}
-                            type="button"
-                            onMouseEnter={() => setReviewHoverStar(st)}
-                            onMouseLeave={() => setReviewHoverStar(0)}
-                            onClick={() => setUserRating(st)}
-                            className="p-1 hover:scale-125 transition-transform"
-                          >
-                            <Star className={`w-7 h-7 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-200'}`} />
-                          </button>
-                        ))}
-                      </div>
-                    </div>
-                    <span className="text-xs font-black px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl">
-                      {userRating === 5 ? '⭐⭐⭐⭐⭐ Luar Biasa! Sangat Direkomendasikan' :
-                       userRating === 4 ? '⭐⭐⭐⭐ Bagus & Sangat Bermanfaat' :
-                       userRating === 3 ? '⭐⭐⭐ Cukup Baik' :
-                       userRating === 2 ? '⭐⭐ Kurang Lengkap' : '⭐ Perlu Perbaikan'}
-                    </span>
-                  </div>
-
-                  {/* Quick Tags / Chips */}
-                  <div>
-                    <span className="text-[11px] font-bold text-slate-500 mb-2 block">Pilih kata kunci cepat:</span>
-                    <div className="flex flex-wrap gap-2">
-                      {[
-                        'Materi Sangat Jelas 💡',
-                        'Praktik Live Code Keren 🚀',
-                        'Mudah Dipahami Pemula 👍',
-                        'Struktur Bab Rapi 📚',
-                        'Sangat Direkomendasikan ⭐'
-                      ].map(tag => (
-                        <button
-                          key={tag}
-                          type="button"
-                          onClick={() => {
-                            if (!userComment.includes(tag)) {
-                              setUserComment(prev => prev ? `${prev} ${tag}` : tag);
-                            }
-                          }}
-                          className="px-3 py-1 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 text-xs font-semibold rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xs"
-                        >
-                          + {tag}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Comment Textarea */}
-                  <form onSubmit={handleSubmitReview} className="space-y-3">
-                    <textarea
-                      value={userComment}
-                      onChange={(e) => setUserComment(e.target.value)}
-                      placeholder="Tuliskan pengalaman belajar Anda, materi mana yang paling berkesan, atau saran pengembangan kursus..."
-                      rows={3}
-                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium bg-white shadow-2xs leading-relaxed"
-                    />
-                    <div className="flex items-center justify-between">
-                      <span className="text-[11px] text-slate-400 font-medium">
-                        {userComment.length} karakter
-                      </span>
-                      <button
-                        type="submit"
-                        disabled={isSubmittingReview || !userComment.trim()}
-                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 hover:scale-[1.02] flex items-center gap-2"
-                      >
-                        {isSubmittingReview ? (
-                          <>
-                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                            <span>Mengirim Ulasan...</span>
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-3.5 h-3.5" />
-                            <span>Kirim Ulasan &amp; Rating</span>
-                          </>
-                        )}
-                      </button>
-                    </div>
-                  </form>
-                </div>
-              )}
 
               {/* Reviews Feed List */}
               <div className="space-y-4 pt-2">
@@ -1180,7 +1051,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
           {/* ── RIGHT COLUMN: 4 COLS (STICKY SIDEBAR) ── */}
           <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
-            {/* Action CTA & Progress Box */}
+            {/* Status & Enrollment Box */}
             <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-4">
               <h3 className="text-base font-black text-slate-800">Status Pembelajaran</h3>
               
@@ -1196,7 +1067,6 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 </div>
               )}
 
-              {/* Completed Badge */}
               {progressPct >= 100 && (
                 <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-black rounded-2xl text-xs shadow-sm">
                   <Award className="w-4 h-4 text-emerald-600" />
@@ -1211,33 +1081,129 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 </button>
               )}
 
-              {enrollmentStatus === 'PENDING' && (
-                <div className="w-full px-5 py-3.5 bg-amber-50 border border-amber-200 text-amber-800 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 text-center">
-                  <Clock className="w-4 h-4 animate-spin shrink-0 text-amber-600" /> Menunggu Persetujuan Instruktur
-                </div>
-              )}
-
               {enrollmentStatus === 'APPROVED' && (
                 <button onClick={handleStart} className="w-full px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-600/20 hover:scale-[1.02] flex items-center justify-center gap-2 text-sm">
                   <BookOpen className="w-4 h-4 text-white" />
                   {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar Sekarang →'}
                 </button>
               )}
-
-              {enrollmentStatus === 'REJECTED' && (
-                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-6 py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md">
-                  ❌ Ditolak · Ajukan Ulang
-                </button>
-              )}
             </div>
 
-            {/* SECTION 2: THIS COURSE INCLUDES */}
+            {/* WHAT YOU'LL LEARN */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm">
+              <h3 className="text-base font-black text-slate-800 mb-5 flex items-center gap-2.5">
+                <Sparkles className="w-5 h-5 text-indigo-600" />
+                Yang Akan Anda Pelajari
+              </h3>
+              <div className="space-y-4">
+                {learningPoints.map((point, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
+                      ✓
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                      {point}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* ADD REVIEW FORM (IN SIDEBAR) */}
+            {role === 'STUDENT' && (
+              <div className="p-6 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 rounded-3xl border-2 border-indigo-100 shadow-sm space-y-4">
+                <div className="flex items-center justify-between">
+                  <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-indigo-600" />
+                    Beri Rating &amp; Komentar
+                  </h4>
+                  {enrollmentStatus !== 'APPROVED' && (
+                    <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                      Pratinjau
+                    </span>
+                  )}
+                </div>
+
+                <div className="p-3 bg-white rounded-2xl border border-indigo-100 flex flex-col items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    {[1, 2, 3, 4, 5].map((st) => (
+                      <button
+                        key={st}
+                        type="button"
+                        onMouseEnter={() => setReviewHoverStar(st)}
+                        onMouseLeave={() => setReviewHoverStar(0)}
+                        onClick={() => setUserRating(st)}
+                        className="p-1 hover:scale-125 transition-transform"
+                      >
+                        <Star className={`w-6 h-6 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-200'}`} />
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-[11px] font-black text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
+                    {userRating === 5 ? '⭐⭐⭐⭐⭐ Sangat Puas!' :
+                     userRating === 4 ? '⭐⭐⭐⭐ Bagus & Jelas' :
+                     userRating === 3 ? '⭐⭐⭐ Cukup Baik' :
+                     userRating === 2 ? '⭐⭐ Kurang Lengkap' : '⭐ Perlu Perbaikan'}
+                  </span>
+                </div>
+
+                {/* Quick Tags */}
+                <div>
+                  <span className="text-[10px] font-bold text-slate-500 mb-1.5 block">Kata kunci cepat:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      'Materi Jelas 💡',
+                      'Live Code Keren 🚀',
+                      'Mudah Dipahami 👍',
+                      'Rekomendasi ⭐'
+                    ].map(tag => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          if (!userComment.includes(tag)) {
+                            setUserComment(prev => prev ? `${prev} ${tag}` : tag);
+                          }
+                        }}
+                        className="px-2.5 py-1 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 text-[10px] font-semibold rounded-full transition-all hover:scale-105"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <form onSubmit={handleSubmitReview} className="space-y-3">
+                  <textarea
+                    value={userComment}
+                    onChange={(e) => setUserComment(e.target.value)}
+                    placeholder="Tuliskan pengalaman belajar Anda di sini..."
+                    rows={2}
+                    className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500/20 font-medium bg-white leading-relaxed"
+                  />
+                  <button
+                    type="submit"
+                    disabled={isSubmittingReview || !userComment.trim()}
+                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                  >
+                    {isSubmittingReview ? 'Mengirim...' : (
+                      <>
+                        <Send className="w-3.5 h-3.5" />
+                        <span>Kirim Ulasan &amp; Rating</span>
+                      </>
+                    )}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* THIS COURSE INCLUDES */}
             <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
               <h3 className="text-base font-black text-slate-800 mb-4 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-indigo-600" />
                 Modul Ini Mencakup:
               </h3>
-              <div className="space-y-3.5 text-xs sm:text-sm font-semibold text-slate-700">
+              <div className="space-y-3.5 text-xs font-semibold text-slate-700">
                 {videoLessonsCount > 0 ? (
                   <div className="flex items-center gap-3">
                     <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
@@ -1246,18 +1212,18 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 ) : (
                   <div className="flex items-center gap-3">
                     <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                    <span>{totalLessonsCount} materi interaktif &amp; Live Code Playground</span>
+                    <span>{totalLessonsCount} materi interaktif &amp; Live Code</span>
                   </div>
                 )}
 
                 <div className="flex items-center gap-3">
                   <FileText className="w-4 h-4 text-blue-500 shrink-0" />
-                  <span>{articleLessonsCount > 0 ? articleLessonsCount : totalLessonsCount} artikel &amp; dokumentasi terstruktur</span>
+                  <span>{articleLessonsCount > 0 ? articleLessonsCount : totalLessonsCount} artikel &amp; dokumentasi</span>
                 </div>
 
                 <div className="flex items-center gap-3">
                   <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                  <span>{tasksCount} tugas praktek &amp; proyek hands-on</span>
+                  <span>{tasksCount} tugas praktek &amp; hands-on</span>
                 </div>
 
                 <div className="flex items-center gap-3">
@@ -1282,7 +1248,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
               </div>
             </div>
 
-            {/* Quality Guarantee Box */}
+            {/* QUALITY GUARANTEE */}
             <div className="bg-indigo-50/70 border border-indigo-100 rounded-3xl p-5 text-xs text-indigo-900 space-y-2">
               <div className="font-bold flex items-center gap-1.5 text-indigo-700">
                 <Sparkles className="w-4 h-4" /> Jaminan Kualitas DevGrow
