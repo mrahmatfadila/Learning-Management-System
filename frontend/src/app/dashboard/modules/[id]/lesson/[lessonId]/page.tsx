@@ -7,7 +7,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef, Suspense } from 'react';
-import { useParams } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import { lessons, coursesData } from '@/data/lessonData';
 import dynamic from 'next/dynamic';
 
@@ -105,6 +105,7 @@ const colorMap: Record<string, { main: string; bg: string; bgLight: string; bord
 };
 
 export default function LessonPage() {
+  const router = useRouter();
   const params = useParams();
   const id = params.id as string;
   const lessonId = params.lessonId as string;
@@ -457,8 +458,23 @@ export default function LessonPage() {
 
   const isCurrentLessonDone = effectiveCompletedLessons.has(lessonId);
 
+  // Helper to find chapter ID for any lesson ID or slug
+  const findChapterForLesson = (lid: string) => {
+    const cleaned = (lid || '').replace(/^html-lesson-/, '').replace(/---.*$/, '');
+    const found = sidebarModules.find((bab: any) => 
+      bab.lessons?.some((l: any) => l.id === lid || l.id === cleaned || l.id === `html-${cleaned}`)
+    );
+    return found?.id || sidebarModules[0]?.id;
+  };
+
+  const activeChapter = findChapterForLesson(lessonId);
+  const nextLessonId = allLessons[currentIdx + 1]?.id || lessonData?.nextPath;
+  const prevLessonId = allLessons[currentIdx - 1]?.id || lessonData?.prevPath;
+
   const handleCompleteLesson = () => {
     const updated = new Set([...completedLessons, lessonId]);
+    const cleaned = (lessonId || '').replace(/^html-lesson-/, '').replace(/---.*$/, '');
+    if (cleaned) updated.add(cleaned);
     setCompletedLessons(updated);
     localStorage.setItem(`progress_${id}`, JSON.stringify([...updated]));
     // Sync progress % to backend enrollment
@@ -476,6 +492,10 @@ export default function LessonPage() {
         }
       } catch {}
     }
+
+    if (nextLessonId) {
+      router.push(`/dashboard/modules/${id}/lesson/${nextLessonId}`);
+    }
   };
 
 
@@ -492,17 +512,22 @@ export default function LessonPage() {
   const [aiInput, setAiInput] = useState('');
   const [aiLoading, setAiLoading] = useState(false);
   const [aiMessages, setAiMessages] = useState<{ role: 'user' | 'ai'; text: string }[]>([
-    { role: 'ai', text: `Halo! Saya AI Assistant DevGrow ??\n\nSiap bantu kamu belajar ${lessonData?.title || 'HTML'}. Tanya apa saja!` },
+    { role: 'ai', text: `Halo! Saya AI Assistant DevGrow 👋\n\nSiap bantu kamu belajar ${lessonData?.title || 'HTML'}. Tanya apa saja!` },
   ]);
-  const activeChapter = sidebarModules.find((bab: any) => bab.lessons.some((l: any) => l.id === lessonId))?.id;
-  const [expandedBab, setExpandedBab] = useState<string[]>(activeChapter ? [activeChapter] : []);
+
+  // Keep all opened chapters open without closing during navigation
+  const [expandedBab, setExpandedBab] = useState<string[]>([]);
   const aiBottom = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     setUserCode(lessonData?.code || '');
     userCodeRef.current = lessonData?.code || '';
     setQuizAnswered({});
-    if (activeChapter) setExpandedBab([activeChapter]);
+    
+    // Ensure the current lesson's chapter is expanded in the sidebar
+    if (activeChapter) {
+      setExpandedBab(prev => prev.includes(activeChapter) ? prev : [...prev, activeChapter]);
+    }
 
     if (id === 'php' && lessonData?.code) {
       setLiveRender('');
@@ -644,7 +669,9 @@ export default function LessonPage() {
     if (id !== 'php') setLiveRender(''); // for php we could re-run but user can click Run
   };
   const handleCopy = () => { navigator.clipboard.writeText(userCode); setCodeCopied(true); setTimeout(() => setCodeCopied(false), 2000); };
-  const toggleBab = (b: string) => { if (!expandedBab.includes(b) || expandedBab.length !== 1) setExpandedBab([b]); };
+  const toggleBab = (b: string) => {
+    setExpandedBab(prev => prev.includes(b) ? prev.filter(x => x !== b) : [...prev, b]);
+  };
 
   const handleAiSend = async () => {
     if (!aiInput.trim() || aiLoading) return;
@@ -1077,15 +1104,15 @@ export default function LessonPage() {
                 )}
 
                 <div className="flex justify-between items-center">
-                  {lessonData?.prevPath ? (
-                    <Link href={`/dashboard/modules/${id}/lesson/${lessonData.prevPath}`}
+                  {prevLessonId ? (
+                    <Link href={`/dashboard/modules/${id}/lesson/${prevLessonId}`}
                       className={`flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold border transition-all ${isDark ? 'border-white/10 text-slate-300 hover:bg-white/6' : 'border-slate-200 bg-white text-slate-600 hover:bg-slate-50 shadow-sm'}`}>
                       <ChevronLeft className="w-4 h-4" /> Sebelumnya
                     </Link>
                   ) : <div />}
-                  {lessonData?.nextPath ? (
+                  {nextLessonId ? (
                     isCurrentLessonDone ? (
-                      <Link href={`/dashboard/modules/${id}/lesson/${lessonData.nextPath}`}
+                      <Link href={`/dashboard/modules/${id}/lesson/${nextLessonId}`}
                         className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold text-white transition-all shadow-lg ${colors.bg} ${colors.hover}`}>
                         Materi Berikutnya <ChevronRight className="w-4 h-4" />
                       </Link>
