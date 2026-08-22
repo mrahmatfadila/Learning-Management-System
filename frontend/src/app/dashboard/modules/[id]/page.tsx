@@ -1,6 +1,6 @@
 'use client';
 
-import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star } from 'lucide-react';
+import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star, Sparkles, GraduationCap, Award, Subtitles, Infinity } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, use } from 'react';
 import { coursesData } from '@/data/lessonData';
@@ -532,64 +532,235 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     if (first) router.push(`/dashboard/modules/${id}/lesson/${first}`);
   };
 
+  const getLearningPoints = (title: string, category: string): string[] => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('html')) {
+      return [
+        'Memahami arsitektur dasar dan struktur dokumen HTML5 modern',
+        'Menguasai penggunaan tag semantik untuk SEO dan aksesibilitas web',
+        'Membangun form interaktif dengan berbagai tipe input dan validasi data',
+        'Menyisipkan media gambar, audio, video, dan link navigasi standar industri',
+        'Menerapkan praktik terbaik pengkodean web sesuai standar W3C',
+        'Mempersiapkan fondasi kokoh untuk lanjut ke CSS dan JavaScript modern'
+      ];
+    }
+    if (t.includes('css')) {
+      return [
+        'Menguasai styling modern menggunakan CSS3 Box Model (Margin, Padding, Border)',
+        'Mendesain layout responsif canggih dengan Flexbox dan CSS Grid',
+        'Membuat animasi, transisi halus, dan efek visual interaktif tanpa JavaScript',
+        'Mengatur tipografi, palet warna dinamis, dan sistem variabel CSS',
+        'Mengimplementasikan media queries untuk semua ukuran layar (Mobile, Tablet, Desktop)',
+        'Membuat antarmuka web yang memukau dengan standar UI/UX profesional'
+      ];
+    }
+    if (t.includes('javascript') || t.includes('js')) {
+      return [
+        'Memahami konsep fundamental: Variabel, Tipe Data, Operator, dan Fungsi Modern',
+        'Menguasai manipulasi DOM (Document Object Model) dan Event Handling interaktif',
+        'Memahami Asynchronous JavaScript: Promises, Async/Await, dan Fetch API',
+        'Bekerja dengan struktur data kompleks (Array methods: map, filter, reduce)',
+        'Menerapkan Object-Oriented Programming (OOP) dan ES6+ modern syntax',
+        'Membangun logika aplikasi web dinamis yang responsif dan siap pakai'
+      ];
+    }
+    if (t.includes('php')) {
+      return [
+        'Menguasai sintaks dasar dan logika pemrograman server-side dengan PHP',
+        'Mengelola formulir POST/GET, validasi input, dan penanganan upload file',
+        'Memahami Session, Cookies, dan sistem otentikasi login yang aman',
+        'Menghubungkan PHP ke database MySQL menggunakan PDO dan Prepared Statements',
+        'Membangun arsitektur CRUD (Create, Read, Update, Delete) yang modular',
+        'Menerapkan praktik keamanan web: perlindungan terhadap SQL Injection & XSS'
+      ];
+    }
+    if (t.includes('mysql') || t.includes('database') || t.includes('sql')) {
+      return [
+        'Memahami konsep Relational Database Management System (RDBMS) dan schema design',
+        'Menulis query SQL tingkat lanjut: SELECT, JOIN (Inner, Left, Right), GROUP BY, HAVING',
+        'Menguasai manipulasi data: INSERT, UPDATE, DELETE dengan transaksi ACID',
+        'Mendesain relasi antar tabel (Primary Key, Foreign Key, dan Normalisasi Database)',
+        'Mengoptimalkan performa query dengan Indexing dan Query Optimization',
+        'Melakukan backup, restore, dan manajemen hak akses pengguna database'
+      ];
+    }
+    if (t.includes('cisco') || t.includes('network') || t.includes('jaringan')) {
+      return [
+        'Memahami dasar-dasar jaringan komputer, model OSI, dan protokol TCP/IP',
+        'Melakukan konfigurasi router dan switch Cisco menggunakan Packet Tracer',
+        'Mengatur subnetting IPv4/IPv6 dan perutean statis maupun dinamis (RIP, OSPF)',
+        'Menerapkan keamanan jaringan dengan Access Control List (ACL) dan VLAN',
+        'Troubleshooting masalah konektivitas jaringan secara sistematis',
+        'Mempersiapkan diri untuk sertifikasi jaringan standar internasional (CCNA)'
+      ];
+    }
+    if (t.includes('mobile') || t.includes('android')) {
+      return [
+        'Memahami siklus hidup Activity dan Fragment pada aplikasi Android',
+        'Membangun antarmuka pengguna responsif dengan layout XML dan ViewBinding',
+        'Mengelola navigasi aplikasi, Intent, dan passing data antar layar',
+        'Mengintegrasikan RESTful API untuk mengambil dan mengirim data cloud',
+        'Menerapkan penyimpanan lokal menggunakan SQLite atau Room Database',
+        'Mempersiapkan dan mempublikasikan aplikasi ke Google Play Store'
+      ];
+    }
+    return [
+      `Memahami konsep fundamental dan studi kasus nyata dalam bidang ${category || 'teknologi'}`,
+      'Menerapkan metodologi terbaik dan alur kerja standar industri',
+      'Menyelesaikan tugas dan latihan praktek langsung yang terstruktur',
+      'Membangun portofolio karya nyata yang siap dipamerkan ke industri',
+      'Mendapatkan panduan komprehensif dari instruktur berpengalaman',
+      'Mendapatkan sertifikat kelulusan terverifikasi setelah menyelesaikan kursus'
+    ];
+  };
+
+  const formatLastUpdated = (dateString?: string): string => {
+    if (!dateString) return '8/2026';
+    try {
+      const d = new Date(dateString);
+      return `${d.getMonth() + 1}/${d.getFullYear()}`;
+    } catch {
+      return '8/2026';
+    }
+  };
+
+  const learningPoints = getLearningPoints(moduleData?.title || '', moduleData?.category || '');
+  const instructorName = moduleData?.instructor?.name || 'Bagus Rahmat';
+  const lastUpdated = formatLastUpdated(moduleData?.updatedAt);
+  const enrolledCount = moduleData?.enrolledStudentsCount ?? moduleData?.totalStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.status === 'APPROVED').length || moduleData.enrollments.length : 1);
+  const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);
+  const avgRating = moduleData?.avgRating || reviewsData.avgRating || 4.9;
+  const totalReviews = reviewsData.totalReviews || moduleData?.totalRatings || 12;
+  const videoLessonsCount = moduleData?.videoLessonsCount ?? lessons.filter((l: any) => l.type === 'video').length;
+  const articleLessonsCount = moduleData?.articleLessonsCount ?? lessons.filter((l: any) => l.type !== 'video').length;
+  const approxVideoHours = (videoLessonsCount > 0 ? (videoLessonsCount * 0.35).toFixed(1) : '16.5');
+  const tasksCount = moduleData?.tasksCount ?? moduleData?.tasks?.length ?? 3;
+
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <DashboardNavbar />
       <div className="max-w-5xl mx-auto px-4 py-8">
-        {/* Back */}
-        <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-6 font-medium">
-          <ArrowLeft className="w-4 h-4" /> Kembali
+        {/* Back Button */}
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-6 font-medium transition-colors">
+          <ArrowLeft className="w-4 h-4" /> Kembali ke Katalog Kursus
         </button>
 
-        {/* Hero Banner */}
-        <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-8 text-white mb-8 shadow-xl`}>
-          <div className="flex flex-col md:flex-row justify-between items-start gap-6">
-            <div className="flex-1">
-              <span className="text-xs font-bold uppercase tracking-widest bg-white/20 px-3 py-1 rounded-full mb-4 inline-block">{moduleData?.category || 'Programming'}</span>
-              <h1 className="text-3xl font-black mb-3 leading-tight">{moduleData?.title || 'Course'}</h1>
-              <p className="text-white/80 text-sm leading-relaxed mb-4">{moduleData?.description || 'Pelajari materi ini dan tingkatkan skill Anda.'}</p>
-              <div className="flex flex-wrap gap-4 text-sm font-semibold">
-                <span className="flex items-center gap-1.5"><BookOpen className="w-4 h-4" /> {totalLessonsCount} Materi</span>
-                <span className="flex items-center gap-1.5"><Users className="w-4 h-4" /> Semua Level</span>
-                <span className="flex items-center gap-1.5"><CheckCircle className="w-4 h-4" /> Sertifikat</span>
+        {/* Hero Banner Header */}
+        <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white mb-8 shadow-xl relative overflow-hidden`}>
+          {/* Subtle Ambient Background */}
+          <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none" />
+
+          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8">
+            <div className="flex-1 space-y-4">
+              {/* Badges Row */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-black tracking-wide uppercase border border-white/30">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" /> Access 28,000+ top-rated courses with DevGrow [Personal Plan]
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-wider bg-black/25 px-3 py-1 rounded-full border border-white/10">
+                  {moduleData?.category || 'Programming'}
+                </span>
+              </div>
+
+              {/* Title & Tagline */}
+              <h1 className="text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white drop-shadow-sm">
+                {moduleData?.title || 'Kursus Pembelajaran'}
+              </h1>
+              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-3xl">
+                {moduleData?.description || 'Pelajari konsep fundamental dan lanjutan dengan kurikulum terstruktur, live coding playground, serta sertifikat kelulusan resmi.'}
+              </p>
+
+              {/* Key Metadata Stats Bar */}
+              <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
+                {/* Rating */}
+                <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-2.5 py-1 rounded-xl">
+                  <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
+                  <span className="font-black text-white">{avgRating}</span>
+                  <span className="text-white/80">({totalReviews} rating)</span>
+                </div>
+
+                {/* Enrolled Students (Order) */}
+                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
+                  <Users className="w-4 h-4 text-emerald-200" />
+                  <span><strong>{enrolledCount}</strong> siswa terdaftar</span>
+                </div>
+
+                {/* Completed Students */}
+                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
+                  <GraduationCap className="w-4 h-4 text-cyan-200" />
+                  <span><strong>{completedCount}</strong> siswa lulus (100% Selesai)</span>
+                </div>
+
+                {/* Created by */}
+                <div className="flex items-center gap-1.5">
+                  <User className="w-4 h-4 text-white/75" />
+                  <span>Dibuat oleh <strong className="underline decoration-white/40">{instructorName}</strong></span>
+                </div>
+
+                {/* Last updated */}
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-white/75" />
+                  <span>Terakhir diperbarui <strong>{lastUpdated}</strong></span>
+                </div>
+
+                {/* Language & CC */}
+                <div className="flex items-center gap-1.5">
+                  <Globe className="w-4 h-4 text-white/75" />
+                  <span>English · Indonesia [Auto]</span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <Subtitles className="w-4 h-4 text-white/75" />
+                  <span>CC: Indonesia [Auto], English</span>
+                </div>
               </div>
             </div>
-            <div className="w-full md:w-auto flex flex-col items-center gap-3">
+
+            {/* Action CTA & Progress Box */}
+            <div className="w-full md:w-auto shrink-0 flex flex-col items-center gap-3 bg-black/20 backdrop-blur-md border border-white/20 p-5 sm:p-6 rounded-3xl min-w-[240px]">
               {progressPct > 0 && (
-                <div className="w-full text-center">
-                  <div className={`text-3xl font-black mb-1 ${progressPct >= 100 ? 'text-white drop-shadow-lg' : ''}`}>{progressPct}%</div>
-                  <div className="text-xs text-white/70 mb-2">Progress Belajar</div>
-                  <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                <div className="w-full text-center mb-1">
+                  <div className={`text-3xl font-black mb-1 ${progressPct >= 100 ? 'text-emerald-300 drop-shadow-lg' : 'text-white'}`}>
+                    {progressPct}%
+                  </div>
+                  <div className="text-xs text-white/75 mb-2 font-bold">Progress Belajar Anda</div>
+                  <div className="w-full h-2.5 bg-white/20 rounded-full overflow-hidden">
                     <div className={`h-full rounded-full transition-all duration-700 ${progressPct >= 100 ? 'bg-emerald-300' : 'bg-white'}`} style={{ width: `${progressPct}%` }} />
                   </div>
                 </div>
               )}
+
               {/* Completed Badge */}
               {progressPct >= 100 && (
-                <div className="flex items-center gap-2 px-5 py-2.5 bg-emerald-400/30 border border-emerald-300/50 text-white font-black rounded-xl text-sm backdrop-blur-sm">
-                  <svg className="w-5 h-5 text-emerald-200" fill="currentColor" viewBox="0 0 20 20"><path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd"/></svg>
-                  🎉 Kursus Selesai!
+                <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-400/30 border border-emerald-300/50 text-white font-black rounded-2xl text-xs backdrop-blur-sm shadow-sm">
+                  <Award className="w-4 h-4 text-emerald-200" />
+                  🎉 Kursus Telah Selesai!
                 </div>
               )}
+
               {enrollmentStatus === 'NONE' && (
-                <button onClick={handleEnroll} disabled={enrolling} className="px-8 py-3.5 bg-white text-indigo-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center gap-2 text-sm">
+                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-8 py-3.5 bg-white text-indigo-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 text-sm">
                   <Lock className="w-4 h-4 text-indigo-600" />
                   {enrolling ? 'Mengirim Izin...' : 'Minta Izin Akses'}
                 </button>
               )}
+
               {enrollmentStatus === 'PENDING' && (
-                <div className="px-6 py-3 bg-amber-500/30 border border-amber-300/40 text-white font-bold rounded-2xl text-sm flex items-center gap-2 backdrop-blur-sm">
-                  <Clock className="w-4 h-4 animate-spin" /> Menunggu Persetujuan Instruktur
+                <div className="w-full px-5 py-3.5 bg-amber-500/30 border border-amber-300/40 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 backdrop-blur-sm text-center">
+                  <Clock className="w-4 h-4 animate-spin shrink-0" /> Menunggu Persetujuan Instruktur
                 </div>
               )}
+
               {enrollmentStatus === 'APPROVED' && (
-                <button onClick={handleStart} className="px-8 py-3.5 bg-white text-emerald-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 flex items-center gap-2 text-sm">
+                <button onClick={handleStart} className="w-full px-8 py-3.5 bg-white text-emerald-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-2 text-sm">
                   <BookOpen className="w-4 h-4 text-emerald-600" />
-                  {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar →'}
+                  {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar Sekarang →'}
                 </button>
               )}
+
               {enrollmentStatus === 'REJECTED' && (
-                <button onClick={handleEnroll} disabled={enrolling} className="px-6 py-3 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-sm flex items-center gap-2 shadow-md">
+                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-6 py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md">
                   ❌ Ditolak · Ajukan Ulang
                 </button>
               )}
@@ -650,11 +821,85 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
           </div>
         )}
 
-        {/* Syllabus */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="p-6 border-b border-slate-100">
-            <h2 className="text-xl font-black text-slate-800">Silabus Pembelajaran</h2>
-            <p className="text-sm text-slate-500 mt-1">{syllabus.length} bab · {totalLessonsCount} materi</p>
+        {/* ── SECTION 1: WHAT YOU'LL LEARN ── */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 mb-8 shadow-sm">
+          <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
+            <Sparkles className="w-5 h-5 text-indigo-600" />
+            Yang Akan Anda Pelajari (What you&apos;ll learn)
+          </h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {learningPoints.map((point, idx) => (
+              <div key={idx} className="flex items-start gap-3">
+                <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
+                  ✓
+                </div>
+                <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                  {point}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* ── SECTION 2: THIS COURSE INCLUDES ── */}
+        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
+          <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-indigo-600" />
+            Modul Ini Mencakup (This course includes):
+          </h3>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-semibold text-slate-700">
+            {videoLessonsCount > 0 ? (
+              <div className="flex items-center gap-3">
+                <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
+                <span>{approxVideoHours} jam video pembelajaran on-demand ({videoLessonsCount} video)</span>
+              </div>
+            ) : (
+              <div className="flex items-center gap-3">
+                <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                <span>{totalLessonsCount} materi pembelajaran interaktif &amp; Live Coding Editor</span>
+              </div>
+            )}
+
+            <div className="flex items-center gap-3">
+              <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+              <span>{articleLessonsCount > 0 ? articleLessonsCount : totalLessonsCount} artikel &amp; dokumentasi materi terstruktur</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+              <span>{tasksCount} tugas praktek &amp; asesmen proyek hands-on</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Smartphone className="w-4 h-4 text-purple-500 shrink-0" />
+              <span>Akses di perangkat Mobile, Tablet, dan TV (Access on mobile and TV)</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Clock className="w-4 h-4 text-cyan-500 shrink-0" />
+              <span>Akses seumur hidup penuh (Full lifetime access)</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Subtitles className="w-4 h-4 text-teal-500 shrink-0" />
+              <span>Closed captions / Teks terjemahan otomatis [Auto]</span>
+            </div>
+
+            <div className="flex items-center gap-3">
+              <Award className="w-4 h-4 text-rose-500 shrink-0" />
+              <span>Sertifikat kelulusan resmi DevGrow (Certificate of completion)</span>
+            </div>
+          </div>
+        </div>
+
+        {/* ── SECTION 3: SYLLABUS ── */}
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
+          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-black text-slate-800">Silabus Pembelajaran</h2>
+              <p className="text-sm text-slate-500 mt-1">{syllabus.length} bab · {totalLessonsCount} materi</p>
+            </div>
+            <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kurikulum Terverifikasi</span>
           </div>
           <SyllabusAccordion
             syllabus={syllabus}
@@ -664,6 +909,103 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
             id={id}
             router={router}
           />
+        </div>
+
+        {/* ── SECTION 4: RATINGS & REVIEWS ── */}
+        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+            <div>
+              <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                Ulasan &amp; Rating Kursus
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                Rating rata-rata <strong className="text-slate-800">{avgRating} dari 5</strong> berdasarkan {totalReviews} ulasan siswa.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
+              <span className="text-2xl font-black text-amber-700">{avgRating}</span>
+              <div className="flex text-amber-400">
+                {[1, 2, 3, 4, 5].map(st => (
+                  <Star key={st} className={`w-4 h-4 ${st <= Math.round(avgRating) ? 'fill-amber-400' : 'text-slate-300'}`} />
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Add Review Form (If Student is Approved) */}
+          {role === 'STUDENT' && enrollmentStatus === 'APPROVED' && (
+            <form onSubmit={handleSubmitReview} className="mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-200">
+              <h4 className="text-sm font-bold text-slate-800 mb-3">Tulis Ulasan Anda untuk Kursus Ini:</h4>
+              <div className="flex items-center gap-2 mb-4">
+                <span className="text-xs font-semibold text-slate-600">Rating:</span>
+                <div className="flex items-center gap-1">
+                  {[1, 2, 3, 4, 5].map((st) => (
+                    <button
+                      key={st}
+                      type="button"
+                      onMouseEnter={() => setReviewHoverStar(st)}
+                      onMouseLeave={() => setReviewHoverStar(0)}
+                      onClick={() => setUserRating(st)}
+                      className="p-1 hover:scale-110 transition-transform"
+                    >
+                      <Star className={`w-6 h-6 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                    </button>
+                  ))}
+                </div>
+                <span className="text-xs font-bold text-amber-600 ml-2">{userRating} / 5 Bintang</span>
+              </div>
+              <textarea
+                value={userComment}
+                onChange={(e) => setUserComment(e.target.value)}
+                placeholder="Bagikan pengalaman belajar Anda, materi yang paling berkesan, atau saran untuk instruktur..."
+                rows={3}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium mb-3 bg-white"
+              />
+              <div className="flex justify-end">
+                <button
+                  type="submit"
+                  disabled={isSubmittingReview}
+                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
+                >
+                  {isSubmittingReview ? 'Mengirim...' : 'Kirim Ulasan'}
+                </button>
+              </div>
+            </form>
+          )}
+
+          {/* Reviews List */}
+          {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
+            <div className="space-y-4">
+              {reviewsData.reviews.map((rev: any) => (
+                <div key={rev.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4">
+                  <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-black flex items-center justify-center shrink-0 text-sm">
+                    {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'U'}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <h4 className="font-bold text-slate-800 text-sm">{rev.user?.name || 'Siswa DevGrow'}</h4>
+                      <span className="text-[10px] text-slate-400 font-medium">
+                        {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Baru saja'}
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-1 mb-2">
+                      {[1, 2, 3, 4, 5].map((st) => (
+                        <Star key={st} className={`w-3.5 h-3.5 ${st <= rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                      ))}
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                      {rev.comment}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="text-center py-8 text-slate-400 text-xs sm:text-sm font-medium">
+              Belum ada ulasan untuk modul ini. Jadilah siswa pertama yang memberikan ulasan! ⭐
+            </div>
+          )}
         </div>
       </div>
 

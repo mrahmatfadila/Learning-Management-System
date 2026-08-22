@@ -59,6 +59,13 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
           include: { chapterRef: true },
           orderBy: { order: 'asc' }
         },
+        tasks: {
+          orderBy: { createdAt: 'desc' }
+        },
+        reviews: {
+          include: { user: { select: { id: true, name: true, role: true } } },
+          orderBy: { createdAt: 'desc' }
+        },
         enrollments: {
           include: { student: { select: { id: true, name: true, email: true } } }
         }
@@ -93,6 +100,11 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
             instructor: true,
             chapters: { orderBy: { order: 'asc' } },
             lessons: { include: { chapterRef: true }, orderBy: { order: 'asc' } },
+            tasks: { orderBy: { createdAt: 'desc' } },
+            reviews: {
+              include: { user: { select: { id: true, name: true, role: true } } },
+              orderBy: { createdAt: 'desc' }
+            },
             enrollments: { include: { student: { select: { id: true, name: true, email: true } } } }
           }
         });
@@ -147,7 +159,37 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
       // Fallback ke data lokal jika Content API sedang tidak aktif
     }
 
-    res.json(moduleItem);
+    // Hitung statistik real-time
+    const enrollments = moduleItem.enrollments || [];
+    const approvedEnrollments = enrollments.filter(e => e.status === 'APPROVED');
+    const completedStudents = enrollments.filter(e => e.progress >= 100);
+    const inProgressStudents = enrollments.filter(e => e.progress > 0 && e.progress < 100);
+    const pendingStudents = enrollments.filter(e => e.status === 'PENDING');
+    
+    const reviews = moduleItem.reviews || [];
+    const avgRating = reviews.length > 0
+      ? Number((reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1))
+      : 4.9;
+
+    const lessons = moduleItem.lessons || [];
+    const videoLessons = lessons.filter(l => l.type === 'video');
+    const articleLessons = lessons.filter(l => l.type !== 'video');
+
+    const result = {
+      ...moduleItem,
+      enrolledStudentsCount: approvedEnrollments.length || enrollments.length || 0,
+      completedStudentsCount: completedStudents.length,
+      inProgressStudentsCount: inProgressStudents.length,
+      pendingStudentsCount: pendingStudents.length,
+      totalStudentsCount: enrollments.length,
+      avgRating,
+      totalRatings: reviews.length,
+      videoLessonsCount: videoLessons.length,
+      articleLessonsCount: articleLessons.length,
+      tasksCount: moduleItem.tasks?.length || 0
+    };
+
+    res.json(result);
   } catch (error) {
     console.error('Error fetching module:', error);
     res.status(500).json({ message: 'Error fetching module' });
