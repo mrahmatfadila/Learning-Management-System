@@ -382,7 +382,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     const lessons = (moduleData?.lessons ?? []).slice().sort((a: any, b: any) => a.order - b.order);
     const chapters = (moduleData?.chapters ?? []).slice().sort((a: any, b: any) => a.order - b.order);
     const learningPoints = getLearningPoints(moduleData?.title || '', moduleData?.category || '');
-    const instructorName = moduleData?.instructor?.name || 'Bagus Rahmat';
+    const instructorName = moduleData?.instructor?.name || 'DevGrow Academy';
     const lastUpdated = formatLastUpdated(moduleData?.updatedAt);
     const enrolledCount = moduleData?.enrolledStudentsCount ?? moduleData?.totalStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.status === 'APPROVED').length || moduleData.enrollments.length : 1);
     const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);
@@ -822,7 +822,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   };
 
   const learningPoints = getLearningPoints(moduleData?.title || '', moduleData?.category || '');
-  const instructorName = moduleData?.instructor?.name || 'Bagus Rahmat';
+  const instructorName = moduleData?.instructor?.name || 'DevGrow Academy';
   const lastUpdated = formatLastUpdated(moduleData?.updatedAt);
   const enrolledCount = moduleData?.enrolledStudentsCount ?? moduleData?.totalStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.status === 'APPROVED').length || moduleData.enrollments.length : 1);
   const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);

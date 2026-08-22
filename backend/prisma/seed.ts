@@ -45,11 +45,11 @@ async function main() {
   });
 
   const ins1Pass = await bcrypt.hash('password123', salt);
-  const bagusRahmat = await prisma.user.upsert({
+  const devgrowAcademy = await prisma.user.upsert({
     where: { email: 'bagus@lms.test' },
-    update: { name: 'Bagus Rahmat', password: ins1Pass, role: 'INSTRUCTOR', isVerified: true },
+    update: { name: 'DevGrow Academy', password: ins1Pass, role: 'INSTRUCTOR', isVerified: true },
     create: {
-      name: 'Bagus Rahmat',
+      name: 'DevGrow Academy',
       email: 'bagus@lms.test',
       password: ins1Pass,
       role: 'INSTRUCTOR',
