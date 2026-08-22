@@ -691,36 +691,44 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   }
 
   // ── STUDENT VIEW ──
-  const chapters = (moduleData?.chapters ?? []).slice().sort((a: any, b: any) => a.order - b.order);
-  const lessons = (moduleData?.lessons ?? []).slice().sort((a: any, b: any) => a.order - b.order);
+  const courseFromLocal = coursesData.find(c => c.id === id || c.id === courseId);
+  const localModules = courseFromLocal?.modules;
 
-  // Group lessons by chapters explicitly defined
-  let syllabus = chapters.map((chapter: any) => {
-    const chapterLessons = lessons.filter((l: any) => l.chapterId === chapter.id || l.chapter === chapter.title);
-    return { title: chapter.title, lessons: chapterLessons };
-  });
-
-  // Find any lessons that weren't caught by the chapter mapping
-  const mappedLessonIds = new Set(syllabus.flatMap((chap: any) => chap.lessons.map((l: any) => l.id)));
-  const unmappedLessons = lessons.filter((l: any) => !mappedLessonIds.has(l.id));
-
-  // Fallback for unmapped lessons or if chapters don't exist yet
-  if (unmappedLessons.length > 0) {
-    const fallbackGrouped = unmappedLessons.reduce((acc: any, lesson: any) => {
-      const chap = lesson.chapter || 'Bab Umum';
-      if (!acc[chap]) acc[chap] = [];
-      acc[chap].push(lesson);
-      return acc;
-    }, {});
-    
-    const fallbackSyllabus = Object.entries(fallbackGrouped).map(([title, chapLessons]: [string, any]) => ({
-      title, lessons: chapLessons.sort((a: any, b: any) => a.order - b.order)
+  let syllabus: any[] = [];
+  if (localModules && localModules.length > 0) {
+    syllabus = localModules.map((mod: any) => ({
+      title: mod.title,
+      lessons: mod.lessons || []
     }));
-    
-    syllabus = [...syllabus, ...fallbackSyllabus];
+  } else {
+    const chapters = (moduleData?.chapters ?? []).slice().sort((a: any, b: any) => a.order - b.order);
+    const lessons = (moduleData?.lessons ?? []).slice().sort((a: any, b: any) => a.order - b.order);
+
+    syllabus = chapters.map((chapter: any) => {
+      const chapterLessons = lessons.filter((l: any) => l.chapterId === chapter.id || l.chapter === chapter.title);
+      return { title: chapter.title, lessons: chapterLessons };
+    });
+
+    const mappedLessonIds = new Set(syllabus.flatMap((chap: any) => chap.lessons.map((l: any) => l.id)));
+    const unmappedLessons = lessons.filter((l: any) => !mappedLessonIds.has(l.id));
+
+    if (unmappedLessons.length > 0) {
+      const fallbackGrouped = unmappedLessons.reduce((acc: any, lesson: any) => {
+        const chap = lesson.chapter || 'Bab Umum';
+        if (!acc[chap]) acc[chap] = [];
+        acc[chap].push(lesson);
+        return acc;
+      }, {});
+      
+      const fallbackSyllabus = Object.entries(fallbackGrouped).map(([title, chapLessons]: [string, any]) => ({
+        title, lessons: chapLessons.sort((a: any, b: any) => a.order - b.order)
+      }));
+      
+      syllabus = [...syllabus, ...fallbackSyllabus];
+    }
   }
 
-  const totalLessonsCount = moduleData?.lessons?.length || 0;
+  const totalLessonsCount = syllabus.reduce((sum: number, b: any) => sum + (b.lessons?.length || 0), 0);
 
   if (!enrollmentChecked && role === 'STUDENT') {
     return (
@@ -764,8 +772,9 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);
   const avgRating = moduleData?.avgRating || reviewsData.avgRating || 4.9;
   const totalReviews = reviewsData.totalReviews || moduleData?.totalRatings || 12;
-  const videoLessonsCount = moduleData?.videoLessonsCount ?? lessons.filter((l: any) => l.type === 'video').length;
-  const articleLessonsCount = moduleData?.articleLessonsCount ?? lessons.filter((l: any) => l.type !== 'video').length;
+  const allStudentLessons = syllabus.flatMap((s: any) => s.lessons || []);
+  const videoLessonsCount = moduleData?.videoLessonsCount ?? allStudentLessons.filter((l: any) => l.type === 'video').length;
+  const articleLessonsCount = moduleData?.articleLessonsCount ?? allStudentLessons.filter((l: any) => l.type !== 'video').length;
   const approxVideoHours = (videoLessonsCount > 0 ? (videoLessonsCount * 0.35).toFixed(1) : '16.5');
   const tasksCount = moduleData?.tasksCount ?? moduleData?.tasks?.length ?? 3;
 

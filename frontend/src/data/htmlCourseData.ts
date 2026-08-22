@@ -4,390 +4,136 @@ export const htmlCourseModules = [
     "id": "html-mod-1",
     "title": "HTML Tutorial",
     "lessons": [
-      {
-        "id": "html-home",
-        "title": "HTML HOME"
-      },
-      {
-        "id": "html-introduction",
-        "title": "HTML Introduction"
-      },
-      {
-        "id": "html-editors",
-        "title": "HTML Editors"
-      },
-      {
-        "id": "html-basic",
-        "title": "HTML Basic"
-      },
-      {
-        "id": "html-elements",
-        "title": "HTML Elements"
-      },
-      {
-        "id": "html-attributes",
-        "title": "HTML Attributes"
-      },
-      {
-        "id": "html-headings",
-        "title": "HTML Headings"
-      },
-      {
-        "id": "html-paragraphs",
-        "title": "HTML Paragraphs"
-      },
-      {
-        "id": "html-styles",
-        "title": "HTML Styles"
-      },
-      {
-        "id": "html-formatting",
-        "title": "HTML Formatting"
-      },
-      {
-        "id": "html-quotations",
-        "title": "HTML Quotations"
-      },
-      {
-        "id": "html-comments",
-        "title": "HTML Comments"
-      },
-      {
-        "id": "html-colors",
-        "title": "HTML Colors"
-      },
-      {
-        "id": "html-css",
-        "title": "HTML CSS"
-      },
-      {
-        "id": "html-links",
-        "title": "HTML Links"
-      },
-      {
-        "id": "html-images",
-        "title": "HTML Images"
-      },
-      {
-        "id": "html-favicon",
-        "title": "HTML Favicon"
-      },
-      {
-        "id": "html-page-title",
-        "title": "HTML Page Title"
-      },
-      {
-        "id": "html-tables",
-        "title": "HTML Tables"
-      },
-      {
-        "id": "html-lists",
-        "title": "HTML Lists"
-      },
-      {
-        "id": "html-block-inline",
-        "title": "HTML Block & Inline"
-      },
-      {
-        "id": "html-div",
-        "title": "HTML Div"
-      },
-      {
-        "id": "html-classes",
-        "title": "HTML Classes"
-      },
-      {
-        "id": "html-id",
-        "title": "HTML Id"
-      },
-      {
-        "id": "html-buttons",
-        "title": "HTML Buttons"
-      },
-      {
-        "id": "html-iframes",
-        "title": "HTML Iframes"
-      },
-      {
-        "id": "html-javascript",
-        "title": "HTML JavaScript"
-      },
-      {
-        "id": "html-file-paths",
-        "title": "HTML File Paths"
-      },
-      {
-        "id": "html-head",
-        "title": "HTML Head"
-      },
-      {
-        "id": "html-layout",
-        "title": "HTML Layout"
-      },
-      {
-        "id": "html-responsive",
-        "title": "HTML Responsive"
-      },
-      {
-        "id": "html-computercode",
-        "title": "HTML Computercode"
-      },
-      {
-        "id": "html-semantics",
-        "title": "HTML Semantics"
-      },
-      {
-        "id": "html-style-guide",
-        "title": "HTML Style Guide"
-      },
-      {
-        "id": "html-entities",
-        "title": "HTML Entities"
-      },
-      {
-        "id": "html-symbols",
-        "title": "HTML Symbols"
-      },
-      {
-        "id": "html-emojis",
-        "title": "HTML Emojis"
-      },
-      {
-        "id": "html-charsets",
-        "title": "HTML Charsets"
-      },
-      {
-        "id": "html-url-encode",
-        "title": "HTML URL Encode"
-      },
-      {
-        "id": "html-vs-xhtml",
-        "title": "HTML vs. XHTML"
-      }
+      { "id": "html-home", "title": "HTML HOME" },
+      { "id": "html-introduction", "title": "HTML Introduction" },
+      { "id": "html-editors", "title": "HTML Editors" },
+      { "id": "html-basic", "title": "HTML Basic" },
+      { "id": "html-elements", "title": "HTML Elements" },
+      { "id": "html-attributes", "title": "HTML Attributes" },
+      { "id": "html-headings", "title": "HTML Headings" },
+      { "id": "html-paragraphs", "title": "HTML Paragraphs" },
+      { "id": "html-styles", "title": "HTML Styles" },
+      { "id": "html-formatting", "title": "HTML Formatting" },
+      { "id": "html-quotations", "title": "HTML Quotations" },
+      { "id": "html-comments", "title": "HTML Comments" },
+      { "id": "html-colors", "title": "HTML Colors" },
+      { "id": "html-css", "title": "HTML CSS" },
+      { "id": "html-links", "title": "HTML Links" },
+      { "id": "html-images", "title": "HTML Images" },
+      { "id": "html-project", "title": "HTML Project" },
+      { "id": "html-favicon", "title": "HTML Favicon" },
+      { "id": "html-page-title", "title": "HTML Page Title" },
+      { "id": "html-tables", "title": "HTML Tables" },
+      { "id": "html-lists", "title": "HTML Lists" },
+      { "id": "html-block-inline", "title": "HTML Block & Inline" },
+      { "id": "html-div", "title": "HTML Div" },
+      { "id": "html-classes", "title": "HTML Classes" },
+      { "id": "html-id", "title": "HTML Id" },
+      { "id": "html-buttons", "title": "HTML Buttons" },
+      { "id": "html-iframes", "title": "HTML Iframes" },
+      { "id": "html-javascript", "title": "HTML JavaScript" },
+      { "id": "html-file-paths", "title": "HTML File Paths" },
+      { "id": "html-head", "title": "HTML Head" },
+      { "id": "html-layout", "title": "HTML Layout" },
+      { "id": "html-responsive", "title": "HTML Responsive" },
+      { "id": "html-computercode", "title": "HTML Computercode" },
+      { "id": "html-semantics", "title": "HTML Semantics" },
+      { "id": "html-style-guide", "title": "HTML Style Guide" },
+      { "id": "html-entities", "title": "HTML Entities" },
+      { "id": "html-symbols", "title": "HTML Symbols" },
+      { "id": "html-emojis", "title": "HTML Emojis" },
+      { "id": "html-charsets", "title": "HTML Charsets" },
+      { "id": "html-url-encode", "title": "HTML URL Encode" },
+      { "id": "html-vs-xhtml", "title": "HTML vs. XHTML" }
     ]
   },
   {
     "id": "html-mod-2",
     "title": "HTML Forms",
     "lessons": [
-      {
-        "id": "html-forms",
-        "title": "HTML Forms"
-      },
-      {
-        "id": "html-form-attributes",
-        "title": "HTML Form Attributes"
-      },
-      {
-        "id": "html-form-elements",
-        "title": "HTML Form Elements"
-      },
-      {
-        "id": "html-input-types",
-        "title": "HTML Input Types"
-      },
-      {
-        "id": "html-input-attributes",
-        "title": "HTML Input Attributes"
-      },
-      {
-        "id": "input-form-attributes",
-        "title": "Input Form Attributes"
-      }
+      { "id": "html-forms", "title": "HTML Forms" },
+      { "id": "html-form-attributes", "title": "HTML Form Attributes" },
+      { "id": "html-form-elements", "title": "HTML Form Elements" },
+      { "id": "html-input-types", "title": "HTML Input Types" },
+      { "id": "html-input-attributes", "title": "HTML Input Attributes" },
+      { "id": "input-form-attributes", "title": "Input Form Attributes" }
     ]
   },
   {
     "id": "html-mod-3",
     "title": "HTML Graphics",
     "lessons": [
-      {
-        "id": "html-canvas",
-        "title": "HTML Canvas"
-      },
-      {
-        "id": "html-svg",
-        "title": "HTML SVG"
-      }
+      { "id": "html-canvas", "title": "HTML Canvas" },
+      { "id": "html-svg", "title": "HTML SVG" }
     ]
   },
   {
     "id": "html-mod-4",
     "title": "HTML Media",
     "lessons": [
-      {
-        "id": "html-media",
-        "title": "HTML Media"
-      },
-      {
-        "id": "html-video",
-        "title": "HTML Video"
-      },
-      {
-        "id": "html-audio",
-        "title": "HTML Audio"
-      },
-      {
-        "id": "html-plug-ins",
-        "title": "HTML Plug-ins"
-      },
-      {
-        "id": "html-youtube",
-        "title": "HTML YouTube"
-      }
+      { "id": "html-media", "title": "HTML Media" },
+      { "id": "html-video", "title": "HTML Video" },
+      { "id": "html-audio", "title": "HTML Audio" },
+      { "id": "html-plug-ins", "title": "HTML Plug-ins" },
+      { "id": "html-youtube", "title": "HTML YouTube" }
     ]
   },
   {
     "id": "html-mod-5",
     "title": "HTML APIs",
     "lessons": [
-      {
-        "id": "html-web-apis",
-        "title": "HTML Web APIs"
-      },
-      {
-        "id": "html-geolocation",
-        "title": "HTML Geolocation"
-      },
-      {
-        "id": "html-drag-and-drop",
-        "title": "HTML Drag and Drop"
-      },
-      {
-        "id": "html-web-storage",
-        "title": "HTML Web Storage"
-      },
-      {
-        "id": "html-web-workers",
-        "title": "HTML Web Workers"
-      },
-      {
-        "id": "html-sse",
-        "title": "HTML SSE"
-      }
+      { "id": "html-web-apis", "title": "HTML Web APIs" },
+      { "id": "html-geolocation", "title": "HTML Geolocation" },
+      { "id": "html-drag-and-drop", "title": "HTML Drag and Drop" },
+      { "id": "html-web-storage", "title": "HTML Web Storage" },
+      { "id": "html-web-workers", "title": "HTML Web Workers" },
+      { "id": "html-sse", "title": "HTML SSE" }
     ]
   },
   {
     "id": "html-mod-6",
-    "title": "HTML Examples",
+    "title": "HTML Cert",
     "lessons": [
-      {
-        "id": "html-examples",
-        "title": "HTML Examples"
-      },
-      {
-        "id": "html-editor",
-        "title": "HTML Editor"
-      },
-      {
-        "id": "html-quiz",
-        "title": "HTML Quiz"
-      },
-      {
-        "id": "html-exercises",
-        "title": "HTML Exercises"
-      },
-      {
-        "id": "html-challenges",
-        "title": "HTML Challenges"
-      },
-      {
-        "id": "html-website",
-        "title": "HTML Website"
-      },
-      {
-        "id": "html-syllabus",
-        "title": "HTML Syllabus"
-      },
-      {
-        "id": "html-study-plan",
-        "title": "HTML Study Plan"
-      },
-      {
-        "id": "html-interview-prep",
-        "title": "HTML Interview Prep"
-      },
-      {
-        "id": "html-bootcamp",
-        "title": "HTML Bootcamp"
-      },
-      {
-        "id": "html-summary",
-        "title": "HTML Summary"
-      },
-      {
-        "id": "html-accessibility",
-        "title": "HTML Accessibility"
-      }
+      { "id": "html-certificate", "title": "HTML Certificate" }
     ]
   },
   {
     "id": "html-mod-7",
+    "title": "HTML Examples",
+    "lessons": [
+      { "id": "html-examples", "title": "HTML Examples" },
+      { "id": "html-editor", "title": "HTML Editor" },
+      { "id": "html-quiz", "title": "HTML Quiz" },
+      { "id": "html-exercises", "title": "HTML Exercises" },
+      { "id": "html-challenges", "title": "HTML Challenges" },
+      { "id": "html-website", "title": "HTML Website" },
+      { "id": "html-syllabus", "title": "HTML Syllabus" },
+      { "id": "html-study-plan", "title": "HTML Study Plan" },
+      { "id": "html-interview-prep", "title": "HTML Interview Prep" },
+      { "id": "html-summary", "title": "HTML Summary" },
+      { "id": "html-accessibility", "title": "HTML Accessibility" }
+    ]
+  },
+  {
+    "id": "html-mod-8",
     "title": "HTML References",
     "lessons": [
-      {
-        "id": "html-tag-list",
-        "title": "HTML Tag List"
-      },
-      {
-        "id": "html-attributes-html-references",
-        "title": "HTML Attributes"
-      },
-      {
-        "id": "html-global-attributes",
-        "title": "HTML Global Attributes"
-      },
-      {
-        "id": "html-browser-support",
-        "title": "HTML Browser Support"
-      },
-      {
-        "id": "html-events",
-        "title": "HTML Events"
-      },
-      {
-        "id": "html-colors-html-references",
-        "title": "HTML Colors"
-      },
-      {
-        "id": "html-canvas-html-references",
-        "title": "HTML Canvas"
-      },
-      {
-        "id": "html-audio-video",
-        "title": "HTML Audio/Video"
-      },
-      {
-        "id": "html-doctypes",
-        "title": "HTML Doctypes"
-      },
-      {
-        "id": "html-character-sets",
-        "title": "HTML Character Sets"
-      },
-      {
-        "id": "html-url-encode-html-references",
-        "title": "HTML URL Encode"
-      },
-      {
-        "id": "html-lang-codes",
-        "title": "HTML Lang Codes"
-      },
-      {
-        "id": "http-messages",
-        "title": "HTTP Messages"
-      },
-      {
-        "id": "http-methods",
-        "title": "HTTP Methods"
-      },
-      {
-        "id": "px-to-em-converter",
-        "title": "PX to EM Converter"
-      },
-      {
-        "id": "keyboard-shortcuts",
-        "title": "Keyboard Shortcuts"
-      }
+      { "id": "html-tag-list", "title": "HTML Tag List" },
+      { "id": "html-attributes-html-references", "title": "HTML Attributes" },
+      { "id": "html-global-attributes", "title": "HTML Global Attributes" },
+      { "id": "html-browser-support", "title": "HTML Browser Support" },
+      { "id": "html-events", "title": "HTML Events" },
+      { "id": "html-colors-html-references", "title": "HTML Colors" },
+      { "id": "html-canvas-html-references", "title": "HTML Canvas" },
+      { "id": "html-audio-video", "title": "HTML Audio/Video" },
+      { "id": "html-doctypes", "title": "HTML Doctypes" },
+      { "id": "html-character-sets", "title": "HTML Character Sets" },
+      { "id": "html-url-encode-html-references", "title": "HTML URL Encode" },
+      { "id": "html-lang-codes", "title": "HTML Lang Codes" },
+      { "id": "http-messages", "title": "HTTP Messages" },
+      { "id": "http-methods", "title": "HTTP Methods" },
+      { "id": "px-to-em-converter", "title": "PX to EM Converter" },
+      { "id": "keyboard-shortcuts", "title": "Keyboard Shortcuts" }
     ]
   }
 ];
@@ -2219,5 +1965,47 @@ export const htmlLessonsData: Record<string, any> = {
     },
     "nextPath": null,
     "prevPath": "px-to-em-converter"
+  },
+  "html-project": {
+    "courseId": "html",
+    "title": "HTML Project",
+    "chapter": "HTML Tutorial",
+    "color": "orange",
+    "theory": "<h2 class=\"text-3xl font-extrabold mb-6\">HTML Project: Mini Landing Page</h2><p class=\"mb-4\">Pada materi ini, Anda akan menggabungkan elemen dasar HTML seperti Heading, Paragraf, Link, dan Gambar untuk membangun satu halaman mini landing page utuh.</p><h3 class=\"text-xl font-bold mt-8 mb-4\">Sintaks & Contoh Proyek</h3><div class=\"bg-slate-100 p-4 rounded-xl mb-4 font-mono text-sm overflow-x-auto\"><pre>&lt;header&gt;\n  &lt;h1&gt;Portfolio Developer Saya&lt;/h1&gt;\n  &lt;p&gt;Halo, selamat datang di web profile pertama saya!&lt;/p&gt;\n&lt;/header&gt;\n&lt;main&gt;\n  &lt;h2&gt;Tentang Saya&lt;/h2&gt;\n  &lt;p&gt;Saya sedang belajar Full-Stack Web Development bersama DevGrow.&lt;/p&gt;\n  &lt;a href=\"#contact\"&gt;Hubungi Saya&lt;/a&gt;\n&lt;/main&gt;</pre></div><div class=\"bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg mb-8\"><h4 class=\"text-indigo-900 font-bold mb-2 flex items-center gap-2\">💡 Penjelasan Proyek:</h4><p class=\"text-indigo-800 text-sm leading-relaxed\">Struktur proyek menggunakan tag semantik <code>&lt;header&gt;</code> dan <code>&lt;main&gt;</code> agar terorganisir dengan standar industri modern.</p></div>",
+    "code": "<header>\n  <h1>Portfolio Developer Saya</h1>\n  <p>Halo, selamat datang di web profile pertama saya!</p>\n</header>\n<main>\n  <h2>Tentang Saya</h2>\n  <p>Saya sedang belajar Full-Stack Web Development bersama DevGrow.</p>\n  <a href=\"#contact\">Hubungi Saya</a>\n</main>",
+    "quiz": {
+      "question": "Mengapa kita menggunakan tag semantik seperti <header> dan <main> dalam project HTML?",
+      "options": [
+        "Hanya agar warna teks berubah secara otomatis.",
+        "Meningkatkan struktur semantik, keterbacaan kode, dan ramah SEO mesin pencari.",
+        "Wajib digunakan agar browser tidak mengalami error.",
+        "Khusus untuk aplikasi mobile saja."
+      ],
+      "correctIndex": 1,
+      "explanation": "Tag semantik memberikan makna struktural pada konten dokumen web."
+    },
+    "nextPath": "html-favicon",
+    "prevPath": "html-images"
+  },
+  "html-certificate": {
+    "courseId": "html",
+    "title": "HTML Certificate",
+    "chapter": "HTML Cert",
+    "color": "orange",
+    "theory": "<h2 class=\"text-3xl font-extrabold mb-6\">HTML Certificate & Assessment</h2><p class=\"mb-4\">Sertifikat Resmi DevGrow diberikan kepada siswa yang telah menyelesaikan seluruh modul pembelajaran, tantangan hands-on live code, dan kuis asesmen HTML.</p><h3 class=\"text-xl font-bold mt-8 mb-4\">Langkah Memperoleh Sertifikat</h3><div class=\"bg-slate-100 p-4 rounded-xl mb-4 font-mono text-sm overflow-x-auto\"><pre>1. Selesaikan 100% materi pembelajaran HTML.\n2. Lulus semua asesmen & tantangan kuis.\n3. Unduh e-Certificate terverifikasi langsung dari menu profil.</pre></div><div class=\"p-6 mt-10 bg-emerald-50 border-2 border-emerald-200 rounded-2xl drop-shadow-sm\"><h3 class=\"mt-0 text-emerald-800 font-bold\">🏆 Selamat Atas Komitmen Belajar Anda!</h3><p class=\"mb-4 text-emerald-900\">Terus asah kemampuan web development Anda ke jenjang CSS, JavaScript, dan Framework modern berikutnya.</p></div>",
+    "code": "<!-- HTML Certificate Verification Page -->\n<div style=\"text-align: center; padding: 20px; font-family: sans-serif;\">\n  <h1 style=\"color: #4f46e5;\">🎉 DevGrow Certified HTML Developer</h1>\n  <p>Sertifikat ini membuktikan penguasaan standar HTML5 & Semantic Web.</p>\n</div>",
+    "quiz": {
+      "question": "Apa syarat utama untuk mendapatkan sertifikat kelulusan modul HTML di DevGrow?",
+      "options": [
+        "Cukup login satu kali tanpa membaca materi.",
+        "Menyelesaikan seluruh kurikulum materi hingga progress mencapai 100%.",
+        "Membayar biaya tambahan setiap kali kuis.",
+        "Mengirim email manual ke admin setiap hari."
+      ],
+      "correctIndex": 1,
+      "explanation": "Sertifikat diterbitkan secara otomatis setelah siswa menyelesaikan seluruh materi kursus."
+    },
+    "nextPath": "html-examples",
+    "prevPath": "html-sse"
   }
 };
