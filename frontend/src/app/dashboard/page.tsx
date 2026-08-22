@@ -64,6 +64,7 @@ export default function DashboardPage() {
     return [];
   });
   const [explorePreview, setExplorePreview] = useState<any>(null);
+  const [requestSuccessModal, setRequestSuccessModal] = useState<{ moduleId: string; moduleTitle: string } | null>(null);
 
   const getDifficulty = (m: any) => {
     const t = (m?.title || '').toLowerCase();
@@ -588,6 +589,7 @@ export default function DashboardPage() {
     if (role === 'STUDENT' && activeGroup === 'explore') {
       const handleEnroll = async (moduleId: string) => {
         try {
+          const targetMod = modules.find((m: any) => m.id === moduleId);
           const res = await fetch('http://localhost:5000/api/enrollments', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -595,7 +597,10 @@ export default function DashboardPage() {
           });
           const data = await res.json();
           if (res.ok) {
-            alert(data.message || 'Permintaan izin akses berhasil dikirim! Menunggu persetujuan instruktur.');
+            setRequestSuccessModal({
+              moduleId,
+              moduleTitle: targetMod?.title || 'Kursus'
+            });
             fetchData(user);
           } else {
             alert(data.message || 'Gagal mengirim permintaan izin.');
@@ -3355,6 +3360,67 @@ export default function DashboardPage() {
               <button onClick={() => window.print()}
                 className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs transition-colors shadow-md shadow-indigo-600/10 flex items-center gap-1.5 hover:scale-[1.02] active:scale-[0.98]">
                 Cetak / Simpan PDF
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* ── Access Request Success Popup Modal ── */}
+      {requestSuccessModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-md animate-fadeIn">
+          <div className="bg-white dark:bg-[#0f1422] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-2xl relative overflow-hidden transform animate-scaleUp text-center">
+            {/* Background Ambient Glow */}
+            <div className="absolute -top-20 -right-20 w-40 h-40 bg-amber-500/15 dark:bg-amber-500/20 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-20 -left-20 w-40 h-40 bg-indigo-500/15 dark:bg-indigo-500/20 rounded-full blur-3xl pointer-events-none" />
+
+            {/* Floating Animated Icon */}
+            <div className="relative mx-auto mb-5 w-20 h-20 rounded-3xl bg-gradient-to-tr from-amber-500 via-amber-400 to-yellow-400 p-0.5 shadow-xl shadow-amber-500/25 flex items-center justify-center">
+              <div className="w-full h-full bg-white dark:bg-slate-900 rounded-[22px] flex items-center justify-center relative overflow-hidden">
+                <div className="absolute inset-0 bg-amber-500/10 animate-pulse" />
+                <Clock className="w-9 h-9 text-amber-500 animate-spin" style={{ animationDuration: '7s' }} />
+              </div>
+            </div>
+
+            {/* Badge */}
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/40 text-amber-600 dark:text-amber-400 text-[11px] font-black tracking-wider uppercase mb-3">
+              <span className="w-2 h-2 rounded-full bg-amber-500 animate-ping" />
+              Permintaan Terkirim
+            </div>
+
+            {/* Title */}
+            <h3 className="text-xl font-black text-slate-800 dark:text-white tracking-tight mb-2">
+              Permintaan Akses Berhasil Dikirim! 🎉
+            </h3>
+
+            {/* Body Text */}
+            <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed mb-6">
+              Permintaan izin akses modul <span className="font-bold text-slate-800 dark:text-slate-200">&ldquo;{requestSuccessModal.moduleTitle || 'Kursus'}&rdquo;</span> telah berhasil dikirim. Menunggu persetujuan instruktur pengampu.
+            </p>
+
+            {/* Step Progress Visual */}
+            <div className="bg-slate-50 dark:bg-slate-900/70 border border-slate-100 dark:border-slate-800/80 rounded-2xl p-4 mb-6 text-left space-y-2.5">
+              <div className="flex items-center gap-3 text-xs text-emerald-600 dark:text-emerald-400 font-bold">
+                <div className="w-5 h-5 rounded-full bg-emerald-100 dark:bg-emerald-950/40 flex items-center justify-center text-emerald-600 text-[10px] font-black shrink-0">✓</div>
+                <span>Permintaan Izin Terkirim ke Sistem</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-amber-600 dark:text-amber-400 font-bold">
+                <div className="w-5 h-5 rounded-full bg-amber-100 dark:bg-amber-950/40 flex items-center justify-center text-amber-600 text-[10px] font-black shrink-0 animate-spin">⏳</div>
+                <span>Menunggu Persetujuan Instruktur</span>
+              </div>
+              <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
+                <div className="w-5 h-5 rounded-full bg-slate-200 dark:bg-slate-800 flex items-center justify-center text-slate-400 text-[10px] font-black shrink-0">3</div>
+                <span>Materi Otomatis Terbuka di My Learning</span>
+              </div>
+            </div>
+
+            {/* CTA Button */}
+            <div className="flex gap-3">
+              <button
+                onClick={() => setRequestSuccessModal(null)}
+                className="w-full py-3 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 active:from-indigo-800 text-white font-black rounded-2xl text-xs sm:text-sm transition-all shadow-lg shadow-indigo-600/25 hover:scale-[1.02] active:scale-[0.98]"
+              >
+                Mengerti, Terima Kasih 👍
               </button>
             </div>
           </div>
