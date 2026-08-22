@@ -5,17 +5,40 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
   try {
     const modules = await prisma.module.findMany({
       include: {
-        instructor: true,
-        chapters: true,
+        instructor: { select: { id: true, name: true, email: true, role: true } },
+        chapters: { select: { id: true, title: true, order: true } },
         lessons: {
           select: { id: true, title: true, type: true, order: true, chapter: true }
         },
-        enrollments: true
+        tasks: {
+          select: { id: true, title: true }
+        },
+        enrollments: {
+          select: { id: true, studentId: true, status: true, progress: true }
+        },
+        reviews: {
+          select: { id: true, rating: true }
+        }
       },
       orderBy: { createdAt: 'desc' }
     });
 
-    res.json(modules);
+    const formatted = modules.map(m => {
+      const approvedEnrollments = m.enrollments.filter(e => e.status === 'APPROVED');
+      const totalStudents = approvedEnrollments.length > 0 ? approvedEnrollments.length : m.enrollments.length;
+
+      return {
+        ...m,
+        enr: totalStudents,
+        totalEnrollments: m.enrollments.length,
+        lessonsCount: m.lessons.length,
+        tasksCount: m.tasks.length,
+        reviewsCount: m.reviews.length,
+        likesCount: m.reviews.length > 0 ? m.reviews.length : approvedEnrollments.length
+      };
+    });
+
+    res.json(formatted);
   } catch (error) {
     console.error('Error fetching modules:', error);
     res.status(500).json({ message: 'Error fetching modules' });

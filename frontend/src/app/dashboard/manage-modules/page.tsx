@@ -951,8 +951,8 @@ export default function ManageModulesPage() {
             {[
               { label: 'Total Kursus', value: modules.length, icon: BookOpen, color: 'bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400' },
               { label: 'Kategori', value: allCategories.length, icon: Layers, color: 'bg-purple-50 dark:bg-purple-950/30 text-purple-600 dark:text-purple-400' },
-              { label: isAdmin ? 'Instruktur Aktif' : 'Total Siswa', value: isAdmin ? stats.activeInstructorsCount : modules.reduce((a, m) => a + (m.enr || 0), 0), icon: Users, color: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' },
-              { label: isAdmin ? 'Modul Terverifikasi' : 'Tugas Aktif', value: isAdmin ? stats.verifiedCourses : modules.reduce((a, m) => a + (m.tasksCount || 0), 0), icon: isAdmin ? ShieldCheck : Clock, color: isAdmin ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400' : 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400' },
+              { label: isAdmin ? 'Instruktur Aktif' : 'Total Siswa', value: isAdmin ? stats.activeInstructorsCount : modules.reduce((a, m) => a + (m.enr ?? (m.enrollments ? m.enrollments.filter((e: any) => e.status === 'APPROVED').length || m.enrollments.length : 0)), 0), icon: Users, color: 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400' },
+              { label: isAdmin ? 'Modul Terverifikasi' : 'Tugas Aktif', value: isAdmin ? stats.verifiedCourses : modules.reduce((a, m) => a + (m.tasksCount ?? (m.tasks ? m.tasks.length : 0)), 0), icon: isAdmin ? ShieldCheck : Clock, color: isAdmin ? 'bg-amber-50 dark:bg-amber-950/30 text-amber-600 dark:text-amber-400' : 'bg-orange-50 dark:bg-orange-950/30 text-orange-600 dark:text-orange-400' },
             ].map(stat => (
               <div key={stat.label} className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-slate-200 dark:border-slate-800 p-4 shadow-sm flex items-center gap-3">
                 <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${stat.color} shrink-0`}>
@@ -1255,17 +1255,23 @@ export default function ManageModulesPage() {
                         <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium py-3 border-t border-slate-100 dark:border-slate-800/80">
                           <div className="flex items-center gap-1.5">
                             <Users className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                            <span className="font-semibold text-slate-700 dark:text-slate-300">{mod.enr || 0}</span> siswa
+                            <span className="font-semibold text-slate-700 dark:text-slate-300">
+                              {mod.enr ?? (mod.enrollments ? mod.enrollments.filter((e: any) => e.status === 'APPROVED').length || mod.enrollments.length : 0)}
+                            </span> siswa
                           </div>
                           <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
                           <div className="flex items-center gap-1.5">
                             <BookOpen className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                            <span className="font-semibold text-slate-700 dark:text-slate-300">{mod.lessonsCount || 0}</span> materi
+                            <span className="font-semibold text-slate-700 dark:text-slate-300">
+                              {mod.lessonsCount ?? (mod.lessons ? mod.lessons.length : 0)}
+                            </span> materi
                           </div>
                           <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
                           <div className="flex items-center gap-1.5">
                             <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                            <span className="font-semibold text-slate-700 dark:text-slate-300">{mod.tasksCount || 0}</span> tugas
+                            <span className="font-semibold text-slate-700 dark:text-slate-300">
+                              {mod.tasksCount ?? (mod.tasks ? mod.tasks.length : 0)}
+                            </span> tugas
                           </div>
                         </div>
 
