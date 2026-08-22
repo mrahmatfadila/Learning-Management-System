@@ -2622,8 +2622,15 @@ export const htmlLessonsList = [
 import { htmlLessonsPart2 } from './data/htmlPart2';
 import { htmlLessonsPart3 } from './data/htmlPart3';
 import { htmlLessonsPart4Forms } from './data/htmlPart4Forms';
+import { htmlLessonsPart5Graphics } from './data/htmlPart5Graphics';
 
-const allHtmlLessons = [...htmlLessonsList, ...htmlLessonsPart2, ...htmlLessonsPart3, ...htmlLessonsPart4Forms];
+const allHtmlLessons = [
+  ...htmlLessonsList,
+  ...htmlLessonsPart2,
+  ...htmlLessonsPart3,
+  ...htmlLessonsPart4Forms,
+  ...htmlLessonsPart5Graphics
+];
 
 async function main() {
   console.log(`🌱 Starting Master Curriculum Seeding (${allHtmlLessons.length} total HTML lessons) into lms_content_db...`);
