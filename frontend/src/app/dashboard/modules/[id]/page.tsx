@@ -74,9 +74,11 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
       });
       if (res.ok) {
         await fetchReviews();
+        setUserComment('');
         alert('Terima kasih! Ulasan Anda telah berhasil disimpan.');
       } else {
-        alert('Gagal menyimpan ulasan.');
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Gagal menyimpan ulasan.');
       }
     } catch (err) {
       console.error(err);

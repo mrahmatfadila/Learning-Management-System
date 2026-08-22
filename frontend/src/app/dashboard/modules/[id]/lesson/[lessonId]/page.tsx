@@ -193,12 +193,14 @@ export default function LessonPage() {
       });
       if (res.ok) {
         setModuleReviewSuccess(true);
+        setModuleUserComment('');
         setTimeout(() => {
           setIsReviewModalOpen(false);
           setModuleReviewSuccess(false);
         }, 1500);
       } else {
-        alert('Gagal menyimpan ulasan.');
+        const data = await res.json().catch(() => ({}));
+        alert(data.error || 'Gagal menyimpan ulasan.');
       }
     } catch (err) {
       alert('Terjadi kesalahan saat mengirim ulasan.');

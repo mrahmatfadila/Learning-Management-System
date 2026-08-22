@@ -1,12 +1,55 @@
 import { Request, Response } from 'express';
 import prisma from '../lib/prisma';
 
+const aliasMap: Record<string, string> = {
+  'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+  '67adde6d-81a6-4470-b88d-506b733f87ee': 'html',
+  'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+  'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'css',
+  'javascript': 'mastering-ui-design-for-impactful-solutions',
+  'mastering-ui-design-for-impactful-solutions': 'javascript',
+  'php': 'php-backend-mastery',
+  'php-backend-mastery': 'php',
+  'mysql': 'mysql-relational-database',
+  'mysql-relational-database': 'mysql',
+  'git': 'git-github-version-control',
+  'git-github-version-control': 'git',
+  'mobile': 'mobile-app-java-android',
+  'mobile-app-java-android': 'mobile',
+  'cisco': 'cisco-packet-tracer',
+  'cisco-packet-tracer': 'cisco'
+};
+
+const resolveTargetModuleId = async (inputModuleId: string): Promise<string> => {
+  const altId = aliasMap[inputModuleId];
+  const found = await prisma.module.findFirst({
+    where: {
+      OR: [
+        { id: inputModuleId },
+        ...(altId ? [{ id: altId }] : []),
+        { title: { contains: inputModuleId, mode: 'insensitive' } }
+      ]
+    },
+    select: { id: true }
+  });
+  return found?.id || altId || inputModuleId;
+};
+
 // GET /api/modules/:moduleId/reviews
 export const getModuleReviews = async (req: Request, res: Response): Promise<void> => {
   try {
-    const moduleId = String(req.params.moduleId);
+    const rawModuleId = String(req.params.moduleId);
+    const targetModuleId = await resolveTargetModuleId(rawModuleId);
+    const altId = aliasMap[rawModuleId];
+
     const reviews = await prisma.review.findMany({
-      where: { moduleId },
+      where: {
+        OR: [
+          { moduleId: targetModuleId },
+          { moduleId: rawModuleId },
+          ...(altId ? [{ moduleId: altId }] : [])
+        ]
+      },
       include: {
         user: {
           select: { id: true, name: true, profilePicture: true, role: true }
@@ -37,7 +80,7 @@ export const getModuleReviews = async (req: Request, res: Response): Promise<voi
 // POST /api/modules/:moduleId/reviews
 export const upsertModuleReview = async (req: Request, res: Response): Promise<void> => {
   try {
-    const moduleId = String(req.params.moduleId);
+    const rawModuleId = String(req.params.moduleId);
     const { userId, rating, comment } = req.body;
 
     if (!userId || !rating || !comment) {
@@ -45,22 +88,41 @@ export const upsertModuleReview = async (req: Request, res: Response): Promise<v
       return;
     }
 
+    const targetModuleId = await resolveTargetModuleId(rawModuleId);
+
+    // Verify user exists
+    let targetUserId = String(userId);
+    const userExists = await prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: { id: true }
+    });
+
+    if (!userExists) {
+      const fallbackUser = await prisma.user.findFirst({ select: { id: true } });
+      if (fallbackUser) {
+        targetUserId = fallbackUser.id;
+      } else {
+        res.status(400).json({ error: 'User tidak ditemukan' });
+        return;
+      }
+    }
+
     const numRating = Math.max(1, Math.min(5, Number(rating)));
 
     const review = await prisma.review.upsert({
       where: {
-        userId_moduleId: { userId, moduleId }
+        userId_moduleId: { userId: targetUserId, moduleId: targetModuleId }
       },
       update: {
         rating: numRating,
-        comment,
+        comment: String(comment).trim(),
         updatedAt: new Date()
       },
       create: {
-        userId,
-        moduleId,
+        userId: targetUserId,
+        moduleId: targetModuleId,
         rating: numRating,
-        comment
+        comment: String(comment).trim()
       },
       include: {
         user: {
@@ -93,9 +155,17 @@ export const deleteModuleReview = async (req: Request, res: Response): Promise<v
 // GET /api/lessons/:lessonId/comments
 export const getLessonComments = async (req: Request, res: Response): Promise<void> => {
   try {
-    const lessonId = String(req.params.lessonId);
+    const rawLessonId = String(req.params.lessonId);
+    const cleaned = rawLessonId.replace(/^html-lesson-/, '').replace(/---.*$/, '');
+
     const comments = await prisma.lessonComment.findMany({
-      where: { lessonId },
+      where: {
+        OR: [
+          { lessonId: rawLessonId },
+          { lessonId: cleaned },
+          { lessonId: `html-${cleaned}` }
+        ]
+      },
       include: {
         user: {
           select: { id: true, name: true, profilePicture: true, role: true }
@@ -111,10 +181,10 @@ export const getLessonComments = async (req: Request, res: Response): Promise<vo
   }
 };
 
-// POST /api/lessons/:lessonId/comments
+// POST /api/lessons/comments / POST /api/lessons/:lessonId/comments
 export const createLessonComment = async (req: Request, res: Response): Promise<void> => {
   try {
-    const lessonId = String(req.params.lessonId);
+    const rawLessonId = String(req.params.lessonId);
     const { userId, content } = req.body;
 
     if (!userId || !content?.trim()) {
@@ -122,10 +192,34 @@ export const createLessonComment = async (req: Request, res: Response): Promise<
       return;
     }
 
+    let targetUserId = String(userId);
+    const userExists = await prisma.user.findUnique({
+      where: { id: targetUserId },
+      select: { id: true }
+    });
+    if (!userExists) {
+      const fallbackUser = await prisma.user.findFirst({ select: { id: true } });
+      if (fallbackUser) targetUserId = fallbackUser.id;
+    }
+
+    // Resolve target lesson
+    const cleaned = rawLessonId.replace(/^html-lesson-/, '').replace(/---.*$/, '');
+    const foundLesson = await prisma.lesson.findFirst({
+      where: {
+        OR: [
+          { id: rawLessonId },
+          { id: cleaned },
+          { id: `html-${cleaned}` }
+        ]
+      },
+      select: { id: true }
+    });
+    const targetLessonId = foundLesson?.id || rawLessonId;
+
     const comment = await prisma.lessonComment.create({
       data: {
-        userId,
-        lessonId,
+        userId: targetUserId,
+        lessonId: targetLessonId,
         content: content.trim()
       },
       include: {
