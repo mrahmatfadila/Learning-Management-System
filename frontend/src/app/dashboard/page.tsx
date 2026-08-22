@@ -617,19 +617,34 @@ export default function DashboardPage() {
       } else if (activeMenu === 'Learning Paths') {
         // Handled in next block
       } else {
-        const toggleLike = async (moduleId: string) => {
-          try {
-            const res = await fetch(`http://localhost:5000/api/modules/${moduleId}/like`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ userId: user.id })
-            });
-            if (res.ok) {
-              fetchData(user);
-            }
-          } catch (err) {
+        const toggleLike = (moduleId: string) => {
+          // Optimistic update: toggle likes array in local state instantly
+          setModules((prev: any[]) => prev.map((m: any) => {
+            if (m.id !== moduleId) return m;
+            const alreadyLiked = m.likes?.some((l: any) => l.userId === user.id);
+            const newLikes = alreadyLiked
+              ? (m.likes || []).filter((l: any) => l.userId !== user.id)
+              : [...(m.likes || []), { id: '__optimistic__', userId: user.id }];
+            return { ...m, likes: newLikes, likesCount: newLikes.length };
+          }));
+
+          // Fire API in background — no await, no loading
+          fetch(`http://localhost:5000/api/modules/${moduleId}/like`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ userId: user.id })
+          }).catch(err => {
             console.error('Failed to toggle like', err);
-          }
+            // Revert on error
+            setModules((prev: any[]) => prev.map((m: any) => {
+              if (m.id !== moduleId) return m;
+              const alreadyLiked = m.likes?.some((l: any) => l.userId === user.id && l.id !== '__optimistic__');
+              const newLikes = alreadyLiked
+                ? (m.likes || []).filter((l: any) => l.userId !== user.id)
+                : [...(m.likes || []), { id: '__optimistic__', userId: user.id }];
+              return { ...m, likes: newLikes, likesCount: newLikes.length };
+            }));
+          });
         };
 
         const allCategories = ['Semua', ...Array.from(new Set(modules.map((m: any) => m.category).filter(Boolean)))] as string[];
@@ -848,14 +863,20 @@ export default function DashboardPage() {
                           {/* Wishlist Button */}
                           <button
                             onClick={e => { e.stopPropagation(); toggleLike(m.id); }}
-                            className={`absolute top-2 right-2 z-10 w-6 h-6 rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow ${
+                            className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 shadow active:scale-125 ${
                               isLiked
-                                ? 'bg-rose-500 text-white scale-110 ring-1 ring-rose-300'
-                                : 'bg-slate-900/60 text-white/80 hover:text-rose-400 hover:bg-slate-900/90'
+                                ? 'bg-rose-500 text-white scale-110 ring-2 ring-rose-300 ring-offset-1 shadow-rose-500/40 shadow-md'
+                                : 'bg-slate-900/60 text-white/70 hover:text-rose-400 hover:bg-slate-900/90 hover:scale-110'
                             }`}
                             title={isLiked ? 'Batal Suka' : 'Suka Modul Ini'}
                           >
-                            <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                            <svg
+                              className={`w-3.5 h-3.5 transition-all duration-200 ${isLiked ? 'scale-110 drop-shadow-sm' : ''}`}
+                              fill={isLiked ? 'currentColor' : 'none'}
+                              viewBox="0 0 24 24"
+                              stroke="currentColor"
+                              strokeWidth={2.2}
+                            >
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                           </button>
@@ -1058,13 +1079,19 @@ export default function DashboardPage() {
                       <div className="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
                         <button
                           onClick={() => toggleLike(m.id)}
-                          className={`w-7 h-7 rounded-xl border transition-all flex items-center justify-center ${
+                          className={`w-8 h-8 rounded-xl border transition-all duration-200 flex items-center justify-center active:scale-125 ${
                             isLiked
-                              ? 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-500 shadow-sm'
-                              : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 hover:text-rose-500'
+                              ? 'bg-rose-50 dark:bg-rose-950/20 border-rose-300 dark:border-rose-900/40 text-rose-500 shadow-sm shadow-rose-200 scale-105'
+                              : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 hover:text-rose-500 hover:border-rose-200 hover:scale-105'
                           }`}
                         >
-                          <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                          <svg
+                            className={`w-3.5 h-3.5 transition-all duration-200 ${isLiked ? 'scale-110' : ''}`}
+                            fill={isLiked ? 'currentColor' : 'none'}
+                            viewBox="0 0 24 24"
+                            stroke="currentColor"
+                            strokeWidth={2.2}
+                          >
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                           </svg>
                         </button>
