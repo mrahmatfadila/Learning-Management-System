@@ -548,7 +548,7 @@ export default function ManageModulesPage() {
   }, [modules]);
 
   return (
-    <div className="p-6 md:p-10 max-w-7xl mx-auto">
+    <div className="p-4 sm:p-6 lg:p-8 max-w-[1550px] w-full mx-auto space-y-6">
       {/* ── TOP HEADER ── */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
         <div>
@@ -1114,8 +1114,8 @@ export default function ManageModulesPage() {
               <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-6">Coba ubah kata kunci pencarian atau reset filter.</p>
             </div>
           ) : viewMode === 'grid' ? (
-            /* ── COMPACT GRID CARD VIEW (Instructor / Admin) ── */
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5">
+            /* ── BALANCED GRID CARD VIEW (Instructor / Admin) ── */
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
               {filtered.map((mod: any) => {
                 const isSelected = selectedIds.includes(mod.id);
                 const theme = getCourseTheme(mod.title);
@@ -1126,17 +1126,17 @@ export default function ManageModulesPage() {
                 return (
                   <div
                     key={mod.id}
-                    className={`bg-white dark:bg-[#0d1117] rounded-2xl border transition-all duration-200 relative group flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 ${
+                    className={`bg-white dark:bg-[#0d1117] rounded-3xl border transition-all duration-300 relative group flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-2xl hover:-translate-y-1.5 ${
                       isSelected
                         ? 'border-indigo-600 ring-2 ring-indigo-500/30'
                         : 'border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50'
                     }`}
                   >
-                    {/* Top Thumbnail Section (Compact) */}
+                    {/* Top Thumbnail Section */}
                     <div className="relative">
                       <div
                         onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
-                        className={`w-full aspect-[16/8.5] ${hasCustomThumb ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} flex items-center justify-center relative overflow-hidden cursor-pointer group/thumb`}
+                        className={`w-full aspect-[16/9] ${hasCustomThumb ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} flex items-center justify-center relative overflow-hidden cursor-pointer group/thumb`}
                       >
                         {hasCustomThumb ? (
                           <>
@@ -1148,11 +1148,11 @@ export default function ManageModulesPage() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                           </>
                         ) : (
-                          <div className="relative z-10 flex flex-col items-center justify-center text-center p-2">
-                            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-all duration-200 mb-1">
-                              <span className="text-lg drop-shadow">{theme.emoji}</span>
+                          <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
+                            <div className="w-12 h-12 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-lg group-hover/thumb:scale-110 transition-all duration-300 mb-1.5">
+                              <span className="text-2xl drop-shadow">{theme.emoji}</span>
                             </div>
-                            <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
+                            <span className="text-xs font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
                           </div>
                         )}
 
@@ -1160,42 +1160,42 @@ export default function ManageModulesPage() {
                         {isAdmin && (
                           <button
                             onClick={(e) => handleToggleSelect(mod.id, e)}
-                            className={`absolute top-2 left-2 z-30 w-5 h-5 rounded-md flex items-center justify-center transition-all ${
+                            className={`absolute top-3 left-3 z-30 w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
                               isSelected
                                 ? 'bg-indigo-600 text-white shadow-md'
                                 : 'bg-white/80 hover:bg-white text-slate-700 shadow'
                             }`}
                             title="Pilih Modul"
                           >
-                            {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                            {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
                           </button>
                         )}
 
                         {/* Floating Category Pill */}
-                        <div className={`absolute top-2 ${isAdmin ? 'left-8' : 'left-2'} z-10`}>
-                          <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
+                        <div className={`absolute top-3 ${isAdmin ? 'left-11' : 'left-3'} z-10`}>
+                          <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide uppercase shadow-sm">
                             {mod.category || 'General'}
                           </span>
                         </div>
 
                         {/* Heart / Likes Top Right */}
-                        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
-                          <div className="bg-slate-900/70 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[9px] font-black shadow flex items-center gap-1">
-                            <Heart className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
+                        <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
+                          <div className="bg-slate-900/75 backdrop-blur-md text-white px-2.5 py-1 rounded-full text-[10px] font-black shadow-sm flex items-center gap-1">
+                            <Heart className="w-3 h-3 fill-rose-500 text-rose-500" />
                             <span>{mod.likesCount ?? mod.likes?.length ?? 0}</span>
                           </div>
                         </div>
 
                         {/* Floating Verification Status Badge (Bottom Left) */}
-                        <div className="absolute bottom-2 left-2 z-10">
+                        <div className="absolute bottom-3 left-3 z-10">
                           {mod.isVerified ? (
-                            <span className="bg-emerald-600/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-emerald-400/40">
-                              <ShieldCheck className="w-2.5 h-2.5 text-emerald-200" />
+                            <span className="bg-emerald-600/95 backdrop-blur-md text-white font-black text-[10px] tracking-wide px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-emerald-400/40">
+                              <ShieldCheck className="w-3.5 h-3.5 text-emerald-200" />
                               <span>Verified</span>
                             </span>
                           ) : (
-                            <span className="bg-slate-900/80 backdrop-blur-md text-slate-300 font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-slate-700/60">
-                              <ShieldX className="w-2.5 h-2.5 text-slate-400" />
+                            <span className="bg-slate-900/85 backdrop-blur-md text-slate-300 font-black text-[10px] tracking-wide px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-slate-700/60">
+                              <ShieldX className="w-3.5 h-3.5 text-slate-400" />
                               <span>Draft / Reg</span>
                             </span>
                           )}
@@ -1203,44 +1203,44 @@ export default function ManageModulesPage() {
                       </div>
                     </div>
 
-                    {/* Card Body (Compact) */}
-                    <div className="p-3.5 flex-1 flex flex-col justify-between gap-2.5">
+                    {/* Card Body */}
+                    <div className="p-5 flex-1 flex flex-col justify-between gap-3.5">
                       <div>
                         {/* Meta Header: Difficulty & Instructor */}
-                        <div className="flex items-center justify-between gap-1.5 mb-1.5">
-                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${difficulty.color}`}>
+                        <div className="flex items-center justify-between gap-2 mb-2">
+                          <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${difficulty.color}`}>
                             {difficulty.label}
                           </span>
                           {mod.instructor ? (
-                            <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[110px]" title={mod.instructor.name}>
-                              <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
+                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[130px]" title={mod.instructor.name}>
+                              <div className="w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black shrink-0">
                                 {mod.instructor.name.charAt(0)}
                               </div>
                               <span className="truncate">{mod.instructor.name}</span>
                             </div>
                           ) : (
-                            <span className="text-[9px] text-slate-400 font-medium">Instruktur LMS</span>
+                            <span className="text-[10px] text-slate-400 font-medium">Instruktur LMS</span>
                           )}
                         </div>
 
                         {/* Title */}
                         <h3
                           onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
-                          className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug mb-1 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer"
+                          className="font-black text-slate-900 dark:text-slate-100 text-base leading-snug mb-1.5 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer"
                         >
                           {mod.title}
                         </h3>
 
                         {/* Description */}
-                        <p className="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 leading-normal mb-2">
-                          {mod.description || 'Kelola kurikulum dan materi pembelajaran.'}
+                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
+                          {mod.description || 'Kelola silabus, kurikulum, dan materi pembelajaran praktis.'}
                         </p>
 
                         {/* Skill Tags */}
                         {skillTags.length > 0 && (
-                          <div className="flex flex-wrap gap-1">
+                          <div className="flex flex-wrap gap-1.5">
                             {skillTags.slice(0, 3).map((tag: string) => (
-                              <span key={tag} className="text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                              <span key={tag} className="text-[10px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded-md">
                                 #{tag}
                               </span>
                             ))}
@@ -1251,74 +1251,74 @@ export default function ManageModulesPage() {
                       {/* Footer: Stats & Instructor Control Actions */}
                       <div>
                         {/* Stats Row */}
-                        <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium py-2 border-t border-slate-100 dark:border-slate-800/80">
-                          <div className="flex items-center gap-1">
-                            <Users className="w-3 h-3 text-slate-400" />
-                            <span className="font-semibold text-slate-600 dark:text-slate-300">{mod.enr || 0}</span> siswa
+                        <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium py-3 border-t border-slate-100 dark:border-slate-800/80">
+                          <div className="flex items-center gap-1.5">
+                            <Users className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                            <span className="font-semibold text-slate-700 dark:text-slate-300">{mod.enr || 0}</span> siswa
                           </div>
                           <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                          <div className="flex items-center gap-1">
-                            <BookOpen className="w-3 h-3 text-slate-400" />
-                            <span className="font-semibold text-slate-600 dark:text-slate-300">{mod.lessonsCount || 0}</span> materi
+                          <div className="flex items-center gap-1.5">
+                            <BookOpen className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                            <span className="font-semibold text-slate-700 dark:text-slate-300">{mod.lessonsCount || 0}</span> materi
                           </div>
                           <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                          <div className="flex items-center gap-1">
-                            <Clock className="w-3 h-3 text-slate-400" />
-                            <span className="font-semibold text-slate-600 dark:text-slate-300">{mod.tasksCount || 0}</span> tugas
+                          <div className="flex items-center gap-1.5">
+                            <Clock className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
+                            <span className="font-semibold text-slate-700 dark:text-slate-300">{mod.tasksCount || 0}</span> tugas
                           </div>
                         </div>
 
                         {/* Instructor Management Actions */}
-                        <div className="flex items-center gap-1.5 pt-1">
+                        <div className="flex items-center gap-2 pt-1">
                           {/* Primary CTA: Edit / Manage Syllabus */}
                           <button
                             onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
-                            className="flex-1 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm group/btn"
+                            className="flex-1 py-2.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm group/btn"
                           >
-                            <Edit2 className="w-3 h-3" /> Kelola Silabus
+                            <Edit2 className="w-3.5 h-3.5" /> Kelola Silabus
                           </button>
 
                           {/* Quick Edit Modal */}
                           <button
                             onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', mod); }}
-                            className="p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-300 text-slate-600 dark:text-slate-300 hover:text-indigo-600 rounded-xl transition-colors shadow-sm"
+                            className="p-2.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-300 text-slate-600 dark:text-slate-300 hover:text-indigo-600 rounded-2xl transition-colors shadow-sm"
                             title="Edit Data Modul"
                           >
-                            <Settings className="w-3 h-3" />
+                            <Settings className="w-3.5 h-3.5" />
                           </button>
 
                           {/* Duplicate (Admin) */}
                           {isAdmin && (
                             <button
                               onClick={(e) => handleOpenDuplicate(mod, e)}
-                              className="p-1.5 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/40 hover:bg-purple-100 text-purple-600 dark:text-purple-400 rounded-xl transition-colors shadow-sm"
+                              className="p-2.5 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/40 hover:bg-purple-100 text-purple-600 dark:text-purple-400 rounded-2xl transition-colors shadow-sm"
                               title="Duplikasi Modul"
                             >
-                              <Copy className="w-3 h-3" />
+                              <Copy className="w-3.5 h-3.5" />
                             </button>
                           )}
 
                           {/* Delete Modul */}
                           <button
                             onClick={(e) => handleDelete(mod.id, e)}
-                            className="p-1.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 hover:bg-rose-100 text-rose-600 dark:text-rose-400 rounded-xl transition-colors shadow-sm"
+                            className="p-2.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 hover:bg-rose-100 text-rose-600 dark:text-rose-400 rounded-2xl transition-colors shadow-sm"
                             title="Hapus Modul"
                           >
-                            <Trash2 className="w-3 h-3" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
 
                           {/* Toggle Verify (Admin) */}
                           {isAdmin && (
                             <button
                               onClick={(e) => handleToggleVerify(mod, e)}
-                              className={`p-1.5 rounded-xl border transition-colors shadow-sm ${
+                              className={`p-2.5 rounded-2xl border transition-colors shadow-sm ${
                                 mod.isVerified
                                   ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/20 dark:border-rose-900/40'
                                   : 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-900/40'
                               }`}
                               title={mod.isVerified ? 'Batalkan Verifikasi' : 'Verifikasi Modul'}
                             >
-                              {mod.isVerified ? <ShieldX className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
+                              {mod.isVerified ? <ShieldX className="w-3.5 h-3.5" /> : <ShieldCheck className="w-3.5 h-3.5" />}
                             </button>
                           )}
                         </div>
