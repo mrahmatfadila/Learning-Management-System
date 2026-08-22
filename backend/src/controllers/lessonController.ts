@@ -4,6 +4,21 @@ import prisma from '../lib/prisma';
 export const getLessonsByModuleId = async (req: Request, res: Response): Promise<any> => {
   try {
     const moduleId = req.params.moduleId as string;
+    const contentApiSlug = moduleId === '67adde6d-81a6-4470-b88d-506b733f87ee' ? 'html' : moduleId;
+
+    // Coba ambil dari Content API terlebih dahulu
+    try {
+      const contentRes = await fetch(`http://127.0.0.1:5001/api/v1/modules/${contentApiSlug}`, {
+        signal: AbortSignal.timeout(2000)
+      });
+      if (contentRes.ok) {
+        const contentData = await contentRes.json();
+        if (contentData.success && contentData.data?.lessons?.length > 0) {
+          return res.json(contentData.data.lessons);
+        }
+      }
+    } catch {}
+
     let lessons = await prisma.lesson.findMany({
       where: { moduleId },
       orderBy: { order: 'asc' }
@@ -44,6 +59,35 @@ export const getLessonsByModuleId = async (req: Request, res: Response): Promise
 export const getLessonById = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
+
+    // 🌐 INTEGRASI CONTENT-API-SERVER (lms_content_db)
+    try {
+      const contentRes = await fetch(`http://127.0.0.1:5001/api/v1/lessons/${id}`, {
+        signal: AbortSignal.timeout(2000)
+      });
+      if (contentRes.ok) {
+        const contentData = await contentRes.json();
+        if (contentData.success && contentData.data) {
+          const l = contentData.data;
+          return res.json({
+            id: l.id,
+            moduleId: l.moduleId,
+            chapterId: l.chapterId,
+            chapter: l.chapter,
+            title: l.title,
+            type: l.type,
+            order: l.order,
+            content: typeof l.content === 'object' ? JSON.stringify(l.content) : l.content,
+            w3schoolStructure: l.w3schoolStructure,
+            starterCode: l.content?.code || null,
+            videoUrl: null,
+            createdAt: new Date(),
+            updatedAt: new Date()
+          });
+        }
+      }
+    } catch {}
+
     let lesson = await prisma.lesson.findUnique({ where: { id } });
     if (!lesson) {
       lesson = await prisma.lesson.findFirst({
@@ -103,11 +147,11 @@ export const updateLesson = async (req: Request, res: Response): Promise<any> =>
     if (order !== undefined) data.order = order;
     if (chapter !== undefined) data.chapter = chapter;
 
-    const updatedLesson = await prisma.lesson.update({
+    const updated = await prisma.lesson.update({
       where: { id },
       data
     });
-    res.json(updatedLesson);
+    res.json(updated);
   } catch (error) {
     res.status(500).json({ message: 'Error updating lesson' });
   }

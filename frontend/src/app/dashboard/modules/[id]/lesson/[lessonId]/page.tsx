@@ -209,20 +209,37 @@ export default function LessonPage() {
   if (dbLessonData && dbModuleData && dbModuleData.lessons) {
     let parsedContent: any = {};
     try {
-      parsedContent = JSON.parse(dbLessonData.content || '{}');
+      parsedContent = typeof dbLessonData.content === 'object' ? dbLessonData.content : JSON.parse(dbLessonData.content || '{}');
     } catch {
       parsedContent = { theory: dbLessonData.content, code: dbLessonData.videoUrl || '' };
     }
 
     const sortedLessons = [...dbModuleData.lessons].sort((a: any, b: any) => a.order - b.order);
     const currentIndex = sortedLessons.findIndex((l: any) => l.id === lessonId);
+
+    const w3 = dbLessonData.w3schoolStructure || parsedContent.w3schoolStructure || null;
+    const quizData = w3?.pertanyaanKuis ? {
+      question: w3.pertanyaanKuis.question,
+      options: w3.pertanyaanKuis.options,
+      correctIndex: w3.pertanyaanKuis.answer,
+      explanation: w3.pertanyaanKuis.explanation
+    } : (parsedContent.quiz ? {
+      question: parsedContent.quiz.question,
+      options: parsedContent.quiz.options,
+      correctIndex: parsedContent.quiz.answer !== undefined ? parsedContent.quiz.answer : parsedContent.quiz.correctIndex,
+      explanation: parsedContent.quiz.explanation
+    } : staticLessonData.quiz);
+
     dynamicLessonData = {
       ...staticLessonData,
       title: dbLessonData.title,
-      theory: parsedContent.theory || dbLessonData.content || '',
-      code: parsedContent.code || '',
-      quiz: parsedContent.quiz || staticLessonData.quiz,
-      color: parsedContent.color || staticLessonData.color || 'blue',
+      overview: w3?.penjelasanJudul || parsedContent.overview || '',
+      theory: w3?.isiMateri || parsedContent.theory || dbLessonData.content || '',
+      code: w3?.contohCoding || parsedContent.code || dbLessonData.starterCode || '',
+      codeExplanation: w3?.penjelasanCodingSatuPerSatu || parsedContent.codeExplanation || [],
+      challenge: w3?.codinganLatihan || parsedContent.challenge || null,
+      quiz: quizData,
+      color: parsedContent.color || staticLessonData.color || 'orange',
       chapter: dbLessonData.chapter || 'Materi Pembelajaran',
       prevPath: currentIndex > 0 ? sortedLessons[currentIndex - 1].id : null,
       nextPath: currentIndex < sortedLessons.length - 1 ? sortedLessons[currentIndex + 1].id : null,
@@ -747,6 +764,23 @@ export default function LessonPage() {
               {/* Divider */}
               <div className={`h-px w-full mb-8 ${isDark ? 'bg-white/8' : 'bg-slate-200'}`} />
 
+              {/* Overview Banner (W3Schools Standard) */}
+              {lessonData?.overview && (
+                <div className={`p-4 rounded-2xl mb-8 border flex items-start gap-3.5 ${isDark ? 'bg-indigo-500/10 border-indigo-500/25 text-indigo-200' : 'bg-gradient-to-r from-indigo-50/90 to-blue-50/90 border-indigo-200 text-indigo-950'}`}>
+                  <div className="p-2.5 rounded-xl bg-indigo-600 text-white shrink-0 shadow-sm mt-0.5">
+                    <BookOpen className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-[11px] font-black uppercase tracking-wider text-indigo-600 dark:text-indigo-400 mb-1">
+                      Ikhtisar Materi
+                    </div>
+                    <p className="text-sm leading-relaxed font-medium">
+                      {lessonData.overview}
+                    </p>
+                  </div>
+                </div>
+              )}
+
               {/* Theory content */}
               {/* Video Player */}
               {lessonData.type === 'video' && lessonData.videoUrl && (
@@ -794,60 +828,117 @@ export default function LessonPage() {
                   <Zap className={`w-5 h-5 ${isDark ? 'text-white' : 'text-orange-500'}`} />
                 </div>
                 <div>
-                  <div className={`font-bold text-sm mb-0.5 ${textPrimary}`}>Try It Yourself ??</div>
-                  <div className={`text-xs ${textMuted}`}>Edit kode di panel kanan ? lihat hasilnya secara <strong className={isDark ? 'text-orange-400' : 'text-orange-600'}>Live Preview</strong></div>
+                  <div className={`font-bold text-sm mb-0.5 ${textPrimary}`}>Try It Yourself ⚡</div>
+                  <div className={`text-xs ${textMuted}`}>Edit kode di panel kanan → lihat hasilnya secara <strong className={isDark ? 'text-orange-400' : 'text-orange-600'}>Live Preview</strong></div>
                 </div>
               </div>
 
+              {/* Penjelasan Coding Satu per Satu (W3Schools Standard) */}
+              {lessonData?.codeExplanation && lessonData.codeExplanation.length > 0 && (
+                <div className={`rounded-2xl border p-5 mb-8 ${isDark ? 'bg-[#161b22] border-white/8' : 'bg-white border-slate-200 shadow-sm'}`}>
+                  <div className="flex items-center gap-2.5 mb-4">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-600 dark:text-amber-400 flex items-center justify-center font-bold text-sm">
+                      💡
+                    </div>
+                    <div>
+                      <h3 className={`text-sm font-black ${textPrimary}`}>Penjelasan Baris Kode Satu per Satu</h3>
+                      <div className={`text-[10px] ${textMuted}`}>Bedah sintaks kode langkah demi langkah</div>
+                    </div>
+                  </div>
+                  <div className="space-y-2.5">
+                    {lessonData.codeExplanation.map((exp: string, idx: number) => (
+                      <div key={idx} className={`p-3.5 rounded-xl border text-xs leading-relaxed flex items-start gap-3 ${isDark ? 'bg-white/5 border-white/5 text-slate-300' : 'bg-slate-50/80 border-slate-200/60 text-slate-700'}`}>
+                        <span className="w-5 h-5 rounded-full bg-indigo-600 text-white font-mono font-bold flex items-center justify-center shrink-0 text-[10px] shadow-sm">
+                          {idx + 1}
+                        </span>
+                        <span className="font-mono">{exp}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Codingan Latihan / Tantangan Praktik (W3Schools Standard) */}
+              {lessonData?.challenge && (
+                <div className={`rounded-2xl border p-5 mb-8 overflow-hidden relative ${isDark ? 'bg-gradient-to-br from-indigo-950/40 to-purple-950/20 border-indigo-500/30' : 'bg-gradient-to-br from-indigo-50/60 to-purple-50/40 border-indigo-200'}`}>
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-black uppercase tracking-wider px-2.5 py-1 rounded-lg bg-indigo-600 text-white shadow-sm">🎯 Latihan Praktik</span>
+                      <span className={`text-xs font-bold ${textMuted}`}>Uji Skill Coding Kamu</span>
+                    </div>
+                    {lessonData.challenge.starterCode && (
+                      <button
+                        onClick={() => {
+                          setUserCode(lessonData.challenge.starterCode);
+                          userCodeRef.current = lessonData.challenge.starterCode;
+                        }}
+                        className="text-xs font-bold text-indigo-600 hover:text-indigo-700 dark:text-indigo-400 flex items-center gap-1 bg-white/80 dark:bg-white/10 px-3 py-1.5 rounded-xl border border-indigo-200 dark:border-indigo-500/30 transition-all hover:scale-105">
+                        ⚡ Muat ke Editor
+                      </button>
+                    )}
+                  </div>
+                  <p className={`text-sm font-semibold mb-3 leading-relaxed ${textPrimary}`}>{lessonData.challenge.instruction}</p>
+                  {lessonData.challenge.hint && (
+                    <details className="mt-2 text-xs">
+                      <summary className="cursor-pointer font-bold text-indigo-600 dark:text-indigo-400 hover:underline">💡 Butuh Hint?</summary>
+                      <p className={`mt-2 p-3 rounded-xl border ${isDark ? 'bg-white/5 border-white/10 text-slate-300' : 'bg-white border-slate-200 text-slate-600'}`}>
+                        {lessonData.challenge.hint}
+                      </p>
+                    </details>
+                  )}
+                </div>
+              )}
+
               {/* Quiz */}
-              <div className={`rounded-2xl border overflow-hidden mb-8 ${isDark ? 'bg-[#161b22] border-white/8' : 'bg-white border-slate-200 shadow-sm'}`}>
-                <div className={`flex items-center gap-3 px-5 py-4 border-b ${border}`}>
-                  <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${colors.bgLight}`}>
-                    <CheckCircle className={`w-4 h-4 ${colors.icon}`} />
+              {lessonData?.quiz && (
+                <div className={`rounded-2xl border overflow-hidden mb-8 ${isDark ? 'bg-[#161b22] border-white/8' : 'bg-white border-slate-200 shadow-sm'}`}>
+                  <div className={`flex items-center gap-3 px-5 py-4 border-b ${border}`}>
+                    <div className={`w-8 h-8 rounded-xl flex items-center justify-center ${colors.bgLight}`}>
+                      <CheckCircle className={`w-4 h-4 ${colors.icon}`} />
+                    </div>
+                    <div>
+                      <div className={`text-sm font-black ${textPrimary}`}>Quick Check-up</div>
+                      <div className={`text-[10px] ${textMuted}`}>Uji pemahamanmu sebelum lanjut</div>
+                    </div>
                   </div>
-                  <div>
-                    <div className={`text-sm font-black ${textPrimary}`}>Quick Check-up</div>
-                    <div className={`text-[10px] ${textMuted}`}>Uji pemahamanmu sebelum lanjut</div>
+                  <div className="p-5">
+                    <p className={`text-sm font-semibold mb-4 leading-relaxed ${textPrimary}`}>{lessonData?.quiz?.question}</p>
+                    <div className="space-y-2">
+                      {lessonData?.quiz?.options?.map((ans: string, i: number) => {
+                        const isCorrect = i === lessonData?.quiz?.correctIndex;
+                        const answered = quizAnswered[1] !== undefined;
+                        return (
+                          <button key={i} disabled={answered}
+                            onClick={() => setQuizAnswered({ 1: isCorrect })}
+                            className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all flex items-center justify-between gap-3 ${
+                              answered && isCorrect
+                                ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
+                                : answered && !isCorrect
+                                ? `border-transparent ${isDark ? 'bg-white/4 text-slate-500' : 'bg-slate-50 text-slate-400'} cursor-not-allowed`
+                                : isDark
+                                ? 'border-white/10 bg-white/4 text-slate-300 hover:border-indigo-400/50 hover:bg-indigo-500/8'
+                                : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50'
+                            }`}>
+                            <span>{ans}</span>
+                            {answered && isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
+                          </button>
+                        );
+                      })}
+                    </div>
+                    {quizAnswered[1] === true && (
+                      <div className="mt-4 flex items-start gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
+                        <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
+                        <span>{lessonData?.quiz?.explanation}</span>
+                      </div>
+                    )}
+                    {quizAnswered[1] === false && (
+                      <div className={`mt-4 p-3.5 rounded-xl text-sm ${isDark ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-red-50 text-red-600 border border-red-200'}`}>
+                        Kurang tepat! Jawaban benar: <strong>{lessonData?.quiz?.options?.[lessonData?.quiz?.correctIndex || 0]}</strong>
+                      </div>
+                    )}
                   </div>
                 </div>
-                <div className="p-5">
-                  <p className={`text-sm font-semibold mb-4 leading-relaxed ${textPrimary}`}>{lessonData?.quiz?.question}</p>
-                  <div className="space-y-2">
-                    {lessonData?.quiz?.options?.map((ans: string, i: number) => {
-                      const isCorrect = i === lessonData?.quiz?.correctIndex;
-                      const answered = quizAnswered[1] !== undefined;
-                      const chosen = quizAnswered[1] !== undefined;
-                      return (
-                        <button key={i} disabled={answered}
-                          onClick={() => setQuizAnswered({ 1: isCorrect })}
-                          className={`w-full text-left px-4 py-3 rounded-xl border text-sm font-medium transition-all flex items-center justify-between gap-3 ${
-                            answered && isCorrect
-                              ? 'border-emerald-400 bg-emerald-50 text-emerald-700'
-                              : answered && !isCorrect
-                              ? `border-transparent ${isDark ? 'bg-white/4 text-slate-500' : 'bg-slate-50 text-slate-400'} cursor-not-allowed`
-                              : isDark
-                              ? 'border-white/10 bg-white/4 text-slate-300 hover:border-indigo-400/50 hover:bg-indigo-500/8'
-                              : 'border-slate-200 bg-white text-slate-700 hover:border-indigo-300 hover:bg-indigo-50/50'
-                          }`}>
-                          <span>{ans}</span>
-                          {answered && isCorrect && <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0" />}
-                        </button>
-                      );
-                    })}
-                  </div>
-                  {quizAnswered[1] === true && (
-                    <div className="mt-4 flex items-start gap-2.5 p-3.5 bg-emerald-50 border border-emerald-200 rounded-xl text-sm text-emerald-700">
-                      <CheckCircle className="w-4 h-4 shrink-0 mt-0.5 text-emerald-500" />
-                      <span>{lessonData?.quiz?.explanation}</span>
-                    </div>
-                  )}
-                  {quizAnswered[1] === false && (
-                    <div className={`mt-4 p-3.5 rounded-xl text-sm ${isDark ? 'bg-red-500/10 text-red-400 border border-red-500/20' : 'bg-red-50 text-red-600 border border-red-200'}`}>
-                      Kurang tepat! Jawaban benar: <strong>{lessonData?.quiz?.options?.[lessonData?.quiz?.correctIndex || 0]}</strong>
-                    </div>
-                  )}
-                </div>
-              </div>
+              )}
 
               {/* Complete & Nav footer */}
               <div className="space-y-4 pt-4">

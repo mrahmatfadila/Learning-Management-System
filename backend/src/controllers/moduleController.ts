@@ -5,27 +5,17 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
   try {
     const modules = await prisma.module.findMany({
       include: {
-        instructor: { select: { id: true, name: true, email: true, profilePicture: true } },
-        _count: {
-          select: { enrollments: true, lessons: true, tasks: true }
-        }
-      }
+        instructor: true,
+        chapters: true,
+        lessons: {
+          select: { id: true, title: true, type: true, order: true, chapter: true }
+        },
+        enrollments: true
+      },
+      orderBy: { createdAt: 'desc' }
     });
 
-    // Format the response to match what frontend expects for cards
-    const formattedModules = modules.map(m => ({
-      id: m.id,
-      title: m.title,
-      category: m.category,
-      description: m.description,
-      enr: m._count.enrollments,
-      lessonsCount: m._count.lessons,
-      tasksCount: m._count.tasks,
-      instructor: m.instructor,
-      isVerified: m.isVerified
-    }));
-
-    res.json(formattedModules);
+    res.json(modules);
   } catch (error) {
     console.error('Error fetching modules:', error);
     res.status(500).json({ message: 'Error fetching modules' });
@@ -35,7 +25,7 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
 export const getModuleById = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
-    const moduleItem = await prisma.module.findUnique({
+    let moduleItem = await prisma.module.findUnique({
       where: { id },
       include: {
         instructor: true,
@@ -53,7 +43,85 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
     });
 
     if (!moduleItem) {
+      // Coba cari alias module
+      const aliasMap: Record<string, string> = {
+        'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+        '67adde6d-81a6-4470-b88d-506b733f87ee': 'html',
+        'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+        'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'css',
+        'javascript': 'mastering-ui-design-for-impactful-solutions',
+        'mastering-ui-design-for-impactful-solutions': 'javascript',
+        'php': 'php-backend-mastery',
+        'php-backend-mastery': 'php',
+        'mysql': 'mysql-relational-database',
+        'mysql-relational-database': 'mysql',
+        'git': 'git-github-version-control',
+        'git-github-version-control': 'git',
+        'mobile': 'mobile-app-java-android',
+        'mobile-app-java-android': 'mobile',
+        'cisco': 'cisco-packet-tracer',
+        'cisco-packet-tracer': 'cisco'
+      };
+
+      if (aliasMap[id]) {
+        moduleItem = await prisma.module.findUnique({
+          where: { id: aliasMap[id] },
+          include: {
+            instructor: true,
+            chapters: { orderBy: { order: 'asc' } },
+            lessons: { include: { chapterRef: true }, orderBy: { order: 'asc' } },
+            enrollments: { include: { student: { select: { id: true, name: true, email: true } } } }
+          }
+        });
+      }
+    }
+
+    if (!moduleItem) {
       return res.status(404).json({ message: 'Module not found' });
+    }
+
+    // 🌐 INTEGRASI CONTENT-API-SERVER (lms_content_db)
+    // Ambil materi kurikulum resmi langsung dari Content API port 5001
+    try {
+      const contentApiSlug = id === '67adde6d-81a6-4470-b88d-506b733f87ee' ? 'html' : id;
+      const contentRes = await fetch(`http://127.0.0.1:5001/api/v1/modules/${contentApiSlug}`, {
+        signal: AbortSignal.timeout(2000)
+      });
+      if (contentRes.ok) {
+        const contentData = await contentRes.json();
+        if (contentData.success && contentData.data) {
+          const extModule = contentData.data;
+          if (extModule.chapters && extModule.chapters.length > 0) {
+            moduleItem.chapters = extModule.chapters.map((c: any) => ({
+              id: c.id,
+              moduleId: moduleItem.id,
+              title: c.title,
+              order: c.order,
+              createdAt: new Date(),
+              updatedAt: new Date()
+            }));
+          }
+          if (extModule.lessons && extModule.lessons.length > 0) {
+            moduleItem.lessons = extModule.lessons.map((l: any) => ({
+              id: l.id,
+              moduleId: moduleItem.id,
+              chapterId: l.chapterId,
+              chapter: l.chapter,
+              title: l.title,
+              type: l.type,
+              order: l.order,
+              content: null,
+              videoUrl: null,
+              starterCode: null,
+              createdAt: new Date(),
+              updatedAt: new Date(),
+              chapterRef: { id: l.chapterId, title: l.chapter, order: l.order }
+            }));
+          }
+        }
+      }
+    } catch (e) {
+      // Fallback ke data lokal jika Content API sedang tidak aktif
     }
 
     res.json(moduleItem);
