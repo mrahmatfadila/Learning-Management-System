@@ -367,11 +367,12 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
     return (
       <div className="w-full">
-        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+        <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-6 space-y-6">
           {/* Top Back & Mode Indicator */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-            <button onClick={() => router.push('/dashboard/manage-modules')} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
-              <ArrowLeft className="w-4 h-4" /> Kembali ke Manajemen Kursus
+            <button onClick={() => router.push('/dashboard/manage-modules')} className="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-500 hover:text-slate-800 font-semibold transition-colors group">
+              <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+              <span>Kembali ke Manajemen Kursus</span>
             </button>
             <div className="flex items-center gap-3">
               <span className="px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 font-black text-xs rounded-full">
@@ -384,83 +385,108 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
           </div>
 
           {/* Hero Banner Header with Complete Metadata */}
-          <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden`}>
-            <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-            <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none" />
+          <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden`}>
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black/15 rounded-full blur-3xl pointer-events-none" />
 
-            <div className="relative z-10 space-y-4">
-              {/* Badges Row */}
-              <div className="flex flex-wrap items-center gap-2.5">
-                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-black tracking-wide uppercase border border-white/30">
-                  <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" /> Access 28,000+ top-rated courses with DevGrow [Personal Plan]
-                </span>
-                <span className="text-[11px] font-black uppercase tracking-wider bg-black/25 px-3 py-1 rounded-full border border-white/10">
-                  {moduleData?.category || 'Programming'}
-                </span>
-                <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-500/30 px-3 py-1 rounded-full border border-emerald-300/40 text-emerald-200">
-                  ✓ Verified by DevGrow
-                </span>
+            <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+              <div className="lg:col-span-8 space-y-4">
+                {/* Badges Row */}
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-black tracking-wide uppercase border border-white/30">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" /> Access 28,000+ top-rated courses with DevGrow [Personal Plan]
+                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-wider bg-black/25 px-3 py-1 rounded-full border border-white/10">
+                    {moduleData?.category || 'Programming'}
+                  </span>
+                  <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-500/30 px-3 py-1 rounded-full border border-emerald-300/40 text-emerald-200">
+                    ✓ Verified by DevGrow
+                  </span>
+                </div>
+
+                {/* Title & Tagline */}
+                <h1 className="text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white drop-shadow-sm">
+                  {moduleData?.title || 'Kursus Pembelajaran'}
+                </h1>
+                <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed max-w-4xl font-medium">
+                  {moduleData?.description || 'Kuasai fondasi utama dan lanjutan dengan konsep terstruktur, live coding playground, serta sertifikat kelulusan resmi.'}
+                </p>
+
+                {/* Key Metadata Stats Bar */}
+                <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
+                  {/* Rating */}
+                  <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-3 py-1 rounded-xl">
+                    <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
+                    <span className="font-black text-white">{avgRating}</span>
+                    <span className="text-white/80">({totalReviews} rating)</span>
+                  </div>
+
+                  {/* Enrolled Students (Order) */}
+                  <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-xl">
+                    <Users className="w-4 h-4 text-emerald-200" />
+                    <span><strong>{enrolledCount}</strong> siswa terdaftar (Order)</span>
+                  </div>
+
+                  {/* Completed Students */}
+                  <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-xl">
+                    <GraduationCap className="w-4 h-4 text-cyan-200" />
+                    <span><strong>{completedCount}</strong> siswa lulus (100% Selesai)</span>
+                  </div>
+
+                  {/* Created by */}
+                  <div className="flex items-center gap-1.5">
+                    <User className="w-4 h-4 text-white/75" />
+                    <span>Dibuat oleh <strong className="underline decoration-white/40">{instructorName}</strong></span>
+                  </div>
+
+                  {/* Last updated */}
+                  <div className="flex items-center gap-1.5">
+                    <Clock className="w-4 h-4 text-white/75" />
+                    <span>Terakhir diperbarui <strong>{lastUpdated}</strong></span>
+                  </div>
+
+                  {/* Language & CC */}
+                  <div className="flex items-center gap-1.5">
+                    <Globe className="w-4 h-4 text-white/75" />
+                    <span>English · Indonesia [Auto]</span>
+                  </div>
+
+                  <div className="flex items-center gap-1.5">
+                    <Subtitles className="w-4 h-4 text-white/75" />
+                    <span>CC: Indonesia [Auto], English</span>
+                  </div>
+                </div>
               </div>
 
-              {/* Title & Tagline */}
-              <h1 className="text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white drop-shadow-sm">
-                {moduleData?.title || 'Kursus Pembelajaran'}
-              </h1>
-              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-3xl">
-                {moduleData?.description || 'Kuasai fondasi utama dan lanjutan dengan konsep terstruktur, live coding playground, serta sertifikat kelulusan resmi.'}
-              </p>
-
-              {/* Key Metadata Stats Bar */}
-              <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
-                {/* Rating */}
-                <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-2.5 py-1 rounded-xl">
-                  <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
-                  <span className="font-black text-white">{avgRating}</span>
-                  <span className="text-white/80">({totalReviews} rating)</span>
+              {/* Right Col: Instructor Quick Stats */}
+              <div className="lg:col-span-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-white space-y-3">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black uppercase tracking-wider text-white/80">Statistik Konten</span>
+                  <span className="px-2.5 py-0.5 bg-white/20 text-white text-[10px] font-black rounded-full">
+                    {chapters.length} Bab
+                  </span>
                 </div>
-
-                {/* Enrolled Students (Order) */}
-                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
-                  <Users className="w-4 h-4 text-emerald-200" />
-                  <span><strong>{enrolledCount}</strong> siswa terdaftar (Order)</span>
+                <div className="grid grid-cols-2 gap-2 text-center">
+                  <div className="bg-black/20 rounded-xl p-2.5 border border-white/10">
+                    <p className="text-lg font-black text-white">{lessons.length}</p>
+                    <p className="text-[10px] text-white/75 font-semibold uppercase">Total Materi</p>
+                  </div>
+                  <div className="bg-black/20 rounded-xl p-2.5 border border-white/10">
+                    <p className="text-lg font-black text-emerald-300">{tasksCount}</p>
+                    <p className="text-[10px] text-white/75 font-semibold uppercase">Tugas / Kuis</p>
+                  </div>
                 </div>
-
-                {/* Completed Students */}
-                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
-                  <GraduationCap className="w-4 h-4 text-cyan-200" />
-                  <span><strong>{completedCount}</strong> siswa lulus (100% Selesai)</span>
-                </div>
-
-                {/* Created by */}
-                <div className="flex items-center gap-1.5">
-                  <User className="w-4 h-4 text-white/75" />
-                  <span>Dibuat oleh <strong className="underline decoration-white/40">{instructorName}</strong></span>
-                </div>
-
-                {/* Last updated */}
-                <div className="flex items-center gap-1.5">
-                  <Clock className="w-4 h-4 text-white/75" />
-                  <span>Terakhir diperbarui <strong>{lastUpdated}</strong></span>
-                </div>
-
-                {/* Language & CC */}
-                <div className="flex items-center gap-1.5">
-                  <Globe className="w-4 h-4 text-white/75" />
-                  <span>English · Indonesia [Auto]</span>
-                </div>
-
-                <div className="flex items-center gap-1.5">
-                  <Subtitles className="w-4 h-4 text-white/75" />
-                  <span>CC: Indonesia [Auto], English</span>
-                </div>
+                <p className="text-[11px] text-white/80 text-center leading-relaxed">
+                  Kelola bab, materi interaktif, dan kuis secara visual di panel Content Builder di bawah.
+                </p>
               </div>
             </div>
           </div>
 
           {/* ── 2-COLUMN LAYOUT (LEFT: Syllabus/Builder, RIGHT: Info/Stats) ── */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
             {/* ── LEFT COLUMN: 8 COLS ── */}
-            <div className="lg:col-span-8 space-y-8">
+            <div className="lg:col-span-8 space-y-6">
               {/* SECTION 1: WHAT YOU'LL LEARN */}
               <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
                 <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
@@ -780,27 +806,32 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
   return (
     <div className="w-full">
-      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+      <div className="w-full px-4 sm:px-6 lg:px-8 xl:px-10 py-6 space-y-6">
         {/* Back Button */}
-        <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
-          <ArrowLeft className="w-4 h-4" /> Kembali ke Katalog Kursus
+        <button onClick={() => router.back()} className="inline-flex items-center gap-2 text-xs sm:text-sm text-slate-500 hover:text-slate-800 font-semibold transition-colors group">
+          <ArrowLeft className="w-4 h-4 transition-transform group-hover:-translate-x-1" />
+          <span>Kembali ke Katalog Kursus</span>
         </button>
 
-        {/* Hero Banner Header */}
-        <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden`}>
+        {/* Hero Banner Header with Rich 2-Column Utilization */}
+        <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-8 lg:p-10 text-white shadow-xl relative overflow-hidden`}>
           {/* Subtle Ambient Background */}
-          <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
-          <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -bottom-24 -left-24 w-96 h-96 bg-black/15 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="relative z-10 flex flex-col md:flex-row justify-between items-start gap-8">
-            <div className="flex-1 space-y-4">
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            {/* Left Col: Main Details */}
+            <div className="lg:col-span-8 space-y-4">
               {/* Badges Row */}
-              <div className="flex flex-wrap items-center gap-2.5">
+              <div className="flex flex-wrap items-center gap-2">
                 <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-black tracking-wide uppercase border border-white/30">
                   <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" /> Access 28,000+ top-rated courses with DevGrow [Personal Plan]
                 </span>
                 <span className="text-[11px] font-black uppercase tracking-wider bg-black/25 px-3 py-1 rounded-full border border-white/10">
                   {moduleData?.category || 'Programming'}
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-500/30 px-3 py-1 rounded-full border border-emerald-300/40 text-emerald-200">
+                  ✓ Verified by DevGrow
                 </span>
               </div>
 
@@ -808,29 +839,29 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
               <h1 className="text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white drop-shadow-sm">
                 {moduleData?.title || 'Kursus Pembelajaran'}
               </h1>
-              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-3xl">
+              <p className="text-white/90 text-xs sm:text-sm md:text-base leading-relaxed max-w-4xl font-medium">
                 {moduleData?.description || 'Pelajari konsep fundamental dan lanjutan dengan kurikulum terstruktur, live coding playground, serta sertifikat kelulusan resmi.'}
               </p>
 
               {/* Key Metadata Stats Bar */}
               <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
                 {/* Rating */}
-                <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-2.5 py-1 rounded-xl">
+                <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-3 py-1 rounded-xl">
                   <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
                   <span className="font-black text-white">{avgRating}</span>
-                  <span className="text-white/80">({totalReviews} rating)</span>
+                  <span className="text-white/80">({totalReviews} ulasan)</span>
                 </div>
 
                 {/* Enrolled Students (Order) */}
-                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
+                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-xl">
                   <Users className="w-4 h-4 text-emerald-200" />
                   <span><strong>{enrolledCount}</strong> siswa terdaftar</span>
                 </div>
 
                 {/* Completed Students */}
-                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
+                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-3 py-1 rounded-xl">
                   <GraduationCap className="w-4 h-4 text-cyan-200" />
-                  <span><strong>{completedCount}</strong> siswa lulus (100% Selesai)</span>
+                  <span><strong>{completedCount}</strong> siswa lulus</span>
                 </div>
 
                 {/* Created by */}
@@ -856,6 +887,29 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                   <span>CC: Indonesia [Auto], English</span>
                 </div>
               </div>
+            </div>
+
+            {/* Right Col: Quick Snapshot / Overview Card in Hero */}
+            <div className="lg:col-span-4 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl p-5 text-white space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="text-xs font-black uppercase tracking-wider text-white/80">Kurikulum Resmi</span>
+                <span className="px-2.5 py-0.5 bg-emerald-400/20 border border-emerald-300/30 text-emerald-200 text-[10px] font-black rounded-full">
+                  8 Bab Lengkap
+                </span>
+              </div>
+              <div className="grid grid-cols-2 gap-2 text-center">
+                <div className="bg-black/20 rounded-xl p-2.5 border border-white/10">
+                  <p className="text-lg font-black text-white">{totalLessonsCount}</p>
+                  <p className="text-[10px] text-white/75 font-semibold uppercase">Total Materi</p>
+                </div>
+                <div className="bg-black/20 rounded-xl p-2.5 border border-white/10">
+                  <p className="text-lg font-black text-amber-300">{avgRating}</p>
+                  <p className="text-[10px] text-white/75 font-semibold uppercase">Skor Rating</p>
+                </div>
+              </div>
+              <p className="text-[11px] text-white/80 text-center leading-relaxed">
+                Materi interaktif dilengkapi Live Code Editor, kuis uji pemahaman, dan sertifikat kelulusan.
+              </p>
             </div>
           </div>
         </div>
@@ -914,9 +968,9 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         )}
 
         {/* ── 2-COLUMN LAYOUT (LEFT: Syllabus, RIGHT: What you'll learn + Rating) ── */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 xl:gap-8 items-start">
           {/* ── LEFT COLUMN: 8 COLS (SYLLABUS) ── */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-6">
             {/* SECTION 1: SYLLABUS */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
               <SyllabusAccordion
