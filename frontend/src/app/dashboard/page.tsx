@@ -425,7 +425,7 @@ export default function DashboardPage() {
               </button>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5">
               {filtered.map((m: any) => {
                 const theme = getCourseTheme(m.title);
                 const enrollment = enrollmentMap.get(m.id);
@@ -433,30 +433,30 @@ export default function DashboardPage() {
 
                 if (activeMenu === 'Certificates') {
                   return (
-                    <div key={m.id} className="bg-white dark:bg-[#0c0e18] border-2 border-amber-205 dark:border-amber-900/30 hover:border-amber-400 dark:hover:border-amber-500/50 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all overflow-hidden flex flex-col justify-between relative group">
-                      <div className="absolute top-0 right-0 w-24 h-24 bg-gradient-to-br from-amber-300/10 to-yellow-500/10 rounded-bl-full pointer-events-none" />
+                    <div key={m.id} className="bg-white dark:bg-[#0c0e18] border-2 border-amber-200 dark:border-amber-900/30 hover:border-amber-400 dark:hover:border-amber-500/50 rounded-2xl p-4 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all overflow-hidden flex flex-col justify-between relative group">
+                      <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-amber-300/10 to-yellow-500/10 rounded-bl-full pointer-events-none" />
                       <div>
-                        <div className="flex items-center justify-between mb-4">
-                          <div className="w-10 h-10 rounded-xl bg-amber-50 dark:bg-amber-955/20 border border-amber-100 dark:border-amber-900/30 flex items-center justify-center">
-                            <Award className="w-5 h-5 text-amber-605 dark:text-amber-400 animate-pulse" />
+                        <div className="flex items-center justify-between mb-2.5">
+                          <div className="w-8 h-8 rounded-lg bg-amber-50 dark:bg-amber-950/20 border border-amber-100 dark:border-amber-900/30 flex items-center justify-center">
+                            <Award className="w-4 h-4 text-amber-600 dark:text-amber-400 animate-pulse" />
                           </div>
-                          <span className="text-[10px] font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-955/20 px-2.5 py-1 rounded-lg tracking-wider uppercase border border-amber-100/50 dark:border-amber-900/30">
+                          <span className="text-[9px] font-black text-amber-600 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/20 px-2 py-0.5 rounded-md tracking-wider uppercase border border-amber-100/50 dark:border-amber-900/30">
                             Verified
                           </span>
                         </div>
 
-                        <h3 className="font-bold text-slate-800 dark:text-slate-200 text-base mb-1.5 leading-snug line-clamp-2">{m.title}</h3>
-                        <p className="text-[10px] text-slate-400 dark:text-slate-500 font-medium">No. Kredensial: <span className="font-mono text-slate-500 dark:text-slate-400">{enrollment.enrollmentId ? enrollment.enrollmentId.substring(0, 8).toUpperCase() : 'LMS-' + m.id.substring(0, 8).toUpperCase()}</span></p>
+                        <h3 className="font-bold text-slate-800 dark:text-slate-200 text-xs sm:text-sm mb-1 leading-snug line-clamp-1">{m.title}</h3>
+                        <p className="text-[9px] text-slate-400 dark:text-slate-500 font-medium">No: <span className="font-mono text-slate-500 dark:text-slate-400">{enrollment.enrollmentId ? enrollment.enrollmentId.substring(0, 8).toUpperCase() : 'LMS-' + m.id.substring(0, 8).toUpperCase()}</span></p>
                         
-                        <div className="border-t border-slate-100 dark:border-slate-800 pt-4 mt-4 text-[11px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2">
+                        <div className="border-t border-slate-100 dark:border-slate-800 pt-2.5 mt-2.5 text-[10px] text-slate-500 dark:text-slate-400 font-medium flex items-center gap-1.5">
                           <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-                          <span>Selesai pada {new Date(enrollment.updatedAt || enrollment.enrolledAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
+                          <span className="truncate">Selesai {new Date(enrollment.updatedAt || enrollment.enrolledAt).toLocaleDateString('id-ID', { month: 'short', day: 'numeric', year: 'numeric' })}</span>
                         </div>
                       </div>
 
                       <button onClick={() => setSelectedCert({ module: m, enrollment })}
-                        className="mt-6 w-full py-3.5 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-bold rounded-xl text-xs shadow-md shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-1.5">
-                        <Award className="w-4 h-4" /> Buka Sertifikat
+                        className="mt-3 w-full py-2 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-bold rounded-xl text-[11px] shadow-sm shadow-amber-500/20 hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-1">
+                        <Award className="w-3.5 h-3.5" /> Buka Sertifikat
                       </button>
                     </div>
                   );
@@ -466,11 +466,11 @@ export default function DashboardPage() {
                   <div
                     key={m.id}
                     onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                    className="group bg-white dark:bg-[#0d1117] rounded-3xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col justify-between cursor-pointer relative animate-fadeIn"
+                    className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer relative animate-fadeIn"
                   >
-                    {/* Top Thumbnail Section */}
+                    {/* Top Thumbnail Section (Compact) */}
                     <div className="relative">
-                      <div className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-full aspect-video flex items-center justify-center relative overflow-hidden`}>
+                      <div className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-full aspect-[16/8.5] flex items-center justify-center relative overflow-hidden`}>
                         {m.thumbnail ? (
                           <>
                             <img
@@ -481,30 +481,30 @@ export default function DashboardPage() {
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                           </>
                         ) : (
-                          <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
-                            <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-lg group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 mb-2">
-                              <span className="text-2xl drop-shadow">{theme.emoji}</span>
+                          <div className="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-all duration-200 mb-1">
+                              <span className="text-lg drop-shadow">{theme.emoji}</span>
                             </div>
-                            <span className="text-xs font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
+                            <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
                           </div>
                         )}
 
                         {/* Floating Category Pill */}
-                        <div className="absolute top-3 left-3 z-10">
-                          <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide uppercase shadow-sm">
+                        <div className="absolute top-2 left-2 z-10">
+                          <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
                             {m.category || 'Programming'}
                           </span>
                         </div>
 
                         {/* Status Icon Top Right */}
-                        <div className="absolute top-3 right-3 z-10">
+                        <div className="absolute top-2 right-2 z-10">
                           {activeMenu === 'Completed' ? (
-                            <div className="bg-emerald-500/90 text-white p-1.5 rounded-full shadow-md backdrop-blur-md">
-                              <CheckCircle className="w-4 h-4" />
+                            <div className="bg-emerald-500 text-white p-1 rounded-full shadow backdrop-blur-md">
+                              <CheckCircle className="w-3.5 h-3.5" />
                             </div>
                           ) : (
-                            <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 text-white px-2.5 py-1 rounded-full text-[10px] font-black flex items-center gap-1.5 shadow-sm">
-                              <BookOpen className="w-3 h-3 text-indigo-300" />
+                            <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 text-white px-2 py-0.5 rounded-md text-[9px] font-black flex items-center gap-1 shadow-sm">
+                              <BookOpen className="w-2.5 h-2.5 text-indigo-300" />
                               <span>{m.lessonsCount || 0} Materi</span>
                             </div>
                           )}
@@ -512,43 +512,43 @@ export default function DashboardPage() {
                       </div>
                     </div>
 
-                    {/* Content Body */}
-                    <div className="p-5 flex-1 flex flex-col justify-between gap-4">
+                    {/* Content Body (Compact) */}
+                    <div className="p-3.5 flex-1 flex flex-col justify-between gap-2.5">
                       <div>
-                        <div className="flex items-center justify-between gap-2 mb-2">
-                          <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${getDifficulty(m).color}`}>
+                        <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${getDifficulty(m).color}`}>
                             {getDifficulty(m).label}
                           </span>
                           {m.instructor ? (
-                            <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[130px]" title={m.instructor.name}>
-                              <div className="w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black shrink-0">
+                            <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[100px]" title={m.instructor.name}>
+                              <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
                                 {m.instructor.name.charAt(0)}
                               </div>
                               <span className="truncate">{m.instructor.name}</span>
                             </div>
                           ) : (
-                            <span className="text-[10px] text-slate-400 font-medium">Instruktur LMS</span>
+                            <span className="text-[9px] text-slate-400 font-medium">Instruktur</span>
                           )}
                         </div>
 
-                        <h3 className="font-black text-slate-900 dark:text-slate-100 text-base leading-snug mb-1.5 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug mb-1 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                           {m.title}
                         </h3>
-                        <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                          {m.description || 'Pelajari materi kurikulum terstruktur dan tingkatkan kompetensi Anda secara bertahap.'}
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 leading-normal">
+                          {m.description || 'Pelajari materi kurikulum terstruktur.'}
                         </p>
                       </div>
 
                       {/* Progress & Action Footer */}
-                      <div className="border-t border-slate-100 dark:border-slate-800/80 pt-4">
+                      <div className="border-t border-slate-100 dark:border-slate-800/80 pt-2.5">
                         {activeMenu === 'In Progress' ? (
-                          <div className="space-y-3">
+                          <div className="space-y-2">
                             <div>
-                              <div className="flex justify-between items-center text-[11px] font-bold mb-1.5">
-                                <span className="text-slate-400 dark:text-slate-500">Progres Belajar</span>
+                              <div className="flex justify-between items-center text-[10px] font-bold mb-1">
+                                <span className="text-slate-400 dark:text-slate-500">Progres</span>
                                 <span className="text-indigo-600 dark:text-indigo-400 font-black">{progress}%</span>
                               </div>
-                              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2 overflow-hidden shadow-inner">
+                              <div className="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-1.5 overflow-hidden shadow-inner">
                                 <div
                                   className="bg-gradient-to-r from-indigo-500 via-indigo-600 to-purple-600 h-full rounded-full transition-all duration-500"
                                   style={{ width: `${progress}%` }}
@@ -558,18 +558,18 @@ export default function DashboardPage() {
 
                             <button
                               onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/modules/${m.id}`); }}
-                              className="w-full py-2.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 font-black rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm group/btn"
+                              className="w-full py-1.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm group/btn"
                             >
-                              <BookOpen className="w-3.5 h-3.5" /> Lanjutkan Belajar <ArrowRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 transition-transform" />
+                              <BookOpen className="w-3 h-3" /> Lanjut Belajar <ArrowRight className="w-3 h-3 group-hover/btn:translate-x-0.5 transition-transform" />
                             </button>
                           </div>
                         ) : (
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="text-xs text-slate-400 font-medium flex items-center gap-1.5">
-                              <Users className="w-3.5 h-3.5" /> {m.enr || 0} siswa
+                          <div className="flex items-center justify-between gap-2">
+                            <span className="text-[10px] text-slate-400 font-medium flex items-center gap-1">
+                              <Users className="w-3 h-3" /> {m.enr || 0} siswa
                             </span>
-                            <span className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-3 py-1 rounded-xl border border-emerald-200 dark:border-emerald-800/50 font-black text-xs flex items-center gap-1.5">
-                              <CheckCircle className="w-3.5 h-3.5" /> Lulus 100%
+                            <span className="text-emerald-600 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-lg border border-emerald-200 dark:border-emerald-800/50 font-black text-[10px] flex items-center gap-1">
+                              <CheckCircle className="w-3 h-3" /> Lulus 100%
                             </span>
                           </div>
                         )}
@@ -792,7 +792,7 @@ export default function DashboardPage() {
                 </div>
               </div>
             ) : exploreViewMode === 'grid' ? (
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5">
                 {browseModules.map((m: any) => {
                   const theme = getCourseTheme(m.title);
                   const enrollment = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
@@ -806,13 +806,13 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={m.id}
-                      className="group bg-white dark:bg-[#0d1117] rounded-3xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-2xl hover:-translate-y-1.5 transition-all duration-300 overflow-hidden flex flex-col justify-between relative"
+                      className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col justify-between relative"
                     >
-                      {/* Top Thumbnail Section */}
+                      {/* Top Thumbnail Section (Compact) */}
                       <div className="relative">
                         <div
                           onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                          className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-full aspect-video flex items-center justify-center relative overflow-hidden cursor-pointer group/thumb`}
+                          className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-full aspect-[16/8.5] flex items-center justify-center relative overflow-hidden cursor-pointer group/thumb`}
                         >
                           {m.thumbnail ? (
                             <>
@@ -824,17 +824,17 @@ export default function DashboardPage() {
                               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                             </>
                           ) : (
-                            <div className="relative z-10 flex flex-col items-center justify-center text-center p-4">
-                              <div className="w-14 h-14 rounded-2xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow-lg group-hover/thumb:scale-110 group-hover/thumb:rotate-3 transition-all duration-300 mb-2">
-                                <span className="text-2xl drop-shadow">{theme.emoji}</span>
+                            <div className="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                              <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-all duration-200 mb-1">
+                                <span className="text-lg drop-shadow">{theme.emoji}</span>
                               </div>
-                              <span className="text-xs font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
+                              <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
                             </div>
                           )}
 
                           {/* Floating Category Pill */}
-                          <div className="absolute top-3 left-3 z-10">
-                            <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2.5 py-1 rounded-full text-[10px] font-black tracking-wide uppercase shadow-sm">
+                          <div className="absolute top-2 left-2 z-10">
+                            <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
                               {m.category || 'General'}
                             </span>
                           </div>
@@ -842,78 +842,78 @@ export default function DashboardPage() {
                           {/* Wishlist Button */}
                           <button
                             onClick={e => { e.stopPropagation(); toggleLike(m.id); }}
-                            className={`absolute top-3 right-3 z-10 w-8 h-8 rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow-md ${
+                            className={`absolute top-2 right-2 z-10 w-6 h-6 rounded-full flex items-center justify-center backdrop-blur-md transition-all shadow ${
                               isLiked
-                                ? 'bg-rose-500 text-white scale-110 ring-2 ring-rose-300'
+                                ? 'bg-rose-500 text-white scale-110 ring-1 ring-rose-300'
                                 : 'bg-slate-900/60 text-white/80 hover:text-rose-400 hover:bg-slate-900/90'
                             }`}
                             title={isLiked ? 'Batal Suka' : 'Suka Modul Ini'}
                           >
-                            <svg className="w-4 h-4" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                            <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                               <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                             </svg>
                           </button>
 
                           {/* Floating Enrollment Status Badge */}
                           {isApproved && (
-                            <div className="absolute bottom-3 left-3 z-10 bg-emerald-600/95 backdrop-blur-md text-white font-black text-[10px] tracking-wide px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-emerald-400/40">
-                              <CheckCircle className="w-3.5 h-3.5 text-emerald-200" />
+                            <div className="absolute bottom-2 left-2 z-10 bg-emerald-600/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-emerald-400/40">
+                              <CheckCircle className="w-2.5 h-2.5 text-emerald-200" />
                               <span>Terdaftar {enrollment.progress !== undefined ? `(${enrollment.progress}%)` : ''}</span>
                             </div>
                           )}
                           {isPending && (
-                            <div className="absolute bottom-3 left-3 z-10 bg-amber-500/95 backdrop-blur-md text-white font-black text-[10px] tracking-wide px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-amber-300/40 animate-pulse">
-                              <Clock className="w-3.5 h-3.5 animate-spin text-amber-200" />
-                              <span>Menunggu Persetujuan</span>
+                            <div className="absolute bottom-2 left-2 z-10 bg-amber-500/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-amber-300/40 animate-pulse">
+                              <Clock className="w-2.5 h-2.5 animate-spin text-amber-200" />
+                              <span>Menunggu Izin</span>
                             </div>
                           )}
                           {isRejected && (
-                            <div className="absolute bottom-3 left-3 z-10 bg-rose-600/95 backdrop-blur-md text-white font-black text-[10px] tracking-wide px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5 border border-rose-400/40">
-                              <X className="w-3.5 h-3.5" />
-                              <span>Permintaan Ditolak</span>
+                            <div className="absolute bottom-2 left-2 z-10 bg-rose-600/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-rose-400/40">
+                              <X className="w-2.5 h-2.5" />
+                              <span>Ditolak</span>
                             </div>
                           )}
                         </div>
                       </div>
 
-                      {/* Card Content & Information Body */}
-                      <div className="p-5 flex-1 flex flex-col justify-between gap-4">
+                      {/* Card Content & Information Body (Compact) */}
+                      <div className="p-3.5 flex-1 flex flex-col justify-between gap-2.5">
                         <div>
                           {/* Meta Header: Difficulty & Instructor */}
-                          <div className="flex items-center justify-between gap-2 mb-2.5">
-                            <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${difficulty.color}`}>
+                          <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${difficulty.color}`}>
                               {difficulty.label}
                             </span>
                             {m.instructor ? (
-                              <div className="flex items-center gap-1.5 text-[11px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[130px]" title={m.instructor.name}>
-                                <div className="w-4 h-4 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[9px] font-black shrink-0">
+                              <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[100px]" title={m.instructor.name}>
+                                <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
                                   {m.instructor.name.charAt(0)}
                                 </div>
                                 <span className="truncate">{m.instructor.name}</span>
                               </div>
                             ) : (
-                              <span className="text-[10px] text-slate-400 font-medium">Instruktur LMS</span>
+                              <span className="text-[9px] text-slate-400 font-medium">Instruktur</span>
                             )}
                           </div>
 
                           {/* Course Title */}
                           <h3
                             onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                            className="font-black text-slate-900 dark:text-slate-100 text-base leading-snug mb-1.5 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer"
+                            className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug mb-1 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer"
                           >
                             {m.title}
                           </h3>
 
                           {/* Description */}
-                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-2 leading-relaxed mb-3">
-                            {m.description || 'Pelajari materi kurikulum terstruktur dan tingkatkan kompetensi Anda secara komprehensif.'}
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 leading-normal mb-2">
+                            {m.description || 'Pelajari materi kurikulum terstruktur.'}
                           </p>
 
                           {/* Skill tags */}
                           {skillTags.length > 0 && (
-                            <div className="flex flex-wrap gap-1.5">
+                            <div className="flex flex-wrap gap-1">
                               {skillTags.slice(0, 3).map((tag: string) => (
-                                <span key={tag} className="text-[10px] font-bold text-slate-600 dark:text-slate-300 bg-slate-100 dark:bg-slate-800/80 px-2 py-0.5 rounded-md">
+                                <span key={tag} className="text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
                                   #{tag}
                                 </span>
                               ))}
@@ -924,18 +924,18 @@ export default function DashboardPage() {
                         {/* Footer: Stats & CTA Action */}
                         <div>
                           {/* Information Row */}
-                          <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 font-medium py-3 border-t border-slate-100 dark:border-slate-800/80">
-                            <div className="flex items-center gap-1.5">
-                              <Users className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                              <span className="font-semibold text-slate-700 dark:text-slate-300">{m.enr || 0}</span> siswa
+                          <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium py-2 border-t border-slate-100 dark:border-slate-800/80">
+                            <div className="flex items-center gap-1">
+                              <Users className="w-3 h-3 text-slate-400" />
+                              <span className="font-semibold text-slate-600 dark:text-slate-300">{m.enr || 0}</span> siswa
                             </div>
                             <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                            <div className="flex items-center gap-1.5">
-                              <BookOpen className="w-3.5 h-3.5 text-slate-400 dark:text-slate-500" />
-                              <span className="font-semibold text-slate-700 dark:text-slate-300">{m.lessonsCount || 0}</span> materi
+                            <div className="flex items-center gap-1">
+                              <BookOpen className="w-3 h-3 text-slate-400" />
+                              <span className="font-semibold text-slate-600 dark:text-slate-300">{m.lessonsCount || 0}</span> materi
                             </div>
                             <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                            <div className="flex items-center gap-1 text-[11px] text-amber-500 font-bold">
+                            <div className="flex items-center gap-0.5 text-amber-500 font-bold">
                               <span>★ 4.9</span>
                             </div>
                           </div>
@@ -944,37 +944,37 @@ export default function DashboardPage() {
                           {['INSTRUCTOR', 'ADMIN', 'TEACHER', 'GURU'].includes((user?.role || '').toUpperCase()) ? (
                             <button
                               onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                              className="w-full py-2.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 font-bold rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm"
+                              className="w-full py-1.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm"
                             >
-                              <Edit className="w-3.5 h-3.5" /> Kelola / Edit Modul
+                              <Edit className="w-3 h-3" /> Kelola Modul
                             </button>
                           ) : isApproved ? (
                             <button
                               onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                              className="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-black rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-md shadow-emerald-600/20 hover:scale-[1.01] active:scale-[0.99]"
+                              className="w-full py-1.5 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1 shadow-sm shadow-emerald-600/20 hover:scale-[1.01] active:scale-[0.99]"
                             >
-                              <BookOpen className="w-3.5 h-3.5" /> Lanjut Belajar <ArrowRight className="w-3.5 h-3.5" />
+                              <BookOpen className="w-3 h-3" /> Lanjut Belajar <ArrowRight className="w-3 h-3" />
                             </button>
                           ) : isPending ? (
                             <button
                               disabled
-                              className="w-full py-2.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-2xl text-xs flex items-center justify-center gap-1.5 cursor-not-allowed shadow-sm"
+                              className="w-full py-1.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 cursor-not-allowed shadow-sm"
                             >
-                              <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
+                              <Clock className="w-3 h-3 animate-spin" /> Menunggu Izin
                             </button>
                           ) : isRejected ? (
                             <button
                               onClick={() => handleEnroll(m.id)}
-                              className="w-full py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl text-xs flex items-center justify-center gap-1.5 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-md shadow-rose-600/20"
+                              className="w-full py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-[11px] flex items-center justify-center gap-1 hover:scale-[1.01] active:scale-[0.99] transition-all shadow-sm shadow-rose-600/20"
                             >
-                              Ajukan Izin Ulang <ArrowRight className="w-3.5 h-3.5" />
+                              Ajukan Izin Ulang <ArrowRight className="w-3 h-3" />
                             </button>
                           ) : (
                             <button
                               onClick={() => handleEnroll(m.id)}
-                              className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-black rounded-2xl text-xs transition-all flex items-center justify-center gap-1.5 shadow-md shadow-indigo-600/25 hover:scale-[1.01] active:scale-[0.99]"
+                              className="w-full py-1.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1 shadow-sm shadow-indigo-600/25 hover:scale-[1.01] active:scale-[0.99]"
                             >
-                              <Lock className="w-3.5 h-3.5" /> Minta Izin Akses <ArrowRight className="w-3.5 h-3.5" />
+                              <Lock className="w-3 h-3" /> Minta Izin Akses <ArrowRight className="w-3 h-3" />
                             </button>
                           )}
                         </div>
@@ -984,8 +984,8 @@ export default function DashboardPage() {
                 })}
               </div>
             ) : (
-              /* ── LIST VIEW ── */
-              <div className="space-y-4">
+              /* ── LIST VIEW (Compact) ── */
+              <div className="space-y-3">
                 {browseModules.map((m: any) => {
                   const theme = getCourseTheme(m.title);
                   const enrollment = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
@@ -999,45 +999,45 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={m.id}
-                      className="group bg-white dark:bg-[#0d1117] rounded-3xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-xl transition-all duration-300 p-4 sm:p-5 flex flex-col md:flex-row gap-5 items-start md:items-center justify-between"
+                      className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md transition-all duration-200 p-3 flex flex-col md:flex-row gap-3.5 items-start md:items-center justify-between"
                     >
-                      <div className="flex gap-4 items-start md:items-center min-w-0 flex-1">
+                      <div className="flex gap-3 items-start md:items-center min-w-0 flex-1">
                         {/* 16:9 Mini Thumbnail */}
                         <div
                           onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                          className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-36 sm:w-44 aspect-video rounded-2xl shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer shadow-sm`}
+                          className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-28 sm:w-36 aspect-[16/8.5] rounded-xl shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer shadow-sm`}
                         >
                           {m.thumbnail ? (
                             <img src={m.thumbnail} alt={m.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                           ) : (
-                            <span className="text-3xl drop-shadow-md select-none">{theme.emoji}</span>
+                            <span className="text-2xl drop-shadow select-none">{theme.emoji}</span>
                           )}
                         </div>
 
                         {/* Text & Meta */}
                         <div className="min-w-0 flex-1">
-                          <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                            <span className={`text-[10px] font-black px-2.5 py-0.5 rounded-full border ${difficulty.color}`}>{difficulty.label}</span>
-                            <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2.5 py-0.5 rounded-full uppercase">{m.category || 'General'}</span>
-                            {isApproved && <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2.5 py-0.5 rounded-full border border-emerald-200 dark:border-emerald-800/50">✅ Terdaftar</span>}
-                            {isPending && <span className="text-[10px] font-black text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2.5 py-0.5 rounded-full border border-amber-200 dark:border-amber-800/50 animate-pulse">⏳ Menunggu Izin</span>}
+                          <div className="flex items-center gap-1.5 mb-1 flex-wrap">
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${difficulty.color}`}>{difficulty.label}</span>
+                            <span className="text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md uppercase">{m.category || 'General'}</span>
+                            {isApproved && <span className="text-[9px] font-black text-emerald-600 bg-emerald-50 dark:bg-emerald-950/30 px-2 py-0.5 rounded-md border border-emerald-200 dark:border-emerald-800/50">✅ Terdaftar</span>}
+                            {isPending && <span className="text-[9px] font-black text-amber-600 bg-amber-50 dark:bg-amber-950/30 px-2 py-0.5 rounded-md border border-amber-200 dark:border-amber-800/50 animate-pulse">⏳ Menunggu Izin</span>}
                           </div>
 
                           <h3
                             onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                            className="font-black text-slate-900 dark:text-slate-100 text-base leading-snug mb-1 cursor-pointer group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1"
+                            className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug mb-0.5 cursor-pointer group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors line-clamp-1"
                           >
                             {m.title}
                           </h3>
 
-                          <p className="text-xs text-slate-500 dark:text-slate-400 line-clamp-1 mb-2.5">
+                          <p className="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 mb-1.5">
                             {m.description || 'Pelajari materi kurikulum terstruktur.'}
                           </p>
 
-                          <div className="flex items-center gap-4 text-xs text-slate-400 font-medium">
-                            <span className="flex items-center gap-1.5"><Users className="w-3.5 h-3.5" /> {m.enr || 0} siswa</span>
+                          <div className="flex items-center gap-3 text-[10px] text-slate-400 font-medium">
+                            <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {m.enr || 0} siswa</span>
                             <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                            <span className="flex items-center gap-1.5"><BookOpen className="w-3.5 h-3.5" /> {m.lessonsCount || 0} materi</span>
+                            <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {m.lessonsCount || 0} materi</span>
                             {m.instructor && (
                               <>
                                 <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
@@ -1049,16 +1049,16 @@ export default function DashboardPage() {
                       </div>
 
                       {/* Right Action Buttons */}
-                      <div className="flex items-center gap-2.5 shrink-0 w-full md:w-auto justify-end pt-3 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
+                      <div className="flex items-center gap-2 shrink-0 w-full md:w-auto justify-end pt-2 md:pt-0 border-t md:border-t-0 border-slate-100 dark:border-slate-800">
                         <button
                           onClick={() => toggleLike(m.id)}
-                          className={`w-9 h-9 rounded-2xl border transition-all flex items-center justify-center ${
+                          className={`w-7 h-7 rounded-xl border transition-all flex items-center justify-center ${
                             isLiked
                               ? 'bg-rose-50 dark:bg-rose-950/20 border-rose-200 dark:border-rose-900/30 text-rose-500 shadow-sm'
                               : 'bg-slate-50 dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-400 hover:text-rose-500'
                           }`}
                         >
-                          <svg className="w-4 h-4" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
+                          <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.2}>
                             <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                           </svg>
                         </button>
@@ -1066,27 +1066,27 @@ export default function DashboardPage() {
                         {isApproved ? (
                           <button
                             onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                            className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl text-xs flex items-center gap-1.5 transition-all shadow-md shadow-emerald-600/20 hover:scale-[1.02]"
+                            className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-[11px] flex items-center gap-1 transition-all shadow-sm hover:scale-[1.02]"
                           >
-                            <BookOpen className="w-3.5 h-3.5" /> Lanjut Belajar <ArrowRight className="w-3.5 h-3.5" />
+                            <BookOpen className="w-3 h-3" /> Lanjut Belajar <ArrowRight className="w-3 h-3" />
                           </button>
                         ) : isPending ? (
-                          <span className="px-4 py-2.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-2xl text-xs flex items-center gap-1.5 animate-pulse">
-                            <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
+                          <span className="px-3 py-1.5 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-[11px] flex items-center gap-1 animate-pulse">
+                            <Clock className="w-3 h-3 animate-spin" /> Menunggu Izin
                           </span>
                         ) : isRejected ? (
                           <button
                             onClick={() => handleEnroll(m.id)}
-                            className="px-5 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-black rounded-2xl text-xs transition-all hover:scale-[1.02] shadow-md shadow-rose-600/20"
+                            className="px-4 py-1.5 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-[11px] transition-all hover:scale-[1.02] shadow-sm shadow-rose-600/20"
                           >
-                            Ajukan Izin Ulang <ArrowRight className="w-3.5 h-3.5" />
+                            Ajukan Izin Ulang <ArrowRight className="w-3 h-3" />
                           </button>
                         ) : (
                           <button
                             onClick={() => handleEnroll(m.id)}
-                            className="px-5 py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-black rounded-2xl text-xs flex items-center gap-1.5 transition-all hover:scale-[1.02] shadow-md shadow-indigo-600/25"
+                            className="px-4 py-1.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold rounded-xl text-[11px] flex items-center gap-1 transition-all hover:scale-[1.02] shadow-sm shadow-indigo-600/25"
                           >
-                            <Lock className="w-3.5 h-3.5" /> Minta Izin Akses <ArrowRight className="w-3.5 h-3.5" />
+                            <Lock className="w-3 h-3" /> Minta Izin Akses <ArrowRight className="w-3 h-3" />
                           </button>
                         )}
                       </div>
