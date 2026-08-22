@@ -3,7 +3,7 @@ import {
   BookOpen, Plus, Search, Edit2, Trash2, X, CheckCircle, Layers, Clock, Users,
   CheckSquare, XCircle, AlertCircle, User, Mail, BookMarked, ShieldCheck, ShieldX,
   Copy, Folder, BarChart, ArrowRightLeft, Download, Eye, LayoutGrid, List,
-  TrendingUp, Sparkles, Filter, Check, ArrowUpDown, ChevronRight, Shield, Heart
+  TrendingUp, Sparkles, Filter, Check, ArrowUpDown, ChevronRight, Shield, Heart, Settings
 } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, useMemo } from 'react';
@@ -28,6 +28,28 @@ const getCourseTheme = (title: string) => {
   if (t.includes('figma') || t.includes('wireframe')) return { bg: 'from-purple-400 to-pink-500', label: 'FIG', emoji: 'FIG', logo: 'FIGMA' };
   if (t.includes('security') || t.includes('cyber')) return { bg: 'from-red-600 to-rose-800', label: 'SEC', emoji: 'SEC', logo: 'SEC' };
   return { bg: 'from-indigo-500 to-purple-600', label: 'LMS', emoji: 'LMS', logo: 'BOOK' };
+};
+
+const getDifficulty = (m: any) => {
+  const t = (m?.title || '').toLowerCase();
+  if (t.includes('dasar') || t.includes('basic') || t.includes('intro') || t.includes('pemula')) return { label: 'Pemula', color: 'text-emerald-600 bg-emerald-50 border-emerald-200 dark:bg-emerald-950/20 dark:text-emerald-400 dark:border-emerald-900/30' };
+  if (t.includes('lanjut') || t.includes('advanced') || t.includes('expert')) return { label: 'Mahir', color: 'text-red-600 bg-red-50 border-red-200 dark:bg-red-950/20 dark:text-red-400 dark:border-red-900/30' };
+  return { label: 'Menengah', color: 'text-amber-600 bg-amber-50 border-amber-200 dark:bg-amber-950/20 dark:text-amber-400 dark:border-amber-900/30' };
+};
+
+const getSkillTags = (m: any): string[] => {
+  const t = ((m?.title || '') + ' ' + (m?.description || '')).toLowerCase();
+  const tags: string[] = [];
+  if (t.includes('html')) tags.push('HTML');
+  if (t.includes('css')) tags.push('CSS');
+  if (t.includes('javascript') || t.includes('js')) tags.push('JavaScript');
+  if (t.includes('php')) tags.push('PHP');
+  if (t.includes('mysql') || t.includes('database') || t.includes('sql')) tags.push('Database');
+  if (t.includes('git')) tags.push('Git');
+  if (t.includes('ui') || t.includes('ux') || t.includes('design')) tags.push('UI/UX');
+  if (t.includes('mobile') || t.includes('android')) tags.push('Mobile');
+  if (t.includes('cisco') || t.includes('network')) tags.push('Network');
+  return tags.length > 0 ? tags : ['Web Dev', 'Coding'];
 };
 
 export default function ManageModulesPage() {
@@ -1092,151 +1114,213 @@ export default function ManageModulesPage() {
               <p className="text-slate-500 dark:text-slate-400 max-w-sm mb-6">Coba ubah kata kunci pencarian atau reset filter.</p>
             </div>
           ) : viewMode === 'grid' ? (
-            /* ── GRID CARD VIEW ── */
-            <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+            /* ── COMPACT GRID CARD VIEW (Instructor / Admin) ── */
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 2xl:grid-cols-5 gap-3.5">
               {filtered.map((mod: any) => {
                 const isSelected = selectedIds.includes(mod.id);
+                const theme = getCourseTheme(mod.title);
+                const difficulty = getDifficulty(mod);
+                const skillTags = getSkillTags(mod);
+                const hasCustomThumb = !!mod.thumbnail;
+
                 return (
                   <div
                     key={mod.id}
-                    onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
-                    className={`bg-white dark:bg-[#0c0e18] border rounded-3xl shadow-sm hover:shadow-lg transition-all duration-200 relative group flex flex-col cursor-pointer overflow-hidden ${
+                    className={`bg-white dark:bg-[#0d1117] rounded-2xl border transition-all duration-200 relative group flex flex-col justify-between overflow-hidden shadow-sm hover:shadow-xl hover:-translate-y-1 ${
                       isSelected
                         ? 'border-indigo-600 ring-2 ring-indigo-500/30'
-                        : 'border-slate-200 dark:border-slate-800 hover:dark:border-slate-700'
+                        : 'border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50'
                     }`}
                   >
-                    {/* Thumbnail */}
-                    {(() => {
-                      const theme = getCourseTheme(mod.title);
-                      const hasCustomThumb = !!mod.thumbnail;
-                      return (
-                        <div className={`w-full aspect-video ${hasCustomThumb ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} flex items-center justify-center relative overflow-hidden group`}>
-                          {/* Custom Thumbnail Image */}
-                          {hasCustomThumb && (
+                    {/* Top Thumbnail Section (Compact) */}
+                    <div className="relative">
+                      <div
+                        onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
+                        className={`w-full aspect-[16/8.5] ${hasCustomThumb ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} flex items-center justify-center relative overflow-hidden cursor-pointer group/thumb`}
+                      >
+                        {hasCustomThumb ? (
+                          <>
                             <img
                               src={mod.thumbnail}
                               alt={mod.title}
                               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                             />
-                          )}
-                          {/* Gradient overlay for text readability on custom thumbnail */}
-                          {hasCustomThumb && (
-                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-black/20 z-[1]" />
-                          )}
-
-                          {/* Selection Checkbox */}
-                          {isAdmin && (
-                            <button
-                              onClick={(e) => handleToggleSelect(mod.id, e)}
-                              className={`absolute top-3 left-3 z-30 w-6 h-6 rounded-lg flex items-center justify-center transition-all ${
-                                isSelected
-                                  ? 'bg-indigo-600 text-white shadow-md'
-                                  : 'bg-white/80 hover:bg-white text-slate-700 shadow'
-                              }`}
-                              title="Pilih Modul"
-                            >
-                              {isSelected && <Check className="w-4 h-4 stroke-[3]" />}
-                            </button>
-                          )}
-
-                          <div className={`absolute top-3 ${isAdmin ? 'left-11' : 'left-3'} bg-white/90 backdrop-blur-sm px-2.5 py-1 rounded-lg text-[10px] font-black tracking-wider text-slate-700 shadow-sm uppercase z-10`}>
-                            {mod.category}
+                            <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+                          </>
+                        ) : (
+                          <div className="relative z-10 flex flex-col items-center justify-center text-center p-2">
+                            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-all duration-200 mb-1">
+                              <span className="text-lg drop-shadow">{theme.emoji}</span>
+                            </div>
+                            <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
                           </div>
-                          <div className="absolute top-3 right-3 flex items-center gap-1.5 z-10">
-                            <div className="bg-[#2d2a6e]/85 px-2.5 py-1 rounded-lg text-[10px] font-black text-white tracking-wide shadow-sm">
-                              {mod.enr || 0} siswa
-                            </div>
-                            <div className="bg-rose-500/90 text-white px-2 py-1 rounded-lg text-[10px] font-black shadow-sm flex items-center gap-1">
-                              <Heart className="w-3 h-3 fill-white" />
-                              <span>{mod.likesCount ?? mod.likes?.length ?? 0}</span>
-                            </div>
+                        )}
+
+                        {/* Selection Checkbox (Admin) */}
+                        {isAdmin && (
+                          <button
+                            onClick={(e) => handleToggleSelect(mod.id, e)}
+                            className={`absolute top-2 left-2 z-30 w-5 h-5 rounded-md flex items-center justify-center transition-all ${
+                              isSelected
+                                ? 'bg-indigo-600 text-white shadow-md'
+                                : 'bg-white/80 hover:bg-white text-slate-700 shadow'
+                            }`}
+                            title="Pilih Modul"
+                          >
+                            {isSelected && <Check className="w-3.5 h-3.5 stroke-[3]" />}
+                          </button>
+                        )}
+
+                        {/* Floating Category Pill */}
+                        <div className={`absolute top-2 ${isAdmin ? 'left-8' : 'left-2'} z-10`}>
+                          <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
+                            {mod.category || 'General'}
+                          </span>
+                        </div>
+
+                        {/* Heart / Likes Top Right */}
+                        <div className="absolute top-2 right-2 flex items-center gap-1 z-10">
+                          <div className="bg-slate-900/70 backdrop-blur-md text-white px-2 py-0.5 rounded-md text-[9px] font-black shadow flex items-center gap-1">
+                            <Heart className="w-2.5 h-2.5 fill-rose-500 text-rose-500" />
+                            <span>{mod.likesCount ?? mod.likes?.length ?? 0}</span>
                           </div>
+                        </div>
 
-                          {/* Floating card (only when no custom thumbnail) */}
-                          {!hasCustomThumb && (
-                            <div className="w-[140px] h-20 bg-white/10 rounded-2xl rotate-[-4deg] absolute border border-white/20 backdrop-blur-sm flex items-center justify-between px-4 shadow-xl shadow-black/10 group-hover:scale-105 group-hover:rotate-0 transition-all duration-500">
-                              <span className="text-4xl drop-shadow-md select-none group-hover:scale-110 transition-transform duration-500">{theme.emoji}</span>
-                              <div className="text-right select-none">
-                                <p className="text-[10px] font-black text-white/50 tracking-widest uppercase leading-none">Module</p>
-                                <p className="text-lg font-black text-white leading-tight mt-0.5 tracking-tight">{theme.logo}</p>
-                              </div>
-                            </div>
-                          )}
-
-                          {/* Quick Overlay Action Buttons */}
-                          {canManage && (
-                            <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2 z-20">
-                              <button onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', mod); }}
-                                className="p-2 bg-white text-indigo-600 rounded-xl hover:bg-indigo-50 transition-colors shadow-md" title="Edit Modul">
-                                <Edit2 className="w-4 h-4" />
-                              </button>
-                              {isAdmin && (
-                                <button onClick={(e) => handleOpenDuplicate(mod, e)}
-                                  className="p-2 bg-white text-purple-600 rounded-xl hover:bg-purple-50 transition-colors shadow-md" title="Kloning / Duplikasi Modul">
-                                  <Copy className="w-4 h-4" />
-                                </button>
-                              )}
-                              <button onClick={(e) => handleDelete(mod.id, e)}
-                                className="p-2 bg-white text-red-500 rounded-xl hover:bg-red-50 transition-colors shadow-md" title="Hapus Modul">
-                                <Trash2 className="w-4 h-4" />
-                              </button>
-                            </div>
+                        {/* Floating Verification Status Badge (Bottom Left) */}
+                        <div className="absolute bottom-2 left-2 z-10">
+                          {mod.isVerified ? (
+                            <span className="bg-emerald-600/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-emerald-400/40">
+                              <ShieldCheck className="w-2.5 h-2.5 text-emerald-200" />
+                              <span>Verified</span>
+                            </span>
+                          ) : (
+                            <span className="bg-slate-900/80 backdrop-blur-md text-slate-300 font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-slate-700/60">
+                              <ShieldX className="w-2.5 h-2.5 text-slate-400" />
+                              <span>Draft / Reg</span>
+                            </span>
                           )}
                         </div>
-                      );
-                    })()}
+                      </div>
+                    </div>
 
-                    {/* Card Body */}
-                    <div className="p-4 flex flex-col flex-1">
-                      <div className="flex items-center gap-2 mb-2">
-                        <h3 className="font-extrabold text-slate-800 dark:text-slate-100 text-sm leading-tight line-clamp-2 flex-1">{mod.title}</h3>
-                        {mod.isVerified ? (
-                          <span className="shrink-0 flex items-center gap-1 text-[10px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/30 px-2 py-0.5 rounded-lg">
-                            <ShieldCheck className="w-3 h-3" /> Verified
+                    {/* Card Body (Compact) */}
+                    <div className="p-3.5 flex-1 flex flex-col justify-between gap-2.5">
+                      <div>
+                        {/* Meta Header: Difficulty & Instructor */}
+                        <div className="flex items-center justify-between gap-1.5 mb-1.5">
+                          <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${difficulty.color}`}>
+                            {difficulty.label}
                           </span>
-                        ) : (
-                          <span className="shrink-0 flex items-center gap-1 text-[10px] font-black text-slate-400 dark:text-slate-500 bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700/60 px-2 py-0.5 rounded-lg">
-                            <ShieldX className="w-3 h-3" /> Unverified
-                          </span>
+                          {mod.instructor ? (
+                            <div className="flex items-center gap-1 text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[110px]" title={mod.instructor.name}>
+                              <div className="w-3.5 h-3.5 rounded-full bg-indigo-100 dark:bg-indigo-900/40 text-indigo-600 dark:text-indigo-400 flex items-center justify-center text-[8px] font-black shrink-0">
+                                {mod.instructor.name.charAt(0)}
+                              </div>
+                              <span className="truncate">{mod.instructor.name}</span>
+                            </div>
+                          ) : (
+                            <span className="text-[9px] text-slate-400 font-medium">Instruktur LMS</span>
+                          )}
+                        </div>
+
+                        {/* Title */}
+                        <h3
+                          onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
+                          className="font-bold text-slate-800 dark:text-slate-100 text-xs sm:text-sm leading-snug mb-1 line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors cursor-pointer"
+                        >
+                          {mod.title}
+                        </h3>
+
+                        {/* Description */}
+                        <p className="text-[11px] text-slate-400 dark:text-slate-500 line-clamp-1 leading-normal mb-2">
+                          {mod.description || 'Kelola kurikulum dan materi pembelajaran.'}
+                        </p>
+
+                        {/* Skill Tags */}
+                        {skillTags.length > 0 && (
+                          <div className="flex flex-wrap gap-1">
+                            {skillTags.slice(0, 3).map((tag: string) => (
+                              <span key={tag} className="text-[9px] font-bold text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 px-1.5 py-0.5 rounded">
+                                #{tag}
+                              </span>
+                            ))}
+                          </div>
                         )}
                       </div>
 
-                      {mod.instructor && (
-                        <div className="text-[11px] text-slate-500 dark:text-slate-400 font-semibold mb-2 flex items-center gap-1.5 bg-slate-50 dark:bg-slate-900/50 px-2.5 py-1.5 rounded-xl border border-slate-100 dark:border-slate-800">
-                          <User className="w-3 h-3 text-indigo-500 shrink-0" />
-                          <span className="truncate">{mod.instructor.name}</span>
+                      {/* Footer: Stats & Instructor Control Actions */}
+                      <div>
+                        {/* Stats Row */}
+                        <div className="flex items-center justify-between text-[10px] text-slate-400 dark:text-slate-500 font-medium py-2 border-t border-slate-100 dark:border-slate-800/80">
+                          <div className="flex items-center gap-1">
+                            <Users className="w-3 h-3 text-slate-400" />
+                            <span className="font-semibold text-slate-600 dark:text-slate-300">{mod.enr || 0}</span> siswa
+                          </div>
+                          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                          <div className="flex items-center gap-1">
+                            <BookOpen className="w-3 h-3 text-slate-400" />
+                            <span className="font-semibold text-slate-600 dark:text-slate-300">{mod.lessonsCount || 0}</span> materi
+                          </div>
+                          <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-3 h-3 text-slate-400" />
+                            <span className="font-semibold text-slate-600 dark:text-slate-300">{mod.tasksCount || 0}</span> tugas
+                          </div>
                         </div>
-                      )}
 
-                      <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400 mt-auto pt-3 border-t border-slate-100 dark:border-slate-800 flex-wrap">
-                        <div className="flex items-center gap-1"><Layers className="w-3.5 h-3.5" /> {mod.lessonsCount || 0} lessons</div>
-                        <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                        <div className="flex items-center gap-1"><Clock className="w-3.5 h-3.5" /> {mod.tasksCount || 0} tugas</div>
-                        <div className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
-                        <div className="flex items-center gap-1 text-rose-500 font-bold"><Heart className="w-3.5 h-3.5 fill-rose-500" /> {mod.likesCount ?? mod.likes?.length ?? 0}</div>
-                        <div className="ml-auto flex items-center gap-1.5">
+                        {/* Instructor Management Actions */}
+                        <div className="flex items-center gap-1.5 pt-1">
+                          {/* Primary CTA: Edit / Manage Syllabus */}
+                          <button
+                            onClick={() => router.push(`/dashboard/modules/${mod.id}`)}
+                            className="flex-1 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-600 hover:text-white dark:hover:bg-indigo-600 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-[11px] transition-all flex items-center justify-center gap-1 border border-indigo-200/80 dark:border-indigo-800/50 shadow-sm group/btn"
+                          >
+                            <Edit2 className="w-3 h-3" /> Kelola Silabus
+                          </button>
+
+                          {/* Quick Edit Modal */}
+                          <button
+                            onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', mod); }}
+                            className="p-1.5 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-indigo-300 text-slate-600 dark:text-slate-300 hover:text-indigo-600 rounded-xl transition-colors shadow-sm"
+                            title="Edit Data Modul"
+                          >
+                            <Settings className="w-3 h-3" />
+                          </button>
+
+                          {/* Duplicate (Admin) */}
+                          {isAdmin && (
+                            <button
+                              onClick={(e) => handleOpenDuplicate(mod, e)}
+                              className="p-1.5 bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-900/40 hover:bg-purple-100 text-purple-600 dark:text-purple-400 rounded-xl transition-colors shadow-sm"
+                              title="Duplikasi Modul"
+                            >
+                              <Copy className="w-3 h-3" />
+                            </button>
+                          )}
+
+                          {/* Delete Modul */}
+                          <button
+                            onClick={(e) => handleDelete(mod.id, e)}
+                            className="p-1.5 bg-rose-50 dark:bg-rose-950/20 border border-rose-200 dark:border-rose-900/40 hover:bg-rose-100 text-rose-600 dark:text-rose-400 rounded-xl transition-colors shadow-sm"
+                            title="Hapus Modul"
+                          >
+                            <Trash2 className="w-3 h-3" />
+                          </button>
+
+                          {/* Toggle Verify (Admin) */}
                           {isAdmin && (
                             <button
                               onClick={(e) => handleToggleVerify(mod, e)}
-                              className={`flex items-center gap-1 px-2.5 py-1 rounded-lg text-[11px] font-bold transition-colors border ${
+                              className={`p-1.5 rounded-xl border transition-colors shadow-sm ${
                                 mod.isVerified
-                                  ? 'bg-rose-50 hover:bg-rose-100 text-rose-600 dark:bg-rose-950/20 dark:border-rose-900/50 dark:text-rose-400 border-rose-200'
-                                  : 'bg-emerald-50 hover:bg-emerald-100 text-emerald-700 dark:bg-emerald-950/20 dark:border-emerald-900/50 dark:text-emerald-400 border-emerald-200'
+                                  ? 'bg-rose-50 text-rose-600 border-rose-200 dark:bg-rose-950/20 dark:border-rose-900/40'
+                                  : 'bg-emerald-50 text-emerald-600 border-emerald-200 dark:bg-emerald-950/20 dark:border-emerald-900/40'
                               }`}
                               title={mod.isVerified ? 'Batalkan Verifikasi' : 'Verifikasi Modul'}
                             >
                               {mod.isVerified ? <ShieldX className="w-3 h-3" /> : <ShieldCheck className="w-3 h-3" />}
-                              {mod.isVerified ? 'Unverify' : 'Verifikasi'}
                             </button>
                           )}
-                          <button
-                            onClick={(e) => { e.stopPropagation(); handleOpenModal('edit', mod); }}
-                            className="p-1 text-slate-400 hover:text-indigo-600 transition-colors"
-                            title="Edit"
-                          >
-                            <Edit2 className="w-3.5 h-3.5" />
-                          </button>
                         </div>
                       </div>
                     </div>
