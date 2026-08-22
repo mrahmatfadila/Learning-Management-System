@@ -254,12 +254,31 @@ export default function LessonPage() {
     }
   }, [id, lessonId]);
 
+  // Course theme detection helper
+  const getCourseTheme = (title: string): string => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('html') || t.includes('web')) return 'html';
+    if (t.includes('css') || t.includes('styling')) return 'css';
+    if (t.includes('javascript') || t.includes('js') || t.includes('ecmascript')) return 'javascript';
+    if (t.includes('php') || t.includes('backend')) return 'php';
+    if (t.includes('mysql') || t.includes('database') || t.includes('sql')) return 'mysql';
+    if (t.includes('git') || t.includes('version control')) return 'git';
+    if (t.includes('mobile') || t.includes('android') || t.includes('flutter')) return 'mobile';
+    if (t.includes('cisco') || t.includes('network') || t.includes('jaringan')) return 'cisco';
+    return 'default';
+  };
+
   // Merge static with dynamic if available
   const FALLBACK_LESSON = {
     title: 'Memuat...', theory: '', code: '', quiz: null,
-    color: 'blue', chapter: '', prevPath: null, nextPath: null, courseId: 'html'
+    color: 'orange', chapter: '', prevPath: null, nextPath: null, courseId: 'html'
   };
-  const staticLessonData = (lessons[lessonId as keyof typeof lessons] as any) || FALLBACK_LESSON;
+
+  // Resolve normalized lesson ID for aliases/slugs
+  const directMatch = (lessons as any)[lessonId];
+  const cleanedSlug = lessonId.replace(/^html-lesson-/, '').replace(/---.*$/, '');
+  const slugMatch = (lessons as any)[cleanedSlug] || (lessons as any)[`html-${cleanedSlug}`];
+  const staticLessonData = directMatch || slugMatch || (lessons as any)['html-home'] || FALLBACK_LESSON;
   
   let dynamicLessonData = null;
   if (dbLessonData && dbModuleData && dbModuleData.lessons) {
@@ -306,52 +325,55 @@ export default function LessonPage() {
 
   const colors = colorMap[lessonData?.color as string] || colorMap.orange;
 
-  // Resolve correct course
-  const courseId = lessonData?.courseId || 'html';
-  const currentCourse = coursesData.find(c => c.id === courseId) || coursesData[0];
+  // Resolve correct course definition
+  const detectedTheme = getCourseTheme(dbModuleData?.title || '');
+  const courseId = (detectedTheme !== 'default' ? detectedTheme : lessonData?.courseId) || 'html';
+  const currentCourse = coursesData.find(c => c.id === id || c.id === courseId) || coursesData[0];
   
-  // If we have dynamic module data, build sidebar dynamically
-  let sidebarModules = currentCourse.modules;
-  if (dbModuleData && dbModuleData.chapters && dbModuleData.lessons?.length > 0) {
-    const chapters = [...dbModuleData.chapters].sort((a: any, b: any) => a.order - b.order);
-    sidebarModules = chapters.map((chapter: any, i: number) => {
-      const chapterLessons = [...dbModuleData.lessons]
-        .filter((l: any) => l.chapterId === chapter.id || l.chapter === chapter.title)
-        .sort((a: any, b: any) => a.order - b.order);
-      return { id: chapter.id || `dyn-mod-${i}`, title: chapter.title, lessons: chapterLessons };
-    });
+  // Prioritize structured course modules (8 chapters for HTML) to match Silabus perfectly
+  let sidebarModules = currentCourse?.modules && currentCourse.modules.length > 0 ? currentCourse.modules : [];
+  if (!sidebarModules || sidebarModules.length === 0) {
+    if (dbModuleData && dbModuleData.chapters && dbModuleData.lessons?.length > 0) {
+      const chapters = [...dbModuleData.chapters].sort((a: any, b: any) => a.order - b.order);
+      sidebarModules = chapters.map((chapter: any, i: number) => {
+        const chapterLessons = [...dbModuleData.lessons]
+          .filter((l: any) => l.chapterId === chapter.id || l.chapter === chapter.title)
+          .sort((a: any, b: any) => a.order - b.order);
+        return { id: chapter.id || `dyn-mod-${i}`, title: chapter.title, lessons: chapterLessons };
+      });
 
-    const mappedLessonIds = new Set(sidebarModules.flatMap((m: any) => m.lessons.map((l: any) => l.id)));
-    const unmappedLessons = dbModuleData.lessons.filter((l: any) => !mappedLessonIds.has(l.id));
+      const mappedLessonIds = new Set(sidebarModules.flatMap((m: any) => m.lessons.map((l: any) => l.id)));
+      const unmappedLessons = dbModuleData.lessons.filter((l: any) => !mappedLessonIds.has(l.id));
 
-    if (unmappedLessons.length > 0) {
-      const grouped = unmappedLessons.reduce((acc: any, lesson: any) => {
+      if (unmappedLessons.length > 0) {
+        const grouped = unmappedLessons.reduce((acc: any, lesson: any) => {
+          const chap = lesson.chapter || 'Bab Umum';
+          if (!acc[chap]) acc[chap] = [];
+          acc[chap].push(lesson);
+          return acc;
+        }, {});
+        const fallbackModules = Object.entries(grouped).map(([title, lessons]: [string, any], i) => {
+          lessons.sort((a: any, b: any) => a.order - b.order);
+          return { id: `dyn-fallback-${i}`, title, lessons };
+        });
+        sidebarModules = [...sidebarModules, ...fallbackModules];
+      }
+    } else if (dbModuleData && dbModuleData.lessons?.length > 0) {
+      const grouped = dbModuleData.lessons.reduce((acc: any, lesson: any) => {
         const chap = lesson.chapter || 'Bab Umum';
         if (!acc[chap]) acc[chap] = [];
         acc[chap].push(lesson);
         return acc;
       }, {});
-      const fallbackModules = Object.entries(grouped).map(([title, lessons]: [string, any], i) => {
+      sidebarModules = Object.entries(grouped).map(([title, lessons]: [string, any], i) => {
         lessons.sort((a: any, b: any) => a.order - b.order);
-        return { id: `dyn-fallback-${i}`, title, lessons };
+        return {
+          id: `module-${i}`,
+          title,
+          lessons: lessons.map((l: any) => ({ id: l.id, title: l.title }))
+        };
       });
-      sidebarModules = [...sidebarModules, ...fallbackModules];
     }
-  } else if (dbModuleData && dbModuleData.lessons?.length > 0) {
-    const grouped = dbModuleData.lessons.reduce((acc: any, lesson: any) => {
-      const chap = lesson.chapter || 'Bab Umum';
-      if (!acc[chap]) acc[chap] = [];
-      acc[chap].push(lesson);
-      return acc;
-    }, {});
-    sidebarModules = Object.entries(grouped).map(([title, lessons]: [string, any], i) => {
-      lessons.sort((a: any, b: any) => a.order - b.order);
-      return {
-        id: `module-${i}`,
-        title,
-        lessons: lessons.map((l: any) => ({ id: l.id, title: l.title }))
-      };
-    });
   }
 
   // ── Progress tracking ──
