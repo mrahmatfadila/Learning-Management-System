@@ -942,7 +942,7 @@ export default function DashboardPage() {
                             </div>
                             <span className="w-1 h-1 rounded-full bg-slate-300 dark:bg-slate-700" />
                             <div className="flex items-center gap-0.5 text-amber-500 font-bold">
-                              <span>★ 4.9</span>
+                              <span>★ {m.avgRating > 0 ? Number(m.avgRating).toFixed(1) : '–'}</span>
                             </div>
                           </div>
 

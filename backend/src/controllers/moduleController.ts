@@ -27,14 +27,21 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
       const approvedEnrollments = m.enrollments.filter(e => e.status === 'APPROVED');
       const totalStudents = approvedEnrollments.length > 0 ? approvedEnrollments.length : m.enrollments.length;
 
+      const totalReviews = m.reviews.length;
+      const avgRating = totalReviews > 0
+        ? Math.round((m.reviews.reduce((sum, r) => sum + r.rating, 0) / totalReviews) * 10) / 10
+        : 0;
+
       return {
         ...m,
         enr: totalStudents,
         totalEnrollments: m.enrollments.length,
         lessonsCount: m.lessons.length,
         tasksCount: m.tasks.length,
-        reviewsCount: m.reviews.length,
-        likesCount: m.reviews.length > 0 ? m.reviews.length : approvedEnrollments.length
+        reviewsCount: totalReviews,
+        avgRating,
+        totalRatings: totalReviews,
+        likesCount: totalReviews > 0 ? totalReviews : approvedEnrollments.length
       };
     });
 
