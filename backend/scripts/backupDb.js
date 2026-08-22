@@ -25,6 +25,24 @@ function backupDatabase() {
     console.log(`✅ DATABASE BACKUP SUCCESSFUL!`);
     console.log(`   - Timestamped file: ${filepath}`);
     console.log(`   - Latest snapshot: ${latestPath}`);
+
+    // Clean up older timestamped backups, keeping only the 3 most recent
+    const files = fs.readdirSync(backupDir)
+      .filter(f => f.startsWith('backup_') && f.endsWith('.sql'))
+      .sort((a, b) => b.localeCompare(a)); // Sort descending (newest first)
+
+    if (files.length > 3) {
+      const filesToDelete = files.slice(3);
+      for (const oldFile of filesToDelete) {
+        try {
+          fs.unlinkSync(path.join(backupDir, oldFile));
+          console.log(`   🧹 Pruned old backup: ${oldFile}`);
+        } catch (e) {
+          console.warn(`   ⚠️ Failed to delete ${oldFile}:`, e.message);
+        }
+      }
+    }
+
     return filepath;
   } catch (error) {
     console.error(`❌ Automatic database backup failed:`, error.message);
