@@ -1395,17 +1395,17 @@ function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStat
   const [openBab, setOpenBab] = useState<Record<string, boolean>>({});
   const [openSubBab, setOpenSubBab] = useState<Record<string, boolean>>({});
 
-  // Initialize: open first bab and all sub-babs by default
+  // Initialize: default all chapters closed (tutup semua)
   useEffect(() => {
     if (syllabus.length > 0) {
       const initialOpenBab: Record<string, boolean> = {};
       const initialOpenSubBab: Record<string, boolean> = {};
       syllabus.forEach((bab: any, idx: number) => {
         const babKey = bab.title || String(idx);
-        if (idx === 0) initialOpenBab[babKey] = true;
+        initialOpenBab[babKey] = false;
         (bab.lessons || []).forEach((l: any) => {
           if (l.chapter) {
-            initialOpenSubBab[`${babKey}__${l.chapter}`] = true;
+            initialOpenSubBab[`${babKey}__${l.chapter}`] = false;
           }
         });
       });
