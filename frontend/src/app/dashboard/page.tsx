@@ -92,7 +92,11 @@ export default function DashboardPage() {
     if (view === 'certificates') { setActiveGroup('courses'); setActiveMenu('Certificates'); return; }
     if (view === 'dashboard-overview') { setActiveGroup('overview'); setActiveMenu('Dashboard Overview'); return; }
     if (view === 'recent-activity') { setActiveGroup('overview'); setActiveMenu('Recent Activity'); return; }
-    if (tab === 'browse') { setActiveGroup('explore'); setActiveMenu('Browse Courses'); return; }
+    if (['browse', 'explore', 'catalog'].includes(tab || '') || ['browse', 'explore', 'catalog'].includes(view || '')) {
+      setActiveGroup('explore');
+      setActiveMenu('Browse Courses');
+      return;
+    }
     if (tab === 'in-progress') { setActiveGroup('courses'); setActiveMenu('In Progress'); return; }
     if (tab === 'recommended') { setActiveGroup('explore'); setActiveMenu('Recommended (AI)'); return; }
     if (tab === 'paths') { setActiveGroup('explore'); setActiveMenu('Learning Paths'); return; }
@@ -266,8 +270,39 @@ export default function DashboardPage() {
     return { bg: 'from-indigo-500 to-purple-600', label: 'LMS', emoji: 'LMS', logo: 'BOOK' };
   };
 
-  const enrolledModuleIds = new Set(enrollments.filter((e: any) => e.enrollmentStatus === 'APPROVED').map((e: any) => e.id));
-  const enrollmentMap = new Map(enrollments.map((e: any) => [e.id, e]));
+  const aliasMap: Record<string, string> = {
+    '67adde6d-81a6-4470-b88d-506b733f87ee': 'html',
+    'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+    'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'css',
+    'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+    'mastering-ui-design-for-impactful-solutions': 'javascript',
+    'javascript': 'mastering-ui-design-for-impactful-solutions',
+    'php-backend-mastery': 'php',
+    'php': 'php-backend-mastery',
+    'mysql-relational-database': 'mysql',
+    'mysql': 'mysql-relational-database',
+    'git-github-version-control': 'git',
+    'git': 'git-github-version-control',
+    'mobile-app-java-android': 'mobile',
+    'mobile': 'mobile-app-java-android',
+    'cisco-packet-tracer': 'cisco',
+    'cisco': 'cisco-packet-tracer'
+  };
+
+  const enrollmentMap = new Map();
+  enrollments.forEach((e: any) => {
+    if (e.id) enrollmentMap.set(e.id, e);
+    if (e.moduleId) enrollmentMap.set(e.moduleId, e);
+    if (aliasMap[e.id]) enrollmentMap.set(aliasMap[e.id], e);
+    if (e.moduleId && aliasMap[e.moduleId]) enrollmentMap.set(aliasMap[e.moduleId], e);
+  });
+
+  const enrolledModuleIds = new Set(
+    enrollments
+      .filter((e: any) => e.enrollmentStatus === 'APPROVED')
+      .flatMap((e: any) => [e.id, e.moduleId, aliasMap[e.id], aliasMap[e.moduleId]].filter(Boolean))
+  );
+
   const myModules = modules.filter((m: any) => enrolledModuleIds.has(m.id));
 
   // â”€â”€â”€ RENDER CONTENT â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
@@ -508,8 +543,12 @@ export default function DashboardPage() {
         else alert('Gagal mendaftar.');
       };
 
-      // 1. BROWSE COURSES TAB â€” Premium Redesign
-      if (activeMenu === 'Browse Courses') {
+      // 1. BROWSE COURSES TAB / DEFAULT CATALOG
+      if (activeMenu === 'Recommended (AI)') {
+        // Handled in next block
+      } else if (activeMenu === 'Learning Paths') {
+        // Handled in next block
+      } else {
         const toggleLike = async (moduleId: string) => {
           try {
             const res = await fetch(`http://localhost:5000/api/modules/${moduleId}/like`, {
@@ -551,10 +590,16 @@ export default function DashboardPage() {
           return tags.slice(0, 3);
         };
 
-        let browseModules = modules.filter((m: any) => {
-          const enrollment = enrollmentMap.get(m.id);
-          return !enrollment || enrollment.enrollmentStatus !== 'APPROVED';
+        // Deduplicate unique courses by title / canonical name
+        const seenTitles = new Set<string>();
+        const uniqueModules = modules.filter((m: any) => {
+          const key = (m.title || m.id).toLowerCase().trim();
+          if (seenTitles.has(key)) return false;
+          seenTitles.add(key);
+          return true;
         });
+
+        let browseModules = uniqueModules;
 
         if (exploreSearch.trim()) {
           const q = exploreSearch.toLowerCase();
@@ -569,27 +614,19 @@ export default function DashboardPage() {
         }
         if (exploreSortBy === 'popular') browseModules = [...browseModules].sort((a: any, b: any) => (b.enr || 0) - (a.enr || 0));
         if (exploreSortBy === 'az') browseModules = [...browseModules].sort((a: any, b: any) => a.title.localeCompare(b.title));
-        // 'newest' = default order from server
 
-        const totalAvailable = modules.filter((m: any) => {
-          const enr = enrollmentMap.get(m.id);
+        const totalAvailable = uniqueModules.filter((m: any) => {
+          const enr = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
           return !enr || enr.enrollmentStatus !== 'APPROVED';
         }).length;
 
-        const statsBar = [
-          { label: 'Total Kursus', val: modules.length, icon: 'ðŸ“š' },
-          { label: 'Belum Diikuti', val: totalAvailable, icon: 'ðŸ†“' },
-          { label: 'Kategori', val: allCategories.length - 1, icon: 'ðŸ·ï¸' },
-          { label: 'Terverifikasi', val: modules.filter((m: any) => m.isVerified).length, icon: 'âœ…' },
-        ];
-
         return (
           <div className="p-4 md:p-8">
-            {/* â”€â”€ Title & Search Header â”€â”€ */}
+            {/* ── Title & Search Header ── */}
             <div className="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-6">
               <div>
                 <h1 className="text-3xl font-black text-slate-800 dark:text-white tracking-tight">Katalog Kursus</h1>
-                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Jelajahi dan pilih modul pembelajaran yang Anda butuhkan.</p>
+                <p className="text-slate-500 dark:text-slate-400 text-sm mt-1">Jelajahi seluruh kurikulum pembelajaran dan tingkatkan keahlian Anda.</p>
               </div>
               <div className="flex items-center gap-3 w-full md:w-auto">
                 <div className="relative flex-1 md:w-72">
@@ -614,12 +651,12 @@ export default function DashboardPage() {
                 </div>
                 <div className="bg-indigo-50 dark:bg-indigo-950/20 text-indigo-700 dark:text-indigo-400 font-bold px-4 py-2.5 rounded-xl text-xs border border-indigo-100 dark:border-indigo-900/30 flex items-center gap-2 shrink-0">
                   <BookOpen className="w-4 h-4" />
-                  <span>{browseModules.length} Modul</span>
+                  <span>{browseModules.length} Kursus</span>
                 </div>
               </div>
             </div>
 
-            {/* â”€â”€ Filter & Sort Bar â”€â”€ */}
+            {/* ── Filter & Sort Bar ── */}
             <div className="mb-6 flex flex-col gap-4">
               {/* Category Filter Pills */}
               <div className="flex gap-2 flex-wrap">
@@ -652,7 +689,7 @@ export default function DashboardPage() {
                           : 'bg-white dark:bg-[#0c0e18] text-slate-500 border border-slate-200 dark:border-slate-700 hover:border-slate-400'
                       }`}
                     >
-                      {opt === 'popular' ? 'ðŸ”¥ Populer' : opt === 'newest' ? 'ðŸ†• Terbaru' : 'ðŸ”¤ A-Z'}
+                      {opt === 'popular' ? '🔥 Populer' : opt === 'newest' ? '🆕 Terbaru' : '🔤 A-Z'}
                     </button>
                   ))}
                 </div>
@@ -675,26 +712,20 @@ export default function DashboardPage() {
               </div>
             </div>
 
-            {/* â”€â”€ Course List â”€â”€ */}
+            {/* ── Course List ── */}
             {browseModules.length === 0 ? (
               <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 p-16 text-center shadow-sm">
-                <div className="text-6xl mb-4">ðŸ”</div>
+                <div className="text-6xl mb-4">🔍</div>
                 <h3 className="text-xl font-black text-slate-700 dark:text-slate-200 mb-2">
-                  {exploreSearch ? `Tidak ada hasil untuk "${exploreSearch}"` : 'Semua kursus telah Anda ikuti!'}
+                  Tidak ada kursus yang sesuai dengan pencarian &ldquo;{exploreSearch}&rdquo;
                 </h3>
                 <p className="text-slate-400 dark:text-slate-500 text-sm mb-6">
-                  {exploreSearch ? 'Coba kata kunci lain atau reset filter kategori.' : 'Lanjutkan belajar di kursus aktif Anda.'}
+                  Coba gunakan kata kunci lain atau pilih kategori &ldquo;Semua&rdquo;.
                 </p>
                 <div className="flex items-center justify-center gap-3">
-                  {exploreSearch && (
-                    <button onClick={() => { setExploreSearch(''); setExploreCatFilter('Semua'); }}
-                      className="px-5 py-2.5 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-sm hover:bg-indigo-100 transition-colors">
-                      Reset Filter
-                    </button>
-                  )}
-                  <button onClick={() => router.push('/dashboard?tab=in-progress')}
-                    className="px-5 py-2.5 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-600/20">
-                    Kembali Belajar
+                  <button onClick={() => { setExploreSearch(''); setExploreCatFilter('Semua'); }}
+                    className="px-5 py-2.5 bg-indigo-50 dark:bg-indigo-950/20 border border-indigo-200 dark:border-indigo-900/30 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-sm hover:bg-indigo-100 transition-colors">
+                    Reset Filter
                   </button>
                 </div>
               </div>
@@ -702,10 +733,13 @@ export default function DashboardPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-4">
                 {browseModules.map((m: any) => {
                   const theme = getCourseTheme(m.title);
-                  const enrollment = enrollmentMap.get(m.id);
+                  const enrollment = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
                   const isLiked = m.likes?.some((l: any) => l.userId === user.id);
                   const difficulty = getDifficulty(m);
                   const skillTags = getSkillTags(m);
+                  const isApproved = enrollment?.enrollmentStatus === 'APPROVED';
+                  const isPending = enrollment?.enrollmentStatus === 'PENDING';
+                  const isRejected = enrollment?.enrollmentStatus === 'REJECTED';
 
                   return (
                     <div key={m.id}
@@ -751,13 +785,18 @@ export default function DashboardPage() {
                           <span>{m.likesCount ?? m.likes?.length ?? 0}</span>
                         </button>
 
-                        {/* Enrollment status badge */}
-                        {enrollment?.enrollmentStatus === 'PENDING' && (
+                        {/* Enrollment status badges */}
+                        {isApproved && (
+                          <div className="absolute bottom-2 left-2 z-10 bg-emerald-600 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow flex items-center gap-1">
+                            <CheckCircle className="w-2.5 h-2.5" /> TERDAFTAR {enrollment.progress !== undefined ? `(${enrollment.progress}%)` : ''}
+                          </div>
+                        )}
+                        {isPending && (
                           <div className="absolute bottom-2 left-2 z-10 bg-amber-500 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow flex items-center gap-1">
                             <Clock className="w-2.5 h-2.5 animate-spin" /> PENDING
                           </div>
                         )}
-                        {enrollment?.enrollmentStatus === 'REJECTED' && (
+                        {isRejected && (
                           <div className="absolute bottom-2 left-2 z-10 bg-rose-500 text-white font-black text-[9px] tracking-wider px-2 py-0.5 rounded-md shadow">
                             DITOLAK
                           </div>
@@ -794,21 +833,26 @@ export default function DashboardPage() {
                               className="w-full py-2 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-600 dark:text-indigo-400 font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 border border-indigo-200 dark:border-indigo-800/50">
                               <Edit className="w-3.5 h-3.5" /> Kelola / Edit Modul
                             </button>
-                          ) : !enrollment ? (
+                          ) : isApproved ? (
+                            <button onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                              className="w-full py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
+                              <BookOpen className="w-3.5 h-3.5" /> Lanjut Belajar <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          ) : isPending ? (
+                            <button disabled className="w-full py-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center justify-center gap-1 cursor-not-allowed">
+                              <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
+                            </button>
+                          ) : isRejected ? (
+                            <button onClick={() => handleEnroll(m.id)}
+                              className="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 hover:scale-[1.01] active:scale-[0.99] transition-all">
+                              Daftar Ulang <ArrowRight className="w-3.5 h-3.5" />
+                            </button>
+                          ) : (
                             <button onClick={() => handleEnroll(m.id)}
                               className="w-full py-2 bg-gradient-to-r from-indigo-600 to-purple-650 hover:from-indigo-700 hover:to-purple-700 text-white font-bold rounded-xl text-xs transition-all flex items-center justify-center gap-1.5 shadow hover:scale-[1.01] active:scale-[0.99]">
                               Daftar Sekarang <ArrowRight className="w-3.5 h-3.5" />
                             </button>
-                          ) : enrollment.enrollmentStatus === 'PENDING' ? (
-                            <button disabled className="w-full py-2 bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 text-slate-400 dark:text-slate-600 font-bold rounded-xl text-xs flex items-center justify-center gap-1 cursor-not-allowed">
-                              <Clock className="w-3.5 h-3.5 animate-spin" /> Menunggu Persetujuan
-                            </button>
-                          ) : enrollment.enrollmentStatus === 'REJECTED' ? (
-                            <button onClick={() => handleEnroll(m.id)}
-                              className="w-full py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs flex items-center justify-center gap-1 hover:scale-[1.01] active:scale-[0.99] transition-all">
-                              Daftar Ulang
-                            </button>
-                          ) : null}
+                          )}
                         </div>
                       </div>
                     </div>
@@ -816,14 +860,17 @@ export default function DashboardPage() {
                 })}
               </div>
             ) : (
-              /* â”€â”€ LIST VIEW â”€â”€ */
+              /* ── LIST VIEW ── */
               <div className="space-y-4">
                 {browseModules.map((m: any) => {
                   const theme = getCourseTheme(m.title);
-                  const enrollment = enrollmentMap.get(m.id);
+                  const enrollment = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
                   const isLiked = m.likes?.some((l: any) => l.userId === user.id);
                   const difficulty = getDifficulty(m);
                   const skillTags = getSkillTags(m);
+                  const isApproved = enrollment?.enrollmentStatus === 'APPROVED';
+                  const isPending = enrollment?.enrollmentStatus === 'PENDING';
+                  const isRejected = enrollment?.enrollmentStatus === 'REJECTED';
 
                   return (
                     <div key={m.id}
@@ -845,7 +892,8 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-2 mb-1.5 flex-wrap">
                             <span className={`text-[10px] font-black px-2 py-0.5 rounded-md border ${difficulty.color}`}>{difficulty.label}</span>
                             <span className="text-[10px] font-bold text-slate-400 bg-slate-100 dark:bg-slate-800 px-2 py-0.5 rounded-md uppercase">{m.category || 'General'}</span>
-                            {m.isVerified && <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">âœ“ Verified</span>}
+                            {m.isVerified && <span className="text-[10px] font-black text-emerald-600 dark:text-emerald-400">✓ Verified</span>}
+                            {isApproved && <span className="text-[10px] font-black text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-md border border-emerald-200">✅ Terdaftar</span>}
                           </div>
                           <h3 onClick={() => router.push(`/dashboard/modules/${m.id}`)}
                             className="font-bold text-slate-800 dark:text-slate-200 text-sm md:text-base leading-snug mb-1.5 cursor-pointer group-hover:text-indigo-600 transition-colors line-clamp-1">
@@ -862,7 +910,7 @@ export default function DashboardPage() {
                           <div className="flex items-center gap-3 text-xs text-slate-400 font-medium">
                             <span className="flex items-center gap-1"><Users className="w-3 h-3" /> {m.enr || 0}</span>
                             <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> {m.lessonsCount || 0} materi</span>
-                            {m.instructor && <span className="truncate">ðŸ‘¤ {m.instructor.name}</span>}
+                            {m.instructor && <span className="truncate">👤 {m.instructor.name}</span>}
                           </div>
                           <div className="flex items-center gap-2 shrink-0">
                             <button onClick={() => toggleLike(m.id)}
@@ -875,23 +923,28 @@ export default function DashboardPage() {
                               <svg className="w-3.5 h-3.5" fill={isLiked ? 'currentColor' : 'none'} viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                               </svg>
-                              <span>{m.likes?.length || 0}</span>
+                              <span>{m.likesCount ?? m.likes?.length ?? 0}</span>
                             </button>
-                            {!enrollment ? (
-                              <button onClick={() => handleEnroll(m.id)}
-                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all hover:scale-[1.02] shadow-md shadow-indigo-600/20">
-                                Daftar <ArrowRight className="w-3.5 h-3.5" />
+                            {isApproved ? (
+                              <button onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                                className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all hover:scale-[1.02] shadow-md">
+                                <BookOpen className="w-3.5 h-3.5" /> Lanjut Belajar <ArrowRight className="w-3.5 h-3.5" />
                               </button>
-                            ) : enrollment.enrollmentStatus === 'PENDING' ? (
+                            ) : isPending ? (
                               <span className="px-3 py-2 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-900/30 text-amber-600 dark:text-amber-400 font-bold rounded-xl text-xs flex items-center gap-1">
                                 <Clock className="w-3.5 h-3.5 animate-spin" /> Pending
                               </span>
-                            ) : enrollment.enrollmentStatus === 'REJECTED' ? (
+                            ) : isRejected ? (
                               <button onClick={() => handleEnroll(m.id)}
                                 className="px-4 py-2 bg-rose-600 hover:bg-rose-700 text-white font-bold rounded-xl text-xs transition-all hover:scale-[1.02] shadow-md">
                                 Daftar Ulang
                               </button>
-                            ) : null}
+                            ) : (
+                              <button onClick={() => handleEnroll(m.id)}
+                                className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs flex items-center gap-1.5 transition-all hover:scale-[1.02] shadow-md shadow-indigo-600/20">
+                                Daftar Sekarang <ArrowRight className="w-3.5 h-3.5" />
+                              </button>
+                            )}
                           </div>
                         </div>
                       </div>
@@ -919,7 +972,7 @@ export default function DashboardPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
                     {likedModules.map((m: any) => {
                       const theme = getCourseTheme(m.title);
-                      const enrL = enrollmentMap.get(m.id);
+                      const enrL = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
                       return (
                         <div key={m.id} className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm hover:shadow-lg transition-all overflow-hidden flex group">
                           <div onClick={() => router.push(`/dashboard/modules/${m.id}`)} className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} w-24 shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer`}>
