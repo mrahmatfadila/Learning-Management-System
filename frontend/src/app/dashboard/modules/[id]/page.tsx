@@ -5,7 +5,6 @@ import Link from 'next/link';
 import { useEffect, useState, use } from 'react';
 import { coursesData } from '@/data/lessonData';
 import DashboardSidebar from '@/components/DashboardSidebar';
-import DashboardNavbar from '@/components/DashboardNavbar';
 import { useRouter } from 'next/navigation';
 
 export default function ModuleDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -367,8 +366,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     const tasksCount = moduleData?.tasksCount ?? moduleData?.tasks?.length ?? 3;
 
     return (
-      <div className="min-h-screen bg-[#F8FAFC]">
-        <DashboardNavbar />
+      <div className="w-full">
         <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
           {/* Top Back & Mode Indicator */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
@@ -772,8 +770,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const tasksCount = moduleData?.tasksCount ?? moduleData?.tasks?.length ?? 3;
 
   return (
-    <div className="min-h-screen bg-[#F8FAFC]">
-      <DashboardNavbar />
+    <div className="w-full">
       <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
         {/* Back Button */}
         <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
