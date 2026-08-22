@@ -156,7 +156,7 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
 
 export const createModule = async (req: Request, res: Response): Promise<any> => {
   try {
-    const { title, category, description, instructorId } = req.body;
+    const { title, category, description, instructorId, thumbnail } = req.body;
     
     if (!title || !category || !instructorId) {
       return res.status(400).json({ message: 'Title, category, and instructorId are required' });
@@ -167,7 +167,8 @@ export const createModule = async (req: Request, res: Response): Promise<any> =>
         title,
         category,
         description,
-        instructorId
+        instructorId,
+        thumbnail: thumbnail || null
       }
     });
 
@@ -181,7 +182,7 @@ export const createModule = async (req: Request, res: Response): Promise<any> =>
 export const updateModule = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
-    const { title, category, description } = req.body;
+    const { title, category, description, thumbnail } = req.body;
 
     const existingModule = await prisma.module.findUnique({ where: { id } });
     if (!existingModule) {
@@ -193,7 +194,8 @@ export const updateModule = async (req: Request, res: Response): Promise<any> =>
       data: {
         title: title || existingModule.title,
         category: category || existingModule.category,
-        description: description !== undefined ? description : existingModule.description
+        description: description !== undefined ? description : existingModule.description,
+        thumbnail: thumbnail !== undefined ? (thumbnail || null) : existingModule.thumbnail
       }
     });
 
