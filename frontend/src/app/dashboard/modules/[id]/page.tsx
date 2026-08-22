@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useState, use, useRef } from 'react';
 import { coursesData } from '@/data/lessonData';
 import DashboardSidebar from '@/components/DashboardSidebar';
+import DevGrowLoader from '@/components/DevGrowLoader';
 import { useRouter } from 'next/navigation';
 
 export default function ModuleDetail({ params }: { params: Promise<{ id: string }> }) {
@@ -363,7 +364,17 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     }
   };
 
-  const courseId = moduleData ? resolveCourseId(moduleData) : 'html';
+  if (!moduleData) {
+    return (
+      <DevGrowLoader
+        message="Memuat kurikulum & silabus kursus..."
+        subtitle="Menyiapkan data pembelajaran terstruktur DevGrow"
+        fullScreen={true}
+      />
+    );
+  }
+
+  const courseId = resolveCourseId(moduleData);
   const gradient = gradientMap[courseId] || gradientMap.default;
 
   // ── INSTRUCTOR / ADMIN VIEW ──

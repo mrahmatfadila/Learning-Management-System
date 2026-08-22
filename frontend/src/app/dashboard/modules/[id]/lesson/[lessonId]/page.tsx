@@ -10,6 +10,7 @@ import { useState, useEffect, useRef, Suspense } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { lessons, coursesData } from '@/data/lessonData';
 import dynamic from 'next/dynamic';
+import DevGrowLoader from '@/components/DevGrowLoader';
 
 if (typeof window !== 'undefined') {
   const originalError = console.error;
@@ -789,12 +790,11 @@ export default function LessonPage() {
     <>
     {/* Jangan tampilkan apapun sebelum progress dicek — cegah flash konten terkunci */}
     {!isProgressLoaded ? (
-      <div className="h-screen w-full flex items-center justify-center bg-slate-50">
-        <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-3 border-indigo-500 border-t-transparent rounded-full animate-spin" />
-          <p className="text-sm text-slate-500 font-medium">Memuat materi...</p>
-        </div>
-      </div>
+      <DevGrowLoader
+        message="Memuat materi pembelajaran..."
+        subtitle="Menyiapkan Live Code Sandbox & Runtime interaktif"
+        fullScreen={true}
+      />
     ) : (
     <div className={`h-screen w-full flex overflow-hidden font-sans ${bg} transition-colors duration-200`}>
 
