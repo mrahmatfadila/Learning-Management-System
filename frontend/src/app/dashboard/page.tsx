@@ -468,7 +468,7 @@ export default function DashboardPage() {
                   <div
                     key={m.id}
                     onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                    className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col justify-between cursor-pointer relative animate-fadeIn"
+                    className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-[transform,shadow,border-color] duration-200 overflow-hidden flex flex-col justify-between cursor-pointer relative animate-fadeIn [transform:translateZ(0)]"
                   >
                     {/* Top Thumbnail Section (Compact) */}
                     <div className="relative">
@@ -478,13 +478,13 @@ export default function DashboardPage() {
                             <img
                               src={m.thumbnail}
                               alt={m.title}
-                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                           </>
                         ) : (
                           <div className="relative z-10 flex flex-col items-center justify-center text-center p-2">
-                            <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-all duration-200 mb-1">
+                            <div className="w-9 h-9 rounded-xl bg-white/20 border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-200 mb-1">
                               <span className="text-lg drop-shadow">{theme.emoji}</span>
                             </div>
                             <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
@@ -493,7 +493,7 @@ export default function DashboardPage() {
 
                         {/* Floating Category Pill */}
                         <div className="absolute top-2 left-2 z-10">
-                          <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
+                          <span className="bg-slate-900/90 text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
                             {m.category || 'Programming'}
                           </span>
                         </div>
@@ -501,11 +501,11 @@ export default function DashboardPage() {
                         {/* Status Icon Top Right */}
                         <div className="absolute top-2 right-2 z-10">
                           {activeMenu === 'Completed' ? (
-                            <div className="bg-emerald-500 text-white p-1 rounded-full shadow backdrop-blur-md">
+                            <div className="bg-emerald-500 text-white p-1 rounded-full shadow">
                               <CheckCircle className="w-3.5 h-3.5" />
                             </div>
                           ) : (
-                            <div className="bg-slate-900/80 backdrop-blur-md border border-white/10 text-white px-2 py-0.5 rounded-md text-[9px] font-black flex items-center gap-1 shadow-sm">
+                            <div className="bg-slate-900/90 border border-white/10 text-white px-2 py-0.5 rounded-md text-[9px] font-black flex items-center gap-1 shadow-sm">
                               <BookOpen className="w-2.5 h-2.5 text-indigo-300" />
                               <span>{m.lessonsCount || 0} Materi</span>
                             </div>
@@ -827,7 +827,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={m.id}
-                      className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 overflow-hidden flex flex-col justify-between relative"
+                      className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-[transform,shadow,border-color] duration-200 overflow-hidden flex flex-col justify-between relative [transform:translateZ(0)]"
                     >
                       {/* Top Thumbnail Section (Compact) */}
                       <div className="relative">
@@ -840,13 +840,13 @@ export default function DashboardPage() {
                               <img
                                 src={m.thumbnail}
                                 alt={m.title}
-                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                             </>
                           ) : (
                             <div className="relative z-10 flex flex-col items-center justify-center text-center p-2">
-                              <div className="w-9 h-9 rounded-xl bg-white/15 backdrop-blur-md border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-all duration-200 mb-1">
+                              <div className="w-9 h-9 rounded-xl bg-white/20 border border-white/25 flex items-center justify-center shadow group-hover:scale-110 transition-transform duration-200 mb-1">
                                 <span className="text-lg drop-shadow">{theme.emoji}</span>
                               </div>
                               <span className="text-[10px] font-black text-white/90 uppercase tracking-wider">{theme.logo}</span>
@@ -855,7 +855,7 @@ export default function DashboardPage() {
 
                           {/* Floating Category Pill */}
                           <div className="absolute top-2 left-2 z-10">
-                            <span className="bg-slate-900/80 backdrop-blur-md text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
+                            <span className="bg-slate-900/90 text-white border border-white/10 px-2 py-0.5 rounded-md text-[9px] font-black tracking-wide uppercase shadow-sm">
                               {m.category || 'General'}
                             </span>
                           </div>
@@ -863,15 +863,15 @@ export default function DashboardPage() {
                           {/* Wishlist Button */}
                           <button
                             onClick={e => { e.stopPropagation(); toggleLike(m.id); }}
-                            className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all duration-200 shadow active:scale-125 ${
+                            className={`absolute top-2 right-2 z-10 w-7 h-7 rounded-full flex items-center justify-center transition-[transform,background-color,box-shadow] duration-200 shadow active:scale-125 ${
                               isLiked
                                 ? 'bg-rose-500 text-white scale-110 ring-2 ring-rose-300 ring-offset-1 shadow-rose-500/40 shadow-md'
-                                : 'bg-slate-900/60 text-white/70 hover:text-rose-400 hover:bg-slate-900/90 hover:scale-110'
+                                : 'bg-slate-900/70 text-white/80 hover:text-rose-400 hover:bg-slate-900/90 hover:scale-110'
                             }`}
                             title={isLiked ? 'Batal Suka' : 'Suka Modul Ini'}
                           >
                             <svg
-                              className={`w-3.5 h-3.5 transition-all duration-200 ${isLiked ? 'scale-110 drop-shadow-sm' : ''}`}
+                              className={`w-3.5 h-3.5 transition-transform duration-200 ${isLiked ? 'scale-110 drop-shadow-sm' : ''}`}
                               fill={isLiked ? 'currentColor' : 'none'}
                               viewBox="0 0 24 24"
                               stroke="currentColor"
@@ -883,19 +883,19 @@ export default function DashboardPage() {
 
                           {/* Floating Enrollment Status Badge */}
                           {isApproved && (
-                            <div className="absolute bottom-2 left-2 z-10 bg-emerald-600/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-emerald-400/40">
+                            <div className="absolute bottom-2 left-2 z-10 bg-emerald-600/95 text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-emerald-400/40">
                               <CheckCircle className="w-2.5 h-2.5 text-emerald-200" />
                               <span>Terdaftar {enrollment.progress !== undefined ? `(${enrollment.progress}%)` : ''}</span>
                             </div>
                           )}
                           {isPending && (
-                            <div className="absolute bottom-2 left-2 z-10 bg-amber-500/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-amber-300/40 animate-pulse">
+                            <div className="absolute bottom-2 left-2 z-10 bg-amber-500/95 text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-amber-300/40 animate-pulse">
                               <Clock className="w-2.5 h-2.5 animate-spin text-amber-200" />
                               <span>Menunggu Izin</span>
                             </div>
                           )}
                           {isRejected && (
-                            <div className="absolute bottom-2 left-2 z-10 bg-rose-600/95 backdrop-blur-md text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-rose-400/40">
+                            <div className="absolute bottom-2 left-2 z-10 bg-rose-600/95 text-white font-black text-[9px] tracking-wide px-2 py-0.5 rounded-md shadow flex items-center gap-1 border border-rose-400/40">
                               <X className="w-2.5 h-2.5" />
                               <span>Ditolak</span>
                             </div>
@@ -3309,7 +3309,7 @@ export default function DashboardPage() {
       <DashboardNavbar />
       <div className="flex flex-1 overflow-hidden">
         <DashboardSidebar />
-        <div className={`flex-1 overflow-hidden ${(activeMenu === 'Discussions' || activeMenu === 'Diskusi & QA' || activeMenu === 'Q&A Forum') ? 'flex flex-col' : 'overflow-y-auto pb-28 md:pb-0'}`}>
+        <div className={`flex-1 overflow-hidden ${(activeMenu === 'Discussions' || activeMenu === 'Diskusi & QA' || activeMenu === 'Q&A Forum') ? 'flex flex-col' : 'overflow-y-auto pb-28 md:pb-0 scroll-smooth [will-change:scroll-position] [transform:translateZ(0)]'}`}>
           {loading ? (
             <DevGrowLoader
               message="Memuat konten dashboard..."
