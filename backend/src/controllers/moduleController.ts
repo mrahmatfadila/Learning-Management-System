@@ -226,3 +226,107 @@ export const verifyModule = async (req: Request, res: Response): Promise<any> =>
     res.status(500).json({ message: 'Error verifying module' });
   }
 };
+
+export const duplicateModule = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const id = req.params.id as string;
+    const { targetInstructorId } = req.body;
+
+    const sourceModule = await prisma.module.findUnique({
+      where: { id },
+      include: {
+        chapters: { orderBy: { order: 'asc' } },
+        lessons: { orderBy: { order: 'asc' } }
+      }
+    });
+
+    if (!sourceModule) {
+      return res.status(404).json({ message: 'Module not found' });
+    }
+
+    const instructorId = targetInstructorId || sourceModule.instructorId;
+
+    const newModule = await prisma.module.create({
+      data: {
+        title: `${sourceModule.title} (Salinan)`,
+        category: sourceModule.category,
+        description: sourceModule.description,
+        thumbnail: sourceModule.thumbnail,
+        instructorId: instructorId,
+        isVerified: false
+      }
+    });
+
+    const chapterMap = new Map<string, string>();
+    for (const chap of sourceModule.chapters) {
+      const newChap = await prisma.chapter.create({
+        data: {
+          title: chap.title,
+          order: chap.order,
+          moduleId: newModule.id
+        }
+      });
+      chapterMap.set(chap.id, newChap.id);
+    }
+
+    for (const lesson of sourceModule.lessons) {
+      const newChapterId = lesson.chapterId ? chapterMap.get(lesson.chapterId) || null : null;
+      await prisma.lesson.create({
+        data: {
+          title: lesson.title,
+          type: lesson.type,
+          order: lesson.order,
+          chapter: lesson.chapter,
+          content: lesson.content,
+          videoUrl: lesson.videoUrl,
+          chapterId: newChapterId,
+          moduleId: newModule.id
+        }
+      });
+    }
+
+    const createdModule = await prisma.module.findUnique({
+      where: { id: newModule.id },
+      include: { instructor: true, chapters: true, lessons: true }
+    });
+
+    res.status(201).json({ message: 'Modul berhasil diduplikasi', module: createdModule });
+  } catch (error) {
+    console.error('Error duplicating module:', error);
+    res.status(500).json({ message: 'Error duplicating module' });
+  }
+};
+
+export const bulkVerifyModules = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { ids, isVerified } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0) {
+      return res.status(400).json({ message: 'ids array is required' });
+    }
+    await prisma.module.updateMany({
+      where: { id: { in: ids } },
+      data: { isVerified: Boolean(isVerified) }
+    });
+    res.json({ message: 'Status verifikasi berhasil diperbarui massal' });
+  } catch (error) {
+    console.error('Error bulk verifying modules:', error);
+    res.status(500).json({ message: 'Error bulk verifying modules' });
+  }
+};
+
+export const bulkReassignModules = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { ids, instructorId } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0 || !instructorId) {
+      return res.status(400).json({ message: 'ids and instructorId are required' });
+    }
+    await prisma.module.updateMany({
+      where: { id: { in: ids } },
+      data: { instructorId }
+    });
+    res.json({ message: 'Instruktur berhasil dipindahkan' });
+  } catch (error) {
+    console.error('Error bulk reassigning modules:', error);
+    res.status(500).json({ message: 'Error bulk reassigning modules' });
+  }
+};

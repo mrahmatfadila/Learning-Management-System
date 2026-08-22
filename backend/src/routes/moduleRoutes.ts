@@ -5,16 +5,22 @@ import {
   createModule,
   updateModule,
   deleteModule,
-  verifyModule
+  verifyModule,
+  duplicateModule,
+  bulkVerifyModules,
+  bulkReassignModules
 } from '../controllers/moduleController';
 
 const router = Router();
 
 router.get('/', getAllModules);
+router.post('/bulk-verify', bulkVerifyModules);
+router.post('/bulk-reassign', bulkReassignModules);
 router.get('/:id', getModuleById);
 router.post('/', createModule);
 router.put('/:id', updateModule);
 router.delete('/:id', deleteModule);
 router.patch('/:id/verify', verifyModule);
+router.post('/:id/duplicate', duplicateModule);
 
 export default router;
