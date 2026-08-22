@@ -1176,21 +1176,29 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
             {/* ADD REVIEW FORM (IN SIDEBAR) */}
             {role === 'STUDENT' && (
-              <div className="p-6 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 rounded-3xl border-2 border-indigo-100 shadow-sm space-y-4">
+              <div className="bg-white border border-slate-200/90 rounded-3xl p-6 shadow-sm hover:shadow-md transition-all space-y-4">
                 <div className="flex items-center justify-between">
-                  <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-indigo-600" />
-                    Beri Rating &amp; Komentar
-                  </h4>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-xl bg-amber-500/10 text-amber-500 flex items-center justify-center font-bold">
+                      <Star className="w-4 h-4 fill-amber-400 text-amber-500" />
+                    </div>
+                    <div>
+                      <h4 className="text-sm font-bold text-slate-800">
+                        Beri Rating &amp; Komentar
+                      </h4>
+                      <p className="text-[11px] text-slate-400 font-medium">Bantu kami meningkatkan kualitas materi</p>
+                    </div>
+                  </div>
                   {enrollmentStatus !== 'APPROVED' && (
-                    <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2 py-0.5 rounded-full">
+                    <span className="text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/60 px-2 py-0.5 rounded-full">
                       Pratinjau
                     </span>
                   )}
                 </div>
 
-                <div className="p-3 bg-white rounded-2xl border border-indigo-100 flex flex-col items-center gap-2">
-                  <div className="flex items-center gap-1">
+                {/* Rating Star Selector */}
+                <div className="p-3.5 bg-slate-50/80 rounded-2xl border border-slate-100 flex flex-col items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     {[1, 2, 3, 4, 5].map((st) => (
                       <button
                         key={st}
@@ -1198,60 +1206,72 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                         onMouseEnter={() => setReviewHoverStar(st)}
                         onMouseLeave={() => setReviewHoverStar(0)}
                         onClick={() => setUserRating(st)}
-                        className="p-1 hover:scale-125 transition-transform"
+                        className="p-1 hover:scale-125 transition-transform focus:outline-none"
                       >
-                        <Star className={`w-6 h-6 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-200'}`} />
+                        <Star className={`w-6 h-6 transition-colors ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-200'}`} />
                       </button>
                     ))}
                   </div>
-                  <span className="text-[11px] font-black text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-lg border border-amber-200">
+                  <div className="text-xs font-bold text-amber-800 bg-amber-100/70 px-3 py-0.5 rounded-full border border-amber-200/60">
                     {userRating === 5 ? '⭐⭐⭐⭐⭐ Sangat Puas!' :
                      userRating === 4 ? '⭐⭐⭐⭐ Bagus & Jelas' :
                      userRating === 3 ? '⭐⭐⭐ Cukup Baik' :
                      userRating === 2 ? '⭐⭐ Kurang Lengkap' : '⭐ Perlu Perbaikan'}
-                  </span>
-                </div>
-
-                {/* Quick Tags */}
-                <div>
-                  <span className="text-[10px] font-bold text-slate-500 mb-1.5 block">Kata kunci cepat:</span>
-                  <div className="flex flex-wrap gap-1.5">
-                    {[
-                      'Materi Jelas 💡',
-                      'Live Code Keren 🚀',
-                      'Mudah Dipahami 👍',
-                      'Rekomendasi ⭐'
-                    ].map(tag => (
-                      <button
-                        key={tag}
-                        type="button"
-                        onClick={() => {
-                          if (!userComment.includes(tag)) {
-                            setUserComment(prev => prev ? `${prev} ${tag}` : tag);
-                          }
-                        }}
-                        className="px-2.5 py-1 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 text-[10px] font-semibold rounded-full transition-all hover:scale-105"
-                      >
-                        + {tag}
-                      </button>
-                    ))}
                   </div>
                 </div>
 
-                <form onSubmit={handleSubmitReview} className="space-y-3">
+                {/* Kata Kunci Cepat */}
+                <div>
+                  <span className="text-[11px] font-bold text-slate-500 mb-1.5 block">Kata kunci cepat:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      { label: 'Materi Jelas 💡', text: 'Materi Jelas 💡' },
+                      { label: 'Live Code Keren 🚀', text: 'Live Code Keren 🚀' },
+                      { label: 'Mudah Dipahami 👍', text: 'Mudah Dipahami 👍' },
+                      { label: 'Rekomendasi ⭐', text: 'Rekomendasi ⭐' }
+                    ].map(tag => {
+                      const isSelected = userComment.includes(tag.text);
+                      return (
+                        <button
+                          key={tag.label}
+                          type="button"
+                          onClick={() => {
+                            if (!isSelected) {
+                              setUserComment(prev => prev ? `${prev} ${tag.text}` : tag.text);
+                            } else {
+                              setUserComment(prev => prev.replace(tag.text, '').replace(/\s+/g, ' ').trim());
+                            }
+                          }}
+                          className={`px-3 py-1 text-[11px] font-semibold rounded-full border transition-all hover:scale-105 ${
+                            isSelected 
+                              ? 'bg-indigo-50 border-indigo-300 text-indigo-700 shadow-sm' 
+                              : 'bg-white border-slate-200 hover:border-indigo-200 text-slate-600 hover:bg-slate-50'
+                          }`}
+                        >
+                          + {tag.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* Form Input */}
+                <form onSubmit={handleSubmitReview} className="space-y-3 pt-1">
                   <textarea
                     value={userComment}
                     onChange={(e) => setUserComment(e.target.value)}
                     placeholder="Tuliskan pengalaman belajar Anda di sini..."
-                    rows={2}
-                    className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-2 focus:ring-indigo-500/20 font-medium bg-white leading-relaxed"
+                    rows={3}
+                    className="w-full px-3.5 py-2.5 rounded-2xl border border-slate-200 text-xs focus:ring-4 focus:ring-indigo-500/10 focus:border-indigo-500 font-medium bg-white text-slate-800 placeholder:text-slate-400 transition-all leading-relaxed outline-none"
                   />
                   <button
                     type="submit"
                     disabled={isSubmittingReview || !userComment.trim()}
-                    className="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 flex items-center justify-center gap-1.5"
+                    className="w-full py-2.5 bg-gradient-to-r from-indigo-600 to-indigo-700 hover:from-indigo-700 hover:to-indigo-800 text-white font-bold text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-1.5 active:scale-[0.99]"
                   >
-                    {isSubmittingReview ? 'Mengirim...' : (
+                    {isSubmittingReview ? (
+                      <span>Mengirim...</span>
+                    ) : (
                       <>
                         <Send className="w-3.5 h-3.5" />
                         <span>Kirim Ulasan &amp; Rating</span>
