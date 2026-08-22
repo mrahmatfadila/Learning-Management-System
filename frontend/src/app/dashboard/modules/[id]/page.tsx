@@ -386,8 +386,10 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     const lastUpdated = formatLastUpdated(moduleData?.updatedAt);
     const enrolledCount = moduleData?.enrolledStudentsCount ?? moduleData?.totalStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.status === 'APPROVED').length || moduleData.enrollments.length : 1);
     const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);
-    const avgRating = moduleData?.avgRating || reviewsData.avgRating || 4.9;
-    const totalReviews = reviewsData.totalReviews || moduleData?.totalRatings || 12;
+    const avgRating = reviewsData.totalReviews > 0
+      ? reviewsData.avgRating
+      : (moduleData?.avgRating ?? 0);
+    const totalReviews = reviewsData.totalReviews;
     const videoLessonsCount = moduleData?.videoLessonsCount ?? lessons.filter((l: any) => l.type === 'video').length;
     const articleLessonsCount = moduleData?.articleLessonsCount ?? lessons.filter((l: any) => l.type !== 'video').length;
     const approxVideoHours = (videoLessonsCount > 0 ? (videoLessonsCount * 0.35).toFixed(1) : '16.5');
@@ -445,7 +447,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                   {/* Rating */}
                   <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-3 py-1 rounded-xl">
                     <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
-                    <span className="font-black text-white">{avgRating}</span>
+                    <span className="font-black text-white">{Number(avgRating).toFixed(1)}</span>
                     <span className="text-white/80">({totalReviews} rating)</span>
                   </div>
 
@@ -824,8 +826,10 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const lastUpdated = formatLastUpdated(moduleData?.updatedAt);
   const enrolledCount = moduleData?.enrolledStudentsCount ?? moduleData?.totalStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.status === 'APPROVED').length || moduleData.enrollments.length : 1);
   const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);
-  const avgRating = moduleData?.avgRating || reviewsData.avgRating || 4.9;
-  const totalReviews = reviewsData.totalReviews || moduleData?.totalRatings || 12;
+  const avgRating = reviewsData.totalReviews > 0
+    ? reviewsData.avgRating
+    : (moduleData?.avgRating ?? 0);
+  const totalReviews = reviewsData.totalReviews;
   const allStudentLessons = syllabus.flatMap((s: any) => s.lessons || []);
   const videoLessonsCount = moduleData?.videoLessonsCount ?? allStudentLessons.filter((l: any) => l.type === 'video').length;
   const articleLessonsCount = moduleData?.articleLessonsCount ?? allStudentLessons.filter((l: any) => l.type !== 'video').length;
@@ -876,7 +880,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 {/* Rating */}
                 <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-3 py-1 rounded-xl">
                   <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
-                  <span className="font-black text-white">{avgRating}</span>
+                  <span className="font-black text-white">{Number(avgRating).toFixed(1)}</span>
                   <span className="text-white/80">({totalReviews} ulasan)</span>
                 </div>
 
@@ -931,7 +935,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                   <p className="text-[10px] text-white/75 font-semibold uppercase">Total Materi</p>
                 </div>
                 <div className="bg-black/20 rounded-xl p-2.5 border border-white/10">
-                  <p className="text-lg font-black text-amber-300">{avgRating}</p>
+                  <p className="text-lg font-black text-amber-300">{Number(avgRating).toFixed(1)}</p>
                   <p className="text-[10px] text-white/75 font-semibold uppercase">Skor Rating</p>
                 </div>
               </div>
@@ -1029,7 +1033,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 {/* Score Hero */}
                 <div className="flex items-center gap-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/80 px-6 py-4 rounded-3xl shrink-0 shadow-sm">
                   <div className="text-center">
-                    <div className="text-3xl sm:text-4xl font-black text-amber-800 tracking-tight">{avgRating}</div>
+                    <div className="text-3xl sm:text-4xl font-black text-amber-800 tracking-tight">{Number(avgRating).toFixed(1)}</div>
                     <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">dari 5.0</div>
                   </div>
                   <div className="h-10 w-px bg-amber-200" />
