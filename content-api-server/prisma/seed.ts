@@ -2623,13 +2623,15 @@ import { htmlLessonsPart2 } from './data/htmlPart2';
 import { htmlLessonsPart3 } from './data/htmlPart3';
 import { htmlLessonsPart4Forms } from './data/htmlPart4Forms';
 import { htmlLessonsPart5Graphics } from './data/htmlPart5Graphics';
+import { htmlLessonsPart6Media } from './data/htmlPart6Media';
 
 const allHtmlLessons = [
   ...htmlLessonsList,
   ...htmlLessonsPart2,
   ...htmlLessonsPart3,
   ...htmlLessonsPart4Forms,
-  ...htmlLessonsPart5Graphics
+  ...htmlLessonsPart5Graphics,
+  ...htmlLessonsPart6Media
 ];
 
 async function main() {
