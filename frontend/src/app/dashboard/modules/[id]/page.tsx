@@ -369,9 +369,9 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     return (
       <div className="min-h-screen bg-[#F8FAFC]">
         <DashboardNavbar />
-        <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
-          {/* Top Back & Header */}
-          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
+          {/* Top Back & Mode Indicator */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <button onClick={() => router.push('/dashboard/manage-modules')} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
               <ArrowLeft className="w-4 h-4" /> Kembali ke Manajemen Kursus
             </button>
@@ -459,215 +459,194 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
             </div>
           </div>
 
-          {/* ── SECTION 1: WHAT YOU'LL LEARN ── */}
-          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-            <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
-              <Sparkles className="w-5 h-5 text-indigo-600" />
-              Yang Akan Anda Pelajari (What you&apos;ll learn)
-            </h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {learningPoints.map((point, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
-                    ✓
-                  </div>
-                  <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
-                    {point}
-                  </p>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* ── SECTION 2: THIS COURSE INCLUDES ── */}
-          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
-            <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-indigo-600" />
-              Modul Ini Mencakup (This course includes):
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-semibold text-slate-700">
-              {videoLessonsCount > 0 ? (
-                <div className="flex items-center gap-3">
-                  <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
-                  <span>{approxVideoHours} jam video pembelajaran on-demand ({videoLessonsCount} video)</span>
-                </div>
-              ) : (
-                <div className="flex items-center gap-3">
-                  <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                  <span>{lessons.length} materi pembelajaran interaktif &amp; Live Coding Editor</span>
-                </div>
-              )}
-
-              <div className="flex items-center gap-3">
-                <FileText className="w-4 h-4 text-blue-500 shrink-0" />
-                <span>{articleLessonsCount > 0 ? articleLessonsCount : lessons.length} artikel &amp; dokumentasi materi terstruktur</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-                <span>{tasksCount} tugas praktek &amp; asesmen proyek hands-on</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Smartphone className="w-4 h-4 text-purple-500 shrink-0" />
-                <span>Akses di perangkat Mobile, Tablet, dan TV (Access on mobile and TV)</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Infinity className="w-4 h-4 text-cyan-500 shrink-0" />
-                <span>Akses seumur hidup penuh (Full lifetime access)</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Subtitles className="w-4 h-4 text-teal-500 shrink-0" />
-                <span>Closed captions / Teks terjemahan otomatis [Auto]</span>
-              </div>
-
-              <div className="flex items-center gap-3">
-                <Award className="w-4 h-4 text-rose-500 shrink-0" />
-                <span>Sertifikat kelulusan resmi DevGrow (Certificate of completion)</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Quick Metrics Bar */}
-          <div className="grid grid-cols-3 gap-4">
-            {[
-              { label: 'Total Materi', value: lessons.length, icon: BookOpen, color: 'text-indigo-600 bg-indigo-50' },
-              { label: 'Total Bab', value: chapters.length, icon: Folder, color: 'text-purple-600 bg-purple-50' },
-              { label: 'Siswa Selesai', value: completedCount, icon: GraduationCap, color: 'text-emerald-600 bg-emerald-50' },
-            ].map(s => (
-              <div key={s.label} className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color} shrink-0`}><s.icon className="w-5 h-5" /></div>
-                <div><p className="text-2xl font-black text-slate-800">{s.value}</p><p className="text-xs text-slate-500 font-medium">{s.label}</p></div>
-              </div>
-            ))}
-          </div>
-
-          {/* Lessons List / Content Builder */}
-          <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
-          <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-            <h2 className="font-black text-slate-800 text-lg">Daftar Bab & Materi</h2>
-            <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">{lessons.length} materi</span>
-          </div>
-          {lessons.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 text-center">
-              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4"><Book className="w-7 h-7 text-slate-400" /></div>
-              <h3 className="font-bold text-slate-700 mb-2">Belum ada materi</h3>
-              <p className="text-sm text-slate-400 mb-6 max-w-xs">Mulai tambahkan bab atau materi pembelajaran ke dalam modul ini.</p>
-              <button onClick={() => setIsAddLessonModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
-                <Plus className="w-4 h-4" /> Tambah Materi Pertama
-              </button>
-            </div>
-          ) : (
-            <div>
-              {chapters.map((chapter: any) => {
-                const chapLessons = lessons.filter((l: any) => l.chapterId === chapter.id || l.chapter === chapter.title);
-                return (
-                <div key={chapter.id}>
-                  <div className="flex items-center gap-3 px-6 py-3 bg-slate-50 border-b border-slate-100 group/chap">
-                    <Folder className="w-4 h-4 text-indigo-400 shrink-0" />
-                    {editingChapterId === chapter.id ? (
-                      <div className="flex items-center gap-2 flex-1">
-                        <input 
-                          type="text" 
-                          value={editingChapterTitle} 
-                          onChange={e => setEditingChapterTitle(e.target.value)} 
-                          className="px-2 py-1 text-xs font-black uppercase tracking-wider border border-indigo-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
-                          autoFocus
-                          onKeyDown={e => e.key === 'Enter' && handleUpdateChapter(chapter.id)}
-                        />
-                        <button onClick={() => handleUpdateChapter(chapter.id)} disabled={isSavingChapter} className="text-xs bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700">Simpan</button>
-                        <button onClick={() => setEditingChapterId(null)} className="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded hover:bg-slate-300">Batal</button>
+          {/* ── 2-COLUMN LAYOUT (LEFT: Syllabus/Builder, RIGHT: Info/Stats) ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+            {/* ── LEFT COLUMN: 8 COLS ── */}
+            <div className="lg:col-span-8 space-y-8">
+              {/* SECTION 1: WHAT YOU'LL LEARN */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+                <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
+                  <Sparkles className="w-5 h-5 text-indigo-600" />
+                  Yang Akan Anda Pelajari (What you&apos;ll learn)
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {learningPoints.map((point, idx) => (
+                    <div key={idx} className="flex items-start gap-3">
+                      <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
+                        ✓
                       </div>
-                    ) : (
-                      <>
-                        <span className="text-xs font-black text-slate-600 uppercase tracking-wider">{chapter.title}</span>
-                        <button onClick={() => { setEditingChapterId(chapter.id); setEditingChapterTitle(chapter.title); }} className="opacity-0 group-hover/chap:opacity-100 p-1 text-slate-400 hover:text-indigo-600 transition-opacity ml-2">
-                          <Edit className="w-3.5 h-3.5" />
-                        </button>
-                        <span className="text-xs text-slate-400 font-medium ml-auto">{chapLessons.length} materi</span>
-                      </>
-                    )}
-                  </div>
-                  {chapLessons.map((lesson: any, i: number) => (
-                    <div key={lesson.id} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-b-0">
-                      <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs shrink-0">{i + 1}</div>
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${lesson.type === 'code' ? 'bg-emerald-50 text-emerald-600' : lesson.type === 'video' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'}`}>
-                        {lesson.type === 'code' ? <Code2 className="w-3.5 h-3.5" /> : lesson.type === 'video' ? <PlayCircle className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h4 className="font-bold text-slate-800 text-sm truncate">{lesson.title}</h4>
-                        <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${lesson.type === 'code' ? 'bg-emerald-100 text-emerald-700' : lesson.type === 'video' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>{lesson.type}</span>
-                      </div>
-                      <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => router.push(`/dashboard/modules/${id}/lesson/${lesson.id}/edit`)} className="flex items-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg text-xs font-bold transition-colors">
-                          <Edit className="w-3.5 h-3.5" /> Edit Isi
-                        </button>
-                        <button onClick={() => handleDeleteLesson(lesson.id)} className="p-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg transition-colors">
-                          <Trash className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
+                      <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                        {point}
+                      </p>
                     </div>
                   ))}
                 </div>
-              )})}
+              </div>
 
-              {/* Unmapped fallback */}
-              {(() => {
-                const mappedLessonIds = new Set(chapters.flatMap((c: any) => lessons.filter((l: any) => l.chapterId === c.id || l.chapter === c.title).map((l: any) => l.id)));
-                const unmapped = lessons.filter((l: any) => !mappedLessonIds.has(l.id));
-                if (unmapped.length === 0) return null;
-                
-                const grouped = unmapped.reduce((acc: any, lesson: any) => {
-                  const chap = lesson.chapter || 'Bab Umum';
-                  if (!acc[chap]) acc[chap] = [];
-                  acc[chap].push(lesson);
-                  return acc;
-                }, {});
-
-                return Object.entries(grouped).map(([chapTitle, chapLessons]: [string, any]) => (
-                  <div key={chapTitle}>
-                    <div className="flex items-center gap-3 px-6 py-3 bg-slate-50 border-b border-slate-100 group/chap">
-                      <Folder className="w-4 h-4 text-slate-400 shrink-0" />
-                      <span className="text-xs font-black text-slate-600 uppercase tracking-wider">{chapTitle}</span>
-                      <span className="text-xs text-slate-400 font-medium ml-auto">{chapLessons.length} materi</span>
-                    </div>
-                    {chapLessons.map((lesson: any, i: number) => (
-                      <div key={lesson.id} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-b-0">
-                        <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs shrink-0">{i + 1}</div>
-                        <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${lesson.type === 'code' ? 'bg-emerald-50 text-emerald-600' : lesson.type === 'video' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'}`}>
-                          {lesson.type === 'code' ? <Code2 className="w-3.5 h-3.5" /> : lesson.type === 'video' ? <PlayCircle className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h4 className="font-bold text-slate-800 text-sm truncate">{lesson.title}</h4>
-                          <span className={`text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-md ${lesson.type === 'code' ? 'bg-emerald-100 text-emerald-700' : lesson.type === 'video' ? 'bg-rose-100 text-rose-700' : 'bg-amber-100 text-amber-700'}`}>{lesson.type}</span>
-                        </div>
-                        <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button onClick={() => router.push(`/dashboard/modules/${id}/lesson/${lesson.id}/edit`)} className="flex items-center gap-1.5 px-3 py-2 bg-indigo-50 hover:bg-indigo-100 text-indigo-600 rounded-lg text-xs font-bold transition-colors">
-                            <Edit className="w-3.5 h-3.5" /> Edit Isi
-                          </button>
-                          <button onClick={() => handleDeleteLesson(lesson.id)} className="p-2 bg-red-50 hover:bg-red-100 text-red-500 rounded-lg transition-colors">
-                            <Trash className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </div>
-                    ))}
+              {/* SECTION 2: CONTENT BUILDER / DAFTAR BAB & MATERI */}
+              <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+                <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
+                  <div>
+                    <h2 className="font-black text-slate-800 text-lg">Daftar Bab &amp; Materi Pembelajaran</h2>
+                    <p className="text-xs text-slate-400 mt-0.5">Kelola struktur materi, bab, dan tipe pelajaran modul ini</p>
                   </div>
-                ));
-              })()}
-              <div className="px-6 py-4 border-t border-slate-100">
-                <button onClick={() => setIsAddLessonModalOpen(true)} className="w-full flex items-center justify-center gap-2 py-3 border-2 border-dashed border-slate-300 rounded-xl text-sm font-bold text-slate-400 hover:text-indigo-600 hover:border-indigo-300 hover:bg-indigo-50 transition-all">
-                  <Plus className="w-4 h-4" /> Tambah Bab / Materi Baru
-                </button>
+                  <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">{lessons.length} materi</span>
+                </div>
+                {lessons.length === 0 ? (
+                  <div className="flex flex-col items-center justify-center py-16 text-center">
+                    <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mb-4"><Book className="w-7 h-7 text-slate-400" /></div>
+                    <h3 className="font-bold text-slate-700 mb-2">Belum ada materi</h3>
+                    <p className="text-sm text-slate-400 mb-6 max-w-xs">Mulai tambahkan bab atau materi pembelajaran ke dalam modul ini.</p>
+                    <button onClick={() => setIsAddLessonModalOpen(true)} className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 transition-colors">
+                      <Plus className="w-4 h-4" /> Tambah Materi Pertama
+                    </button>
+                  </div>
+                ) : (
+                  <div>
+                    {chapters.map((chapter: any) => {
+                      const chapLessons = lessons.filter((l: any) => l.chapterId === chapter.id || l.chapter === chapter.title);
+                      return (
+                      <div key={chapter.id}>
+                        <div className="flex items-center gap-3 px-6 py-3 bg-slate-50 border-b border-slate-100 group/chap">
+                          <Folder className="w-4 h-4 text-indigo-400 shrink-0" />
+                          {editingChapterId === chapter.id ? (
+                            <div className="flex items-center gap-2 flex-1">
+                              <input 
+                                type="text" 
+                                value={editingChapterTitle} 
+                                onChange={e => setEditingChapterTitle(e.target.value)} 
+                                className="px-2 py-1 text-xs font-black uppercase tracking-wider border border-indigo-300 rounded focus:outline-none focus:ring-2 focus:ring-indigo-500/20"
+                                autoFocus
+                                onKeyDown={e => e.key === 'Enter' && handleUpdateChapter(chapter.id)}
+                              />
+                              <button onClick={() => handleUpdateChapter(chapter.id)} disabled={isSavingChapter} className="text-xs bg-indigo-600 text-white px-2 py-1 rounded hover:bg-indigo-700">Simpan</button>
+                              <button onClick={() => setEditingChapterId(null)} className="text-xs bg-slate-200 text-slate-700 px-2 py-1 rounded hover:bg-slate-300">Batal</button>
+                            </div>
+                          ) : (
+                            <>
+                              <span className="text-xs font-black text-slate-600 uppercase tracking-wider">{chapter.title}</span>
+                              <button onClick={() => { setEditingChapterId(chapter.id); setEditingChapterTitle(chapter.title); }} className="opacity-0 group-hover/chap:opacity-100 p-1 text-slate-400 hover:text-indigo-600 transition-opacity ml-2">
+                                <Edit className="w-3.5 h-3.5" />
+                              </button>
+                              <span className="text-xs text-slate-400 font-medium ml-auto">{chapLessons.length} materi</span>
+                            </>
+                          )}
+                        </div>
+                        {chapLessons.map((lesson: any, i: number) => (
+                          <div key={lesson.id} className="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors group border-b border-slate-100 last:border-b-0">
+                            <div className="w-8 h-8 rounded-lg bg-slate-100 text-slate-500 flex items-center justify-center font-bold text-xs shrink-0">{i + 1}</div>
+                            <div className={`w-8 h-8 rounded-lg flex items-center justify-center shrink-0 ${lesson.type === 'code' ? 'bg-emerald-50 text-emerald-600' : lesson.type === 'video' ? 'bg-rose-50 text-rose-600' : 'bg-amber-50 text-amber-600'}`}>
+                              {lesson.type === 'code' ? <Code2 className="w-3.5 h-3.5" /> : lesson.type === 'video' ? <PlayCircle className="w-3.5 h-3.5" /> : <FileText className="w-3.5 h-3.5" />}
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <h4 className="font-bold text-slate-800 text-sm truncate">{lesson.title}</h4>
+                              <div className="flex items-center gap-2 text-xs text-slate-400 mt-0.5">
+                                <span className="uppercase font-semibold text-[10px] bg-slate-100 px-2 py-0.5 rounded">{lesson.type}</span>
+                                {lesson.subChapter && <span>· {lesson.subChapter}</span>}
+                              </div>
+                            </div>
+                            <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                              <Link href={`/dashboard/modules/${id}/lesson/${lesson.id}`} className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Buka Materi">
+                                <Play className="w-4 h-4" />
+                              </Link>
+                              <button onClick={() => handleDeleteLesson(lesson.id)} className="p-2 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-lg transition-colors" title="Hapus Materi">
+                                <Trash className="w-4 h-4" />
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
             </div>
-          )}
-        </div>
 
-        <div className="mt-6 flex items-start gap-3 bg-blue-50 border border-blue-100 rounded-2xl px-5 py-4">
-          <div className="w-5 h-5 rounded-full bg-blue-500 text-white flex items-center justify-center text-xs font-black shrink-0 mt-0.5">i</div>
-          <p className="text-sm text-blue-700 font-medium leading-relaxed">Klik <strong>Edit Isi</strong> pada materi untuk mengubah judul, teori, dan kode dasar yang akan dilihat oleh siswa. Semua perubahan tersimpan langsung ke database.</p>
+            {/* ── RIGHT COLUMN: 4 COLS (STICKY SIDEBAR) ── */}
+            <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
+              {/* SECTION 2: THIS COURSE INCLUDES */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+                <h3 className="text-base font-black text-slate-800 mb-4 flex items-center gap-2">
+                  <BookOpen className="w-4 h-4 text-indigo-600" />
+                  Modul Ini Mencakup:
+                </h3>
+                <div className="space-y-3.5 text-xs sm:text-sm font-semibold text-slate-700">
+                  {videoLessonsCount > 0 ? (
+                    <div className="flex items-center gap-3">
+                      <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
+                      <span>{approxVideoHours} jam video pembelajaran on-demand ({videoLessonsCount} video)</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-3">
+                      <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                      <span>{lessons.length} materi interaktif &amp; Live Code Sandbox</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-3">
+                    <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+                    <span>{articleLessonsCount > 0 ? articleLessonsCount : lessons.length} artikel &amp; dokumentasi terstruktur</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                    <span>{tasksCount} tugas praktek &amp; proyek hands-on</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Smartphone className="w-4 h-4 text-purple-500 shrink-0" />
+                    <span>Akses di Mobile, Tablet, dan TV</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Infinity className="w-4 h-4 text-cyan-500 shrink-0" />
+                    <span>Akses seumur hidup penuh (Full lifetime)</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Subtitles className="w-4 h-4 text-teal-500 shrink-0" />
+                    <span>Closed captions / Subtitle [Auto]</span>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <Award className="w-4 h-4 text-rose-500 shrink-0" />
+                    <span>Sertifikat kelulusan resmi DevGrow</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Quick Metrics Bar & Actions */}
+              <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm space-y-4">
+                <h4 className="text-xs font-black text-slate-400 uppercase tracking-wider">Statistik Modul</h4>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    { label: 'Materi', value: lessons.length, color: 'text-indigo-600 bg-indigo-50' },
+                    { label: 'Bab', value: chapters.length, color: 'text-purple-600 bg-purple-50' },
+                    { label: 'Lulus', value: completedCount, color: 'text-emerald-600 bg-emerald-50' },
+                  ].map(s => (
+                    <div key={s.label} className="bg-slate-50 rounded-2xl p-3 text-center border border-slate-100">
+                      <p className="text-lg font-black text-slate-800">{s.value}</p>
+                      <p className="text-[10px] text-slate-400 font-bold uppercase">{s.label}</p>
+                    </div>
+                  ))}
+                </div>
+                <button onClick={() => setIsAddLessonModalOpen(true)} className="w-full flex items-center justify-center gap-2 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-2xl shadow-md shadow-indigo-600/20 text-xs transition-all">
+                  <Plus className="w-4 h-4" /> Tambah Materi Baru
+                </button>
+              </div>
+
+              {/* Quality Guarantee Box */}
+              <div className="bg-indigo-50/70 border border-indigo-100 rounded-3xl p-5 text-xs text-indigo-900 space-y-2">
+                <div className="font-bold flex items-center gap-1.5 text-indigo-700">
+                  <Sparkles className="w-4 h-4" /> Jaminan Kualitas DevGrow
+                </div>
+                <p className="text-slate-600 leading-relaxed text-[11px]">
+                  Semua materi di Content Builder langsung sinkron dengan Live Code Editor siswa secara real-time.
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Add Lesson Modal */}
@@ -709,7 +688,6 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
             </div>
           </div>
         )}
-        </div>
       </div>
     );
   }
@@ -796,14 +774,14 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   return (
     <div className="min-h-screen bg-[#F8FAFC]">
       <DashboardNavbar />
-      <div className="max-w-5xl mx-auto px-4 py-8">
+      <div className="p-4 sm:p-6 lg:p-8 max-w-7xl mx-auto space-y-8">
         {/* Back Button */}
-        <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 mb-6 font-medium transition-colors">
+        <button onClick={() => router.back()} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
           <ArrowLeft className="w-4 h-4" /> Kembali ke Katalog Kursus
         </button>
 
         {/* Hero Banner Header */}
-        <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white mb-8 shadow-xl relative overflow-hidden`}>
+        <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden`}>
           {/* Subtle Ambient Background */}
           <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
           <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none" />
@@ -873,61 +851,12 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 </div>
               </div>
             </div>
-
-            {/* Action CTA & Progress Box */}
-            <div className="w-full md:w-auto shrink-0 flex flex-col items-center gap-3 bg-black/20 backdrop-blur-md border border-white/20 p-5 sm:p-6 rounded-3xl min-w-[240px]">
-              {progressPct > 0 && (
-                <div className="w-full text-center mb-1">
-                  <div className={`text-3xl font-black mb-1 ${progressPct >= 100 ? 'text-emerald-300 drop-shadow-lg' : 'text-white'}`}>
-                    {progressPct}%
-                  </div>
-                  <div className="text-xs text-white/75 mb-2 font-bold">Progress Belajar Anda</div>
-                  <div className="w-full h-2.5 bg-white/20 rounded-full overflow-hidden">
-                    <div className={`h-full rounded-full transition-all duration-700 ${progressPct >= 100 ? 'bg-emerald-300' : 'bg-white'}`} style={{ width: `${progressPct}%` }} />
-                  </div>
-                </div>
-              )}
-
-              {/* Completed Badge */}
-              {progressPct >= 100 && (
-                <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-400/30 border border-emerald-300/50 text-white font-black rounded-2xl text-xs backdrop-blur-sm shadow-sm">
-                  <Award className="w-4 h-4 text-emerald-200" />
-                  🎉 Kursus Telah Selesai!
-                </div>
-              )}
-
-              {enrollmentStatus === 'NONE' && (
-                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-8 py-3.5 bg-white text-indigo-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 disabled:opacity-50 flex items-center justify-center gap-2 text-sm">
-                  <Lock className="w-4 h-4 text-indigo-600" />
-                  {enrolling ? 'Mengirim Izin...' : 'Minta Izin Akses'}
-                </button>
-              )}
-
-              {enrollmentStatus === 'PENDING' && (
-                <div className="w-full px-5 py-3.5 bg-amber-500/30 border border-amber-300/40 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 backdrop-blur-sm text-center">
-                  <Clock className="w-4 h-4 animate-spin shrink-0" /> Menunggu Persetujuan Instruktur
-                </div>
-              )}
-
-              {enrollmentStatus === 'APPROVED' && (
-                <button onClick={handleStart} className="w-full px-8 py-3.5 bg-white text-emerald-700 font-black rounded-2xl hover:bg-slate-50 transition-all shadow-lg hover:scale-105 flex items-center justify-center gap-2 text-sm">
-                  <BookOpen className="w-4 h-4 text-emerald-600" />
-                  {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar Sekarang →'}
-                </button>
-              )}
-
-              {enrollmentStatus === 'REJECTED' && (
-                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-6 py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md">
-                  ❌ Ditolak · Ajukan Ulang
-                </button>
-              )}
-            </div>
           </div>
         </div>
 
         {/* Enrollment Status Notice Banner */}
         {role === 'STUDENT' && enrollmentStatus === 'PENDING' && (
-          <div className="bg-amber-50 border-2 border-amber-200 rounded-3xl p-6 mb-8 flex items-center gap-4 text-amber-900 shadow-sm animate-fadeIn">
+          <div className="bg-amber-50 border-2 border-amber-200 rounded-3xl p-6 flex items-center gap-4 text-amber-900 shadow-sm animate-fadeIn">
             <div className="w-12 h-12 rounded-2xl bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
               <Clock className="w-6 h-6 text-amber-600 animate-spin" />
             </div>
@@ -941,7 +870,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         )}
 
         {role === 'STUDENT' && enrollmentStatus === 'REJECTED' && (
-          <div className="bg-rose-50 border-2 border-rose-200 rounded-3xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-rose-900 shadow-sm animate-fadeIn">
+          <div className="bg-rose-50 border-2 border-rose-200 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-rose-900 shadow-sm animate-fadeIn">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-rose-100 border border-rose-300 flex items-center justify-center shrink-0">
                 <X className="w-6 h-6 text-rose-600" />
@@ -960,7 +889,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         )}
 
         {role === 'STUDENT' && enrollmentStatus === 'NONE' && (
-          <div className="bg-indigo-50 border-2 border-indigo-200 rounded-3xl p-6 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-indigo-900 shadow-sm animate-fadeIn">
+          <div className="bg-indigo-50 border-2 border-indigo-200 rounded-3xl p-6 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 text-indigo-900 shadow-sm animate-fadeIn">
             <div className="flex items-center gap-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-100 border border-indigo-300 flex items-center justify-center shrink-0">
                 <Lock className="w-6 h-6 text-indigo-600" />
@@ -978,191 +907,261 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
           </div>
         )}
 
-        {/* ── SECTION 1: WHAT YOU'LL LEARN ── */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 mb-8 shadow-sm">
-          <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
-            <Sparkles className="w-5 h-5 text-indigo-600" />
-            Yang Akan Anda Pelajari (What you&apos;ll learn)
-          </h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {learningPoints.map((point, idx) => (
-              <div key={idx} className="flex items-start gap-3">
-                <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
-                  ✓
-                </div>
-                <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
-                  {point}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* ── SECTION 2: THIS COURSE INCLUDES ── */}
-        <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 mb-8 shadow-sm">
-          <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-indigo-600" />
-            Modul Ini Mencakup (This course includes):
-          </h3>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-semibold text-slate-700">
-            {videoLessonsCount > 0 ? (
-              <div className="flex items-center gap-3">
-                <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
-                <span>{approxVideoHours} jam video pembelajaran on-demand ({videoLessonsCount} video)</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-3">
-                <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>{totalLessonsCount} materi pembelajaran interaktif &amp; Live Coding Editor</span>
-              </div>
-            )}
-
-            <div className="flex items-center gap-3">
-              <FileText className="w-4 h-4 text-blue-500 shrink-0" />
-              <span>{articleLessonsCount > 0 ? articleLessonsCount : totalLessonsCount} artikel &amp; dokumentasi materi terstruktur</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Clock className="w-4 h-4 text-amber-500 shrink-0" />
-              <span>{tasksCount} tugas praktek &amp; asesmen proyek hands-on</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Smartphone className="w-4 h-4 text-purple-500 shrink-0" />
-              <span>Akses di perangkat Mobile, Tablet, dan TV (Access on mobile and TV)</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Clock className="w-4 h-4 text-cyan-500 shrink-0" />
-              <span>Akses seumur hidup penuh (Full lifetime access)</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Subtitles className="w-4 h-4 text-teal-500 shrink-0" />
-              <span>Closed captions / Teks terjemahan otomatis [Auto]</span>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <Award className="w-4 h-4 text-rose-500 shrink-0" />
-              <span>Sertifikat kelulusan resmi DevGrow (Certificate of completion)</span>
-            </div>
-          </div>
-        </div>
-
-        {/* ── SECTION 3: SYLLABUS ── */}
-        <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden mb-8">
-          <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-            <div>
-              <h2 className="text-xl font-black text-slate-800">Silabus Pembelajaran</h2>
-              <p className="text-sm text-slate-500 mt-1">{syllabus.length} bab · {totalLessonsCount} materi</p>
-            </div>
-            <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kurikulum Terverifikasi</span>
-          </div>
-          <SyllabusAccordion
-            syllabus={syllabus}
-            completedSet={completedSet}
-            progressPct={progressPct}
-            enrollmentStatus={enrollmentStatus}
-            id={id}
-            router={router}
-          />
-        </div>
-
-        {/* ── SECTION 4: RATINGS & REVIEWS ── */}
-        <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
-            <div>
-              <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
-                <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
-                Ulasan &amp; Rating Kursus
+        {/* ── 2-COLUMN LAYOUT (LEFT: Syllabus + Reviews, RIGHT: Info + Action CTA) ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+          {/* ── LEFT COLUMN: 8 COLS ── */}
+          <div className="lg:col-span-8 space-y-8">
+            {/* SECTION 1: WHAT YOU'LL LEARN */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+              <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
+                <Sparkles className="w-5 h-5 text-indigo-600" />
+                Yang Akan Anda Pelajari (What you&apos;ll learn)
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                Rating rata-rata <strong className="text-slate-800">{avgRating} dari 5</strong> berdasarkan {totalReviews} ulasan siswa.
-              </p>
-            </div>
-            <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
-              <span className="text-2xl font-black text-amber-700">{avgRating}</span>
-              <div className="flex text-amber-400">
-                {[1, 2, 3, 4, 5].map(st => (
-                  <Star key={st} className={`w-4 h-4 ${st <= Math.round(avgRating) ? 'fill-amber-400' : 'text-slate-300'}`} />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {learningPoints.map((point, idx) => (
+                  <div key={idx} className="flex items-start gap-3">
+                    <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
+                      ✓
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                      {point}
+                    </p>
+                  </div>
                 ))}
               </div>
             </div>
-          </div>
 
-          {/* Add Review Form (If Student is Approved) */}
-          {role === 'STUDENT' && enrollmentStatus === 'APPROVED' && (
-            <form onSubmit={handleSubmitReview} className="mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-200">
-              <h4 className="text-sm font-bold text-slate-800 mb-3">Tulis Ulasan Anda untuk Kursus Ini:</h4>
-              <div className="flex items-center gap-2 mb-4">
-                <span className="text-xs font-semibold text-slate-600">Rating:</span>
-                <div className="flex items-center gap-1">
-                  {[1, 2, 3, 4, 5].map((st) => (
-                    <button
-                      key={st}
-                      type="button"
-                      onMouseEnter={() => setReviewHoverStar(st)}
-                      onMouseLeave={() => setReviewHoverStar(0)}
-                      onClick={() => setUserRating(st)}
-                      className="p-1 hover:scale-110 transition-transform"
-                    >
-                      <Star className={`w-6 h-6 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
-                    </button>
-                  ))}
+            {/* SECTION 2: SYLLABUS */}
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
+              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
+                <div>
+                  <h2 className="text-xl font-black text-slate-800">Silabus Pembelajaran</h2>
+                  <p className="text-sm text-slate-500 mt-1">{syllabus.length} bab · {totalLessonsCount} materi</p>
                 </div>
-                <span className="text-xs font-bold text-amber-600 ml-2">{userRating} / 5 Bintang</span>
+                <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kurikulum Terverifikasi</span>
               </div>
-              <textarea
-                value={userComment}
-                onChange={(e) => setUserComment(e.target.value)}
-                placeholder="Bagikan pengalaman belajar Anda, materi yang paling berkesan, atau saran untuk instruktur..."
-                rows={3}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium mb-3 bg-white"
+              <SyllabusAccordion
+                syllabus={syllabus}
+                completedSet={completedSet}
+                progressPct={progressPct}
+                enrollmentStatus={enrollmentStatus}
+                id={id}
+                router={router}
               />
-              <div className="flex justify-end">
-                <button
-                  type="submit"
-                  disabled={isSubmittingReview}
-                  className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
-                >
-                  {isSubmittingReview ? 'Mengirim...' : 'Kirim Ulasan'}
-                </button>
-              </div>
-            </form>
-          )}
+            </div>
 
-          {/* Reviews List */}
-          {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
-            <div className="space-y-4">
-              {reviewsData.reviews.map((rev: any) => (
-                <div key={rev.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4">
-                  <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-black flex items-center justify-center shrink-0 text-sm">
-                    {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'U'}
+            {/* SECTION 3: RATINGS & REVIEWS */}
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
+                <div>
+                  <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+                    <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                    Ulasan &amp; Rating Kursus
+                  </h2>
+                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                    Rating rata-rata <strong className="text-slate-800">{avgRating} dari 5</strong> berdasarkan {totalReviews} ulasan siswa.
+                  </p>
+                </div>
+                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
+                  <span className="text-2xl font-black text-amber-700">{avgRating}</span>
+                  <div className="flex text-amber-400">
+                    {[1, 2, 3, 4, 5].map(st => (
+                      <Star key={st} className={`w-4 h-4 ${st <= Math.round(avgRating) ? 'fill-amber-400' : 'text-slate-300'}`} />
+                    ))}
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <h4 className="font-bold text-slate-800 text-sm">{rev.user?.name || 'Siswa DevGrow'}</h4>
-                      <span className="text-[10px] text-slate-400 font-medium">
-                        {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Baru saja'}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-1 mb-2">
+                </div>
+              </div>
+
+              {/* Add Review Form (If Student is Approved) */}
+              {role === 'STUDENT' && enrollmentStatus === 'APPROVED' && (
+                <form onSubmit={handleSubmitReview} className="mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-200">
+                  <h4 className="text-sm font-bold text-slate-800 mb-3">Tulis Ulasan Anda untuk Kursus Ini:</h4>
+                  <div className="flex items-center gap-2 mb-4">
+                    <span className="text-xs font-semibold text-slate-600">Rating:</span>
+                    <div className="flex items-center gap-1">
                       {[1, 2, 3, 4, 5].map((st) => (
-                        <Star key={st} className={`w-3.5 h-3.5 ${st <= rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                        <button
+                          key={st}
+                          type="button"
+                          onMouseEnter={() => setReviewHoverStar(st)}
+                          onMouseLeave={() => setReviewHoverStar(0)}
+                          onClick={() => setUserRating(st)}
+                          className="p-1 hover:scale-110 transition-transform"
+                        >
+                          <Star className={`w-6 h-6 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                        </button>
                       ))}
                     </div>
-                    <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
-                      {rev.comment}
-                    </p>
+                    <span className="text-xs font-bold text-amber-600 ml-2">{userRating} / 5 Bintang</span>
+                  </div>
+                  <textarea
+                    value={userComment}
+                    onChange={(e) => setUserComment(e.target.value)}
+                    placeholder="Bagikan pengalaman belajar Anda, materi yang paling berkesan, atau saran untuk instruktur..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium mb-3 bg-white"
+                  />
+                  <div className="flex justify-end">
+                    <button
+                      type="submit"
+                      disabled={isSubmittingReview}
+                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
+                    >
+                      {isSubmittingReview ? 'Mengirim...' : 'Kirim Ulasan'}
+                    </button>
+                  </div>
+                </form>
+              )}
+
+              {/* Reviews List */}
+              {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
+                <div className="space-y-4">
+                  {reviewsData.reviews.map((rev: any) => (
+                    <div key={rev.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4">
+                      <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-black flex items-center justify-center shrink-0 text-sm">
+                        {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'U'}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-2 mb-1">
+                          <h4 className="font-bold text-slate-800 text-sm">{rev.user?.name || 'Siswa DevGrow'}</h4>
+                          <span className="text-[10px] text-slate-400 font-medium">
+                            {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Baru saja'}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1 mb-2">
+                          {[1, 2, 3, 4, 5].map((st) => (
+                            <Star key={st} className={`w-3.5 h-3.5 ${st <= rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                          ))}
+                        </div>
+                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
+                          {rev.comment}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-400 text-xs sm:text-sm font-medium">
+                  Belum ada ulasan untuk modul ini. Jadilah siswa pertama yang memberikan ulasan! ⭐
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* ── RIGHT COLUMN: 4 COLS (STICKY SIDEBAR) ── */}
+          <div className="lg:col-span-4 space-y-6 lg:sticky lg:top-8">
+            {/* Action CTA & Progress Box */}
+            <div className="bg-white border border-slate-200 p-6 rounded-3xl shadow-sm space-y-4">
+              <h3 className="text-base font-black text-slate-800">Status Pembelajaran</h3>
+              
+              {progressPct > 0 && (
+                <div className="w-full text-center">
+                  <div className={`text-3xl font-black mb-1 ${progressPct >= 100 ? 'text-emerald-600' : 'text-indigo-600'}`}>
+                    {progressPct}%
+                  </div>
+                  <div className="text-xs text-slate-400 mb-2 font-bold">Progress Selesai</div>
+                  <div className="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className={`h-full rounded-full transition-all duration-700 ${progressPct >= 100 ? 'bg-emerald-500' : 'bg-indigo-600'}`} style={{ width: `${progressPct}%` }} />
                   </div>
                 </div>
-              ))}
+              )}
+
+              {/* Completed Badge */}
+              {progressPct >= 100 && (
+                <div className="w-full flex items-center justify-center gap-2 px-4 py-2.5 bg-emerald-50 border border-emerald-200 text-emerald-700 font-black rounded-2xl text-xs shadow-sm">
+                  <Award className="w-4 h-4 text-emerald-600" />
+                  🎉 Kursus Telah Selesai!
+                </div>
+              )}
+
+              {enrollmentStatus === 'NONE' && (
+                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-8 py-3.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-indigo-600/20 hover:scale-[1.02] disabled:opacity-50 flex items-center justify-center gap-2 text-sm">
+                  <Lock className="w-4 h-4 text-white" />
+                  {enrolling ? 'Mengirim Izin...' : 'Minta Izin Akses'}
+                </button>
+              )}
+
+              {enrollmentStatus === 'PENDING' && (
+                <div className="w-full px-5 py-3.5 bg-amber-50 border border-amber-200 text-amber-800 font-bold rounded-2xl text-xs flex items-center justify-center gap-2 text-center">
+                  <Clock className="w-4 h-4 animate-spin shrink-0 text-amber-600" /> Menunggu Persetujuan Instruktur
+                </div>
+              )}
+
+              {enrollmentStatus === 'APPROVED' && (
+                <button onClick={handleStart} className="w-full px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-600/20 hover:scale-[1.02] flex items-center justify-center gap-2 text-sm">
+                  <BookOpen className="w-4 h-4 text-white" />
+                  {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar Sekarang →'}
+                </button>
+              )}
+
+              {enrollmentStatus === 'REJECTED' && (
+                <button onClick={handleEnroll} disabled={enrolling} className="w-full px-6 py-3.5 bg-rose-500 hover:bg-rose-600 text-white font-bold rounded-2xl text-xs flex items-center justify-center gap-2 shadow-md">
+                  ❌ Ditolak · Ajukan Ulang
+                </button>
+              )}
             </div>
-          ) : (
-            <div className="text-center py-8 text-slate-400 text-xs sm:text-sm font-medium">
-              Belum ada ulasan untuk modul ini. Jadilah siswa pertama yang memberikan ulasan! ⭐
+
+            {/* SECTION 2: THIS COURSE INCLUDES */}
+            <div className="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+              <h3 className="text-base font-black text-slate-800 mb-4 flex items-center gap-2">
+                <BookOpen className="w-4 h-4 text-indigo-600" />
+                Modul Ini Mencakup:
+              </h3>
+              <div className="space-y-3.5 text-xs sm:text-sm font-semibold text-slate-700">
+                {videoLessonsCount > 0 ? (
+                  <div className="flex items-center gap-3">
+                    <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
+                    <span>{approxVideoHours} jam video on-demand ({videoLessonsCount} video)</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-3">
+                    <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                    <span>{totalLessonsCount} materi interaktif &amp; Live Code Playground</span>
+                  </div>
+                )}
+
+                <div className="flex items-center gap-3">
+                  <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+                  <span>{articleLessonsCount > 0 ? articleLessonsCount : totalLessonsCount} artikel &amp; dokumentasi terstruktur</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                  <span>{tasksCount} tugas praktek &amp; proyek hands-on</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Smartphone className="w-4 h-4 text-purple-500 shrink-0" />
+                  <span>Akses di Mobile, Tablet, dan TV</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Infinity className="w-4 h-4 text-cyan-500 shrink-0" />
+                  <span>Akses seumur hidup penuh (Full lifetime)</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Subtitles className="w-4 h-4 text-teal-500 shrink-0" />
+                  <span>Closed captions / Subtitle [Auto]</span>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <Award className="w-4 h-4 text-rose-500 shrink-0" />
+                  <span>Sertifikat kelulusan resmi DevGrow</span>
+                </div>
+              </div>
             </div>
-          )}
+
+            {/* Quality Guarantee Box */}
+            <div className="bg-indigo-50/70 border border-indigo-100 rounded-3xl p-5 text-xs text-indigo-900 space-y-2">
+              <div className="font-bold flex items-center gap-1.5 text-indigo-700">
+                <Sparkles className="w-4 h-4" /> Jaminan Kualitas DevGrow
+              </div>
+              <p className="text-slate-600 leading-relaxed text-[11px]">
+                Materi diperbarui berkala sesuai standar industri dengan sertifikat kelulusan terverifikasi dan akses seumur hidup.
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
