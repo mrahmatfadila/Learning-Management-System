@@ -412,8 +412,8 @@ export const bulkReassignModules = async (req: Request, res: Response): Promise<
 // POST /api/modules/:id/like — toggle like (heart) for a module
 export const toggleModuleLike = async (req: Request, res: Response): Promise<void> => {
   try {
-    const moduleId = req.params.id;
-    const { userId } = req.body;
+    const moduleId = String(req.params.id);
+    const userId = String(req.body.userId || '');
 
     if (!userId) {
       res.status(400).json({ error: 'userId wajib diisi' });
