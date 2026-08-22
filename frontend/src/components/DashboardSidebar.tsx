@@ -19,6 +19,7 @@ export default function DashboardSidebar() {
   const [activeGroup, setActiveGroup] = useState('home');
   const [activeMenu, setActiveMenu] = useState('Dashboard');
 
+  // Isolated User Polling with proper cleanup
   useEffect(() => {
     const loadAndSetUser = () => {
       const stored = localStorage.getItem('lms_user');
@@ -32,13 +33,19 @@ export default function DashboardSidebar() {
       return null;
     };
 
-    let uRole = 'STUDENT';
-    const u = loadAndSetUser();
-    if (u) uRole = u?.role?.toUpperCase() || 'STUDENT';
+    loadAndSetUser();
+    window.addEventListener('storage', loadAndSetUser);
+    const interval = setInterval(loadAndSetUser, 3000);
 
-    // Poll every 3s to catch profilePicture updates
-    const interval = setInterval(() => { loadAndSetUser(); }, 3000);
+    return () => {
+      window.removeEventListener('storage', loadAndSetUser);
+      clearInterval(interval);
+    };
+  }, []);
 
+  // Route & Tab Syncing
+  useEffect(() => {
+    const uRole = user?.role?.toUpperCase() || 'STUDENT';
     const view = searchParams.get('view');
     const tab  = searchParams.get('tab');
     const role = searchParams.get('role');
@@ -134,9 +141,7 @@ export default function DashboardSidebar() {
     // Fallback for any other unmatched route — use first group/menu of the role
     if (uRole === 'STUDENT') { setActiveGroup('home'); setActiveMenu('Dashboard'); }
     else                     { setActiveGroup('overview'); setActiveMenu('Dashboard Overview'); }
-
-    return () => clearInterval(interval);
-  }, [pathname, searchParams]);
+  }, [pathname, searchParams, user?.role]);
 
 
   const handleLogout = () => {

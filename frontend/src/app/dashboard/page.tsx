@@ -468,7 +468,7 @@ export default function DashboardPage() {
                   <div
                     key={m.id}
                     onClick={() => router.push(`/dashboard/modules/${m.id}`)}
-                    className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-[transform,shadow,border-color] duration-200 overflow-hidden flex flex-col justify-between cursor-pointer relative animate-fadeIn [transform:translateZ(0)]"
+                    className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md transition-[border-color,box-shadow] duration-200 overflow-hidden flex flex-col justify-between cursor-pointer relative animate-fadeIn"
                   >
                     {/* Top Thumbnail Section (Compact) */}
                     <div className="relative">
@@ -478,7 +478,9 @@ export default function DashboardPage() {
                             <img
                               src={m.thumbnail}
                               alt={m.title}
-                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              loading="lazy"
+                              decoding="async"
+                              className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                             />
                             <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                           </>
@@ -827,7 +829,7 @@ export default function DashboardPage() {
                   return (
                     <div
                       key={m.id}
-                      className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-[transform,shadow,border-color] duration-200 overflow-hidden flex flex-col justify-between relative [transform:translateZ(0)]"
+                      className="group bg-white dark:bg-[#0d1117] rounded-2xl border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-400/60 dark:hover:border-indigo-500/50 shadow-sm hover:shadow-md transition-[border-color,box-shadow] duration-200 overflow-hidden flex flex-col justify-between relative"
                     >
                       {/* Top Thumbnail Section (Compact) */}
                       <div className="relative">
@@ -840,7 +842,9 @@ export default function DashboardPage() {
                               <img
                                 src={m.thumbnail}
                                 alt={m.title}
-                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                loading="lazy"
+                                decoding="async"
+                                className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200"
                               />
                               <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
                             </>
@@ -1035,7 +1039,7 @@ export default function DashboardPage() {
                           className={`${m.thumbnail ? 'bg-slate-950' : `bg-gradient-to-br ${theme.bg}`} w-28 sm:w-36 aspect-[16/8.5] rounded-xl shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer shadow-sm`}
                         >
                           {m.thumbnail ? (
-                            <img src={m.thumbnail} alt={m.title} className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                            <img src={m.thumbnail} alt={m.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-200" />
                           ) : (
                             <span className="text-2xl drop-shadow select-none">{theme.emoji}</span>
                           )}
@@ -1149,9 +1153,9 @@ export default function DashboardPage() {
                       const theme = getCourseTheme(m.title);
                       const enrL = enrollmentMap.get(m.id) || (aliasMap[m.id] ? enrollmentMap.get(aliasMap[m.id]) : null);
                       return (
-                        <div key={m.id} className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm hover:shadow-lg transition-all overflow-hidden flex group">
+                        <div key={m.id} className="bg-white dark:bg-[#0c0e18] rounded-2xl border border-red-100 dark:border-red-900/30 shadow-sm hover:shadow-md transition-[border-color,box-shadow] duration-200 overflow-hidden flex group">
                           <div onClick={() => router.push(`/dashboard/modules/${m.id}`)} className={`${m.thumbnail ? 'bg-slate-900' : `bg-gradient-to-br ${theme.bg}`} w-24 shrink-0 flex items-center justify-center relative overflow-hidden cursor-pointer`}>
-                            {m.thumbnail ? <img src={m.thumbnail} alt={m.title} className="absolute inset-0 w-full h-full object-cover" /> : <span className="text-3xl">{theme.emoji}</span>}
+                            {m.thumbnail ? <img src={m.thumbnail} alt={m.title} loading="lazy" decoding="async" className="absolute inset-0 w-full h-full object-cover" /> : <span className="text-3xl">{theme.emoji}</span>}
                           </div>
                           <div className="p-4 flex-1 min-w-0">
                             <h4 className="font-bold text-slate-800 dark:text-slate-200 text-sm line-clamp-1 mb-1 cursor-pointer group-hover:text-indigo-600" onClick={() => router.push(`/dashboard/modules/${m.id}`)}>{m.title}</h4>
@@ -3305,11 +3309,11 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="h-screen w-full flex flex-col overflow-hidden bg-slate-50 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 relative transition-colors duration-300">
+    <div className="h-screen w-full flex flex-col overflow-hidden bg-slate-50 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100 relative">
       <DashboardNavbar />
       <div className="flex flex-1 overflow-hidden">
         <DashboardSidebar />
-        <div className={`flex-1 overflow-hidden ${(activeMenu === 'Discussions' || activeMenu === 'Diskusi & QA' || activeMenu === 'Q&A Forum') ? 'flex flex-col' : 'overflow-y-auto pb-28 md:pb-0 scroll-smooth [will-change:scroll-position] [transform:translateZ(0)]'}`}>
+        <div className={`flex-1 overflow-hidden ${(activeMenu === 'Discussions' || activeMenu === 'Diskusi & QA' || activeMenu === 'Q&A Forum') ? 'flex flex-col' : 'overflow-y-auto pb-28 md:pb-0'}`}>
           {loading ? (
             <DevGrowLoader
               message="Memuat konten dashboard..."
