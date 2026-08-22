@@ -285,17 +285,6 @@ async function main() {
         isVerified: true
       }
     });
-
-    await prisma.enrollment.upsert({
-      where: { studentId_moduleId: { studentId: student.id, moduleId: am.id } },
-      update: { status: 'APPROVED' },
-      create: {
-        studentId: student.id,
-        moduleId: am.id,
-        status: 'APPROVED',
-        progress: 50
-      }
-    });
   }
 
   console.log('✅ ALL COURSES, CHAPTERS & LESSONS SEEDED SUCCESSFULLY!');
