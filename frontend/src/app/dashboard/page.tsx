@@ -15,7 +15,7 @@ import {
   BarChart2, Zap, ArrowRight, Star, Activity, LogOut, Settings,
   Home, PlayCircle, Plus, Compass, Sparkles, Server, Layout,
   Lock, RefreshCw, ChevronRight, Check, Search, X, Trophy,
-  Play, MessageSquare, ChevronDown
+  Play, MessageSquare, ChevronDown, Edit
 } from 'lucide-react';
 
 
