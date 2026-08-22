@@ -3,7 +3,7 @@
 import {
   CheckCircle, ChevronLeft, ChevronRight, Code2, Play, Copy, RefreshCw,
   X, Zap, List, Moon, Sun, Sparkles, Send, ChevronDown, ChevronUp,
-  MonitorPlay, BookOpen, Trophy, Clock, Video, FileText, Users, Trash, MessageSquare, Lock
+  MonitorPlay, BookOpen, Trophy, Clock, Video, FileText, Users, Trash, MessageSquare, Lock, Star
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef, Suspense } from 'react';
@@ -162,6 +162,48 @@ export default function LessonPage() {
       const res = await fetch(`http://localhost:5000/api/lessons/comments/${commentId}`, { method: 'DELETE' });
       if (res.ok) fetchLessonComments();
     } catch {}
+  };
+
+  // Course Review & Rating Modal State
+  const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [moduleUserRating, setModuleUserRating] = useState(5);
+  const [moduleReviewHoverStar, setModuleReviewHoverStar] = useState(0);
+  const [moduleUserComment, setModuleUserComment] = useState('');
+  const [isSubmittingModuleReview, setIsSubmittingModuleReview] = useState(false);
+  const [moduleReviewSuccess, setModuleReviewSuccess] = useState(false);
+
+  const handlePostModuleReview = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const stored = localStorage.getItem('lms_user');
+    if (!stored) return alert('Silakan login terlebih dahulu.');
+    const user = JSON.parse(stored);
+    if (!moduleUserComment.trim()) return alert('Silakan tuliskan komentar ulasan Anda.');
+
+    setIsSubmittingModuleReview(true);
+    try {
+      const res = await fetch(`http://localhost:5000/api/modules/${id}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          rating: moduleUserRating,
+          comment: moduleUserComment.trim()
+        })
+      });
+      if (res.ok) {
+        setModuleReviewSuccess(true);
+        setTimeout(() => {
+          setIsReviewModalOpen(false);
+          setModuleReviewSuccess(false);
+        }, 1500);
+      } else {
+        alert('Gagal menyimpan ulasan.');
+      }
+    } catch (err) {
+      alert('Terjadi kesalahan saat mengirim ulasan.');
+    } finally {
+      setIsSubmittingModuleReview(false);
+    }
   };
 
   useEffect(() => {
@@ -762,6 +804,18 @@ export default function LessonPage() {
           </div>
           {/* Right */}
           <div className="flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => setIsReviewModalOpen(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                isDark
+                  ? 'bg-amber-500/15 text-amber-300 hover:bg-amber-500/25 border border-amber-500/30'
+                  : 'bg-amber-50 text-amber-800 hover:bg-amber-100 border border-amber-200 shadow-2xs'
+              }`}
+              title="Beri Rating & Ulasan Kursus"
+            >
+              <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+              <span className="hidden sm:inline">Rating Kursus</span>
+            </button>
             <button onClick={() => setAiOpen(p => !p)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 aiOpen
@@ -1216,6 +1270,121 @@ export default function LessonPage() {
               </button>
             </div>
             <p className={`text-[9px] text-center mt-1.5 ${textMuted}`}>AI membaca kode editor kamu 🧠💡</p>
+          </div>
+        </div>
+      )}
+      {/* -- Course Rating & Review Modal -- */}
+      {isReviewModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/70 backdrop-blur-sm animate-fadeIn">
+          <div className="bg-white dark:bg-[#161b22] border border-slate-200 dark:border-slate-800 rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative text-left">
+            <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800 mb-5">
+              <div className="flex items-center gap-2.5">
+                <div className="w-9 h-9 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center text-amber-500">
+                  <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
+                </div>
+                <div>
+                  <h3 className="font-black text-slate-800 dark:text-white text-base">Beri Rating &amp; Ulasan Kursus</h3>
+                  <p className="text-[11px] text-slate-400">{dbModuleData?.title || 'Modul Pembelajaran'}</p>
+                </div>
+              </div>
+              <button
+                onClick={() => setIsReviewModalOpen(false)}
+                className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {moduleReviewSuccess ? (
+              <div className="py-10 text-center space-y-3">
+                <div className="w-14 h-14 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center mx-auto text-2xl animate-bounce">
+                  ✓
+                </div>
+                <h4 className="text-base font-black text-slate-800 dark:text-white">Terima Kasih!</h4>
+                <p className="text-xs text-slate-500">Ulasan dan rating Anda telah berhasil disimpan.</p>
+              </div>
+            ) : (
+              <form onSubmit={handlePostModuleReview} className="space-y-4">
+                {/* Interactive Star Picker */}
+                <div className="p-4 bg-slate-50 dark:bg-slate-900/60 rounded-2xl border border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-1.5">
+                    {[1, 2, 3, 4, 5].map((st) => (
+                      <button
+                        key={st}
+                        type="button"
+                        onMouseEnter={() => setModuleReviewHoverStar(st)}
+                        onMouseLeave={() => setModuleReviewHoverStar(0)}
+                        onClick={() => setModuleUserRating(st)}
+                        className="p-1 hover:scale-125 transition-transform"
+                      >
+                        <Star className={`w-7 h-7 ${(moduleReviewHoverStar || moduleUserRating) >= st ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-300 dark:text-slate-700'}`} />
+                      </button>
+                    ))}
+                  </div>
+                  <span className="text-xs font-black text-amber-700 dark:text-amber-400">
+                    {moduleUserRating === 5 ? '⭐⭐⭐⭐⭐ Sangat Puas!' :
+                     moduleUserRating === 4 ? '⭐⭐⭐⭐ Bagus & Jelas' :
+                     moduleUserRating === 3 ? '⭐⭐⭐ Cukup Baik' :
+                     moduleUserRating === 2 ? '⭐⭐ Kurang Lengkap' : '⭐ Perlu Perbaikan'}
+                  </span>
+                </div>
+
+                {/* Quick Tags */}
+                <div>
+                  <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 mb-2 block">Pilih kata kunci cepat:</span>
+                  <div className="flex flex-wrap gap-1.5">
+                    {[
+                      'Materi Sangat Jelas 💡',
+                      'Praktik Live Code Keren 🚀',
+                      'Mudah Dipahami Pemula 👍',
+                      'Struktur Bab Rapi 📚'
+                    ].map(tag => (
+                      <button
+                        key={tag}
+                        type="button"
+                        onClick={() => {
+                          if (!moduleUserComment.includes(tag)) {
+                            setModuleUserComment(prev => prev ? `${prev} ${tag}` : tag);
+                          }
+                        }}
+                        className="px-2.5 py-1 bg-slate-100 hover:bg-indigo-50 dark:bg-slate-800 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 text-[11px] font-semibold rounded-full transition-all hover:scale-105"
+                      >
+                        + {tag}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Textarea */}
+                <div>
+                  <textarea
+                    value={moduleUserComment}
+                    onChange={(e) => setModuleUserComment(e.target.value)}
+                    placeholder="Bagikan pengalaman belajarmu, materi yang paling kamu sukai, atau saran untuk kursus ini..."
+                    rows={3}
+                    className="w-full px-4 py-3 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-white text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium leading-relaxed"
+                  />
+                </div>
+
+                {/* Submit Buttons */}
+                <div className="flex gap-3 pt-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsReviewModalOpen(false)}
+                    className="flex-1 py-3 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 font-bold text-xs rounded-2xl transition-colors"
+                  >
+                    Batal
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={isSubmittingModuleReview || !moduleUserComment.trim()}
+                    className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-2xl transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 flex items-center justify-center gap-2"
+                  >
+                    {isSubmittingModuleReview ? 'Menyimpan...' : 'Kirim Ulasan & Rating'}
+                  </button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}

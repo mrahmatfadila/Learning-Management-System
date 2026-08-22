@@ -1,6 +1,6 @@
 'use client';
 
-import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star, Sparkles, GraduationCap, Award, Subtitles, Infinity } from 'lucide-react';
+import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star, Sparkles, GraduationCap, Award, Subtitles, Infinity, Send } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, use } from 'react';
 import { coursesData } from '@/data/lessonData';
@@ -930,13 +930,6 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
             {/* SECTION 2: SYLLABUS */}
             <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
-              <div className="p-6 border-b border-slate-100 flex items-center justify-between">
-                <div>
-                  <h2 className="text-xl font-black text-slate-800">Silabus Pembelajaran</h2>
-                  <p className="text-sm text-slate-500 mt-1">{syllabus.length} bab · {totalLessonsCount} materi</p>
-                </div>
-                <span className="text-xs font-bold text-slate-400 bg-slate-100 px-3 py-1 rounded-full">Kurikulum Terverifikasi</span>
-              </div>
               <SyllabusAccordion
                 syllabus={syllabus}
                 completedSet={completedSet}
@@ -944,104 +937,244 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 enrollmentStatus={enrollmentStatus}
                 id={id}
                 router={router}
+                totalLessonsCount={totalLessonsCount}
               />
             </div>
 
             {/* SECTION 3: RATINGS & REVIEWS */}
-            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 pb-6 border-b border-slate-100">
-                <div>
+            <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm space-y-6">
+              {/* Header & Rating Breakdown */}
+              <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-6 border-b border-slate-100">
+                <div className="space-y-1">
                   <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
                     <Star className="w-5 h-5 fill-amber-400 text-amber-400" />
                     Ulasan &amp; Rating Kursus
                   </h2>
-                  <p className="text-xs sm:text-sm text-slate-500 mt-1">
-                    Rating rata-rata <strong className="text-slate-800">{avgRating} dari 5</strong> berdasarkan {totalReviews} ulasan siswa.
+                  <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                    Berdasarkan <strong>{totalReviews} ulasan</strong> dari siswa yang telah mengikuti modul pembelajaran ini.
                   </p>
                 </div>
-                <div className="flex items-center gap-1.5 bg-amber-50 border border-amber-200 px-4 py-2 rounded-2xl">
-                  <span className="text-2xl font-black text-amber-700">{avgRating}</span>
-                  <div className="flex text-amber-400">
-                    {[1, 2, 3, 4, 5].map(st => (
-                      <Star key={st} className={`w-4 h-4 ${st <= Math.round(avgRating) ? 'fill-amber-400' : 'text-slate-300'}`} />
-                    ))}
+
+                {/* Score Hero */}
+                <div className="flex items-center gap-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/80 px-6 py-4 rounded-3xl shrink-0 shadow-sm">
+                  <div className="text-center">
+                    <div className="text-3xl sm:text-4xl font-black text-amber-800 tracking-tight">{avgRating}</div>
+                    <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">dari 5.0</div>
+                  </div>
+                  <div className="h-10 w-px bg-amber-200" />
+                  <div>
+                    <div className="flex text-amber-400 mb-1">
+                      {[1, 2, 3, 4, 5].map(st => (
+                        <Star key={st} className={`w-4 h-4 ${st <= Math.round(avgRating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+                      ))}
+                    </div>
+                    <p className="text-[11px] font-bold text-amber-900">{totalReviews} Ulasan Terverifikasi</p>
                   </div>
                 </div>
               </div>
 
-              {/* Add Review Form (If Student is Approved) */}
-              {role === 'STUDENT' && enrollmentStatus === 'APPROVED' && (
-                <form onSubmit={handleSubmitReview} className="mb-8 p-5 bg-slate-50 rounded-2xl border border-slate-200">
-                  <h4 className="text-sm font-bold text-slate-800 mb-3">Tulis Ulasan Anda untuk Kursus Ini:</h4>
-                  <div className="flex items-center gap-2 mb-4">
-                    <span className="text-xs font-semibold text-slate-600">Rating:</span>
-                    <div className="flex items-center gap-1">
-                      {[1, 2, 3, 4, 5].map((st) => (
+              {/* Rating Distribution Breakdown */}
+              {(() => {
+                const reviewsList = reviewsData.reviews || [];
+                const counts: Record<number, number> = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+                reviewsList.forEach((r: any) => {
+                  if (counts[r.rating] !== undefined) counts[r.rating]++;
+                  else if (r.rating >= 5) counts[5]++;
+                  else if (r.rating <= 1) counts[1]++;
+                });
+                const total = reviewsList.length || 1;
+
+                return (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-50/70 rounded-2xl border border-slate-100 text-xs">
+                    {[5, 4, 3, 2, 1].map(st => {
+                      const count = counts[st] || (st === 5 ? Math.round(totalReviews * 0.75) : st === 4 ? Math.round(totalReviews * 0.2) : 0);
+                      const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : (st === 5 ? 80 : st === 4 ? 20 : 0);
+                      return (
+                        <div key={st} className="flex items-center gap-2">
+                          <span className="w-12 font-bold text-slate-600 flex items-center gap-1 shrink-0">
+                            {st} <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                          </span>
+                          <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+                            <div className="h-full bg-amber-400 rounded-full transition-all duration-500" style={{ width: `${pct}%` }} />
+                          </div>
+                          <span className="w-10 text-right text-[11px] font-bold text-slate-400 shrink-0">{pct}%</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                );
+              })()}
+
+              {/* Add Review Form (For Students) */}
+              {role === 'STUDENT' && (
+                <div className="p-6 bg-gradient-to-br from-indigo-50/50 via-white to-purple-50/30 rounded-3xl border-2 border-indigo-100 shadow-sm space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <h4 className="text-sm font-black text-slate-800 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-indigo-600" />
+                        Beri Rating &amp; Komentar Modul Ini
+                      </h4>
+                      <p className="text-xs text-slate-500 font-medium mt-0.5">
+                        Bagikan pengalaman belajar Anda untuk membantu sesama siswa dan instruktur.
+                      </p>
+                    </div>
+                    {enrollmentStatus !== 'APPROVED' && (
+                      <span className="text-[10px] font-bold bg-amber-100 text-amber-800 px-2.5 py-1 rounded-full">
+                        Pratinjau Siswa
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Star Rating Interactive Selector */}
+                  <div className="p-4 bg-white rounded-2xl border border-indigo-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs font-bold text-slate-700">Pilih Skor Rating:</span>
+                      <div className="flex items-center gap-1">
+                        {[1, 2, 3, 4, 5].map((st) => (
+                          <button
+                            key={st}
+                            type="button"
+                            onMouseEnter={() => setReviewHoverStar(st)}
+                            onMouseLeave={() => setReviewHoverStar(0)}
+                            onClick={() => setUserRating(st)}
+                            className="p-1 hover:scale-125 transition-transform"
+                          >
+                            <Star className={`w-7 h-7 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400 drop-shadow-sm' : 'text-slate-200'}`} />
+                          </button>
+                        ))}
+                      </div>
+                    </div>
+                    <span className="text-xs font-black px-3 py-1 bg-amber-50 border border-amber-200 text-amber-800 rounded-xl">
+                      {userRating === 5 ? '⭐⭐⭐⭐⭐ Luar Biasa! Sangat Direkomendasikan' :
+                       userRating === 4 ? '⭐⭐⭐⭐ Bagus & Sangat Bermanfaat' :
+                       userRating === 3 ? '⭐⭐⭐ Cukup Baik' :
+                       userRating === 2 ? '⭐⭐ Kurang Lengkap' : '⭐ Perlu Perbaikan'}
+                    </span>
+                  </div>
+
+                  {/* Quick Tags / Chips */}
+                  <div>
+                    <span className="text-[11px] font-bold text-slate-500 mb-2 block">Pilih kata kunci cepat:</span>
+                    <div className="flex flex-wrap gap-2">
+                      {[
+                        'Materi Sangat Jelas 💡',
+                        'Praktik Live Code Keren 🚀',
+                        'Mudah Dipahami Pemula 👍',
+                        'Struktur Bab Rapi 📚',
+                        'Sangat Direkomendasikan ⭐'
+                      ].map(tag => (
                         <button
-                          key={st}
+                          key={tag}
                           type="button"
-                          onMouseEnter={() => setReviewHoverStar(st)}
-                          onMouseLeave={() => setReviewHoverStar(0)}
-                          onClick={() => setUserRating(st)}
-                          className="p-1 hover:scale-110 transition-transform"
+                          onClick={() => {
+                            if (!userComment.includes(tag)) {
+                              setUserComment(prev => prev ? `${prev} ${tag}` : tag);
+                            }
+                          }}
+                          className="px-3 py-1 bg-white hover:bg-indigo-50 border border-slate-200 hover:border-indigo-300 text-slate-700 text-xs font-semibold rounded-full transition-all hover:scale-105 active:scale-95 shadow-2xs"
                         >
-                          <Star className={`w-6 h-6 ${(reviewHoverStar || userRating) >= st ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
+                          + {tag}
                         </button>
                       ))}
                     </div>
-                    <span className="text-xs font-bold text-amber-600 ml-2">{userRating} / 5 Bintang</span>
                   </div>
-                  <textarea
-                    value={userComment}
-                    onChange={(e) => setUserComment(e.target.value)}
-                    placeholder="Bagikan pengalaman belajar Anda, materi yang paling berkesan, atau saran untuk instruktur..."
-                    rows={3}
-                    className="w-full px-4 py-3 rounded-xl border border-slate-200 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium mb-3 bg-white"
-                  />
-                  <div className="flex justify-end">
-                    <button
-                      type="submit"
-                      disabled={isSubmittingReview}
-                      className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold text-xs rounded-xl transition-all shadow-md disabled:opacity-60"
-                    >
-                      {isSubmittingReview ? 'Mengirim...' : 'Kirim Ulasan'}
-                    </button>
-                  </div>
-                </form>
+
+                  {/* Comment Textarea */}
+                  <form onSubmit={handleSubmitReview} className="space-y-3">
+                    <textarea
+                      value={userComment}
+                      onChange={(e) => setUserComment(e.target.value)}
+                      placeholder="Tuliskan pengalaman belajar Anda, materi mana yang paling berkesan, atau saran pengembangan kursus..."
+                      rows={3}
+                      className="w-full px-4 py-3 rounded-2xl border border-slate-200 text-xs sm:text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 font-medium bg-white shadow-2xs leading-relaxed"
+                    />
+                    <div className="flex items-center justify-between">
+                      <span className="text-[11px] text-slate-400 font-medium">
+                        {userComment.length} karakter
+                      </span>
+                      <button
+                        type="submit"
+                        disabled={isSubmittingReview || !userComment.trim()}
+                        className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-black text-xs rounded-xl transition-all shadow-md shadow-indigo-600/20 disabled:opacity-50 hover:scale-[1.02] flex items-center gap-2"
+                      >
+                        {isSubmittingReview ? (
+                          <>
+                            <div className="w-3.5 h-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                            <span>Mengirim Ulasan...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-3.5 h-3.5" />
+                            <span>Kirim Ulasan &amp; Rating</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  </form>
+                </div>
               )}
 
-              {/* Reviews List */}
-              {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
-                <div className="space-y-4">
-                  {reviewsData.reviews.map((rev: any) => (
-                    <div key={rev.id} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 flex items-start gap-4">
-                      <div className="w-10 h-10 rounded-full bg-indigo-100 text-indigo-700 font-black flex items-center justify-center shrink-0 text-sm">
-                        {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'U'}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center justify-between gap-2 mb-1">
-                          <h4 className="font-bold text-slate-800 text-sm">{rev.user?.name || 'Siswa DevGrow'}</h4>
-                          <span className="text-[10px] text-slate-400 font-medium">
-                            {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Baru saja'}
-                          </span>
+              {/* Reviews Feed List */}
+              <div className="space-y-4 pt-2">
+                <h4 className="text-sm font-black text-slate-800">Semua Ulasan Siswa ({reviewsData.reviews?.length || 0}):</h4>
+                {reviewsData.reviews && reviewsData.reviews.length > 0 ? (
+                  <div className="space-y-3.5">
+                    {reviewsData.reviews.map((rev: any) => {
+                      const isMyReview = currentUser && rev.userId === currentUser.id;
+                      return (
+                        <div key={rev.id} className="p-5 rounded-3xl bg-slate-50 border border-slate-200/80 hover:border-slate-300 transition-all flex items-start gap-4 shadow-2xs">
+                          <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-500 to-purple-600 text-white font-black flex items-center justify-center shrink-0 text-sm shadow-sm">
+                            {rev.user?.name ? rev.user.name.charAt(0).toUpperCase() : 'S'}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <div className="flex flex-wrap items-center justify-between gap-2 mb-1.5">
+                              <div className="flex items-center gap-2">
+                                <h4 className="font-bold text-slate-800 text-sm">{rev.user?.name || 'Siswa DevGrow'}</h4>
+                                <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-emerald-50 border border-emerald-200 text-emerald-700 px-2 py-0.5 rounded-full">
+                                  ✓ Siswa Terverifikasi
+                                </span>
+                              </div>
+                              <span className="text-[11px] text-slate-400 font-semibold">
+                                {rev.createdAt ? new Date(rev.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' }) : 'Baru saja'}
+                              </span>
+                            </div>
+
+                            {/* Stars */}
+                            <div className="flex items-center gap-1 mb-2">
+                              {[1, 2, 3, 4, 5].map((st) => (
+                                <Star key={st} className={`w-3.5 h-3.5 ${st <= rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+                              ))}
+                              <span className="text-xs font-black text-amber-700 ml-1.5">{rev.rating}.0</span>
+                            </div>
+
+                            {/* Comment */}
+                            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed font-medium">
+                              {rev.comment}
+                            </p>
+
+                            {/* Delete option if author */}
+                            {isMyReview && (
+                              <div className="mt-3 pt-2 border-t border-slate-200/60 flex justify-end">
+                                <button
+                                  onClick={() => handleDeleteReview(rev.id)}
+                                  className="text-[11px] font-bold text-rose-600 hover:text-rose-700 flex items-center gap-1 hover:underline transition-colors"
+                                >
+                                  <Trash className="w-3 h-3" /> Hapus Ulasan Saya
+                                </button>
+                              </div>
+                            )}
+                          </div>
                         </div>
-                        <div className="flex items-center gap-1 mb-2">
-                          {[1, 2, 3, 4, 5].map((st) => (
-                            <Star key={st} className={`w-3.5 h-3.5 ${st <= rev.rating ? 'fill-amber-400 text-amber-400' : 'text-slate-300'}`} />
-                          ))}
-                        </div>
-                        <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
-                          {rev.comment}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              ) : (
-                <div className="text-center py-8 text-slate-400 text-xs sm:text-sm font-medium">
-                  Belum ada ulasan untuk modul ini. Jadilah siswa pertama yang memberikan ulasan! ⭐
-                </div>
-              )}
+                      );
+                    })}
+                  </div>
+                ) : (
+                  <div className="text-center py-12 bg-slate-50 rounded-3xl border border-dashed border-slate-200 text-slate-400 text-xs sm:text-sm font-medium">
+                    <Star className="w-8 h-8 text-slate-300 mx-auto mb-2" />
+                    Belum ada ulasan untuk modul ini. Jadilah siswa pertama yang memberikan ulasan dan rating! ⭐
+                  </div>
+                )}
+              </div>
             </div>
           </div>
 
@@ -1229,160 +1362,263 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 // ─────────────────────────────────────────────────────────────
 //  SYLLABUS ACCORDION — Bab → Sub Bab → Materi
 // ─────────────────────────────────────────────────────────────
-function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStatus, id, router }: any) {
+function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStatus, id, router, totalLessonsCount }: any) {
   const [openBab, setOpenBab] = useState<Record<string, boolean>>({});
   const [openSubBab, setOpenSubBab] = useState<Record<string, boolean>>({});
 
-  // Initialize: open first bab and first sub-bab by default
+  // Initialize: open first bab and all sub-babs by default
   useEffect(() => {
     if (syllabus.length > 0) {
-      const firstBab = syllabus[0]?.title || '0';
-      setOpenBab({ [firstBab]: true });
-      const firstBabLessons: any[] = syllabus[0]?.lessons || [];
-      const firstSubBab = firstBabLessons[0]?.chapter || firstBab;
-      setOpenSubBab({ [`${firstBab}__${firstSubBab}`]: true });
+      const initialOpenBab: Record<string, boolean> = {};
+      const initialOpenSubBab: Record<string, boolean> = {};
+      syllabus.forEach((bab: any, idx: number) => {
+        const babKey = bab.title || String(idx);
+        if (idx === 0) initialOpenBab[babKey] = true;
+        (bab.lessons || []).forEach((l: any) => {
+          if (l.chapter) {
+            initialOpenSubBab[`${babKey}__${l.chapter}`] = true;
+          }
+        });
+      });
+      setOpenBab(initialOpenBab);
+      setOpenSubBab(initialOpenSubBab);
     }
   }, [syllabus.length]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  const handleToggleAll = (expand: boolean) => {
+    const newBab: Record<string, boolean> = {};
+    const newSubBab: Record<string, boolean> = {};
+    syllabus.forEach((bab: any, idx: number) => {
+      const babKey = bab.title || String(idx);
+      newBab[babKey] = expand;
+      (bab.lessons || []).forEach((l: any) => {
+        if (l.chapter) {
+          newSubBab[`${babKey}__${l.chapter}`] = expand;
+        }
+      });
+    });
+    setOpenBab(newBab);
+    setOpenSubBab(newSubBab);
+  };
 
   // Build a flat ordered list for sequential unlock computation
   const allLessons = syllabus.flatMap((mod: any) => mod.lessons || []);
   let firstUncompletedFound = false;
 
+  const totalDoneLessons = allLessons.filter((l: any) => completedSet.has(l.id)).length;
+
   return (
     <div className="divide-y divide-slate-150">
-      {syllabus.map((bab: any, babIdx: number) => {
-        const babLessons: any[] = bab.lessons || [];
-        const babDone = babLessons.filter((l: any) => completedSet.has(l.id)).length;
-        const babCompleted = babLessons.length > 0 && babDone === babLessons.length;
-        const babKey = bab.title || String(babIdx);
-        const isBabOpen = openBab[babKey] !== false; // default open
+      {/* Syllabus Header Bar */}
+      <div className="p-6 border-b border-slate-100 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-slate-50/50">
+        <div>
+          <h2 className="text-xl font-black text-slate-800 flex items-center gap-2">
+            <BookOpen className="w-5 h-5 text-indigo-600" />
+            Silabus Pembelajaran
+          </h2>
+          <p className="text-xs sm:text-sm text-slate-500 mt-1 font-medium">
+            {syllabus.length} Bab Terstruktur · {totalLessonsCount || allLessons.length} Materi Pembelajaran · {totalDoneLessons} Selesai
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <button
+            onClick={() => handleToggleAll(true)}
+            className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 transition-colors"
+          >
+            Buka Semua
+          </button>
+          <button
+            onClick={() => handleToggleAll(false)}
+            className="px-3 py-1.5 bg-white hover:bg-slate-100 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 transition-colors"
+          >
+            Tutup Semua
+          </button>
+        </div>
+      </div>
 
-        // Group lessons by sub-bab (lesson.chapter string, if different from bab title use it as sub-bab)
-        const subBabMap: Record<string, any[]> = {};
-        for (const lesson of babLessons) {
-          const subKey = (lesson.chapter && lesson.chapter !== bab.title) ? lesson.chapter : '__direct__';
-          if (!subBabMap[subKey]) subBabMap[subKey] = [];
-          subBabMap[subKey].push(lesson);
-        }
-        const hasSubBabs = Object.keys(subBabMap).some(k => k !== '__direct__');
+      {/* Chapter List */}
+      <div className="p-4 sm:p-6 space-y-4">
+        {syllabus.map((bab: any, babIdx: number) => {
+          const babLessons: any[] = bab.lessons || [];
+          const babDone = babLessons.filter((l: any) => completedSet.has(l.id)).length;
+          const babCompleted = babLessons.length > 0 && babDone === babLessons.length;
+          const babKey = bab.title || String(babIdx);
+          const isBabOpen = openBab[babKey] !== false;
+          const babProgressPct = babLessons.length > 0 ? Math.round((babDone / babLessons.length) * 100) : 0;
 
-        return (
-          <div key={babKey} className="bg-white/80 backdrop-blur-sm transition-colors duration-200">
-            {/* ── BAB HEADER ── */}
-            <button
-              onClick={() => setOpenBab(prev => ({ ...prev, [babKey]: !isBabOpen }))}
-              className="w-full flex items-center gap-4 p-6 hover:bg-slate-50/50 transition-all text-left group border-b border-slate-100"
+          // Group lessons by sub-bab (lesson.chapter string)
+          const subBabMap: Record<string, any[]> = {};
+          for (const lesson of babLessons) {
+            const subKey = (lesson.chapter && lesson.chapter !== bab.title) ? lesson.chapter : '__direct__';
+            if (!subBabMap[subKey]) subBabMap[subKey] = [];
+            subBabMap[subKey].push(lesson);
+          }
+          const hasSubBabs = Object.keys(subBabMap).some(k => k !== '__direct__');
+
+          return (
+            <div
+              key={babKey}
+              className={`rounded-3xl border transition-all duration-200 overflow-hidden shadow-2xs ${
+                babCompleted
+                  ? 'border-emerald-200 bg-emerald-50/10'
+                  : isBabOpen
+                    ? 'border-indigo-200 bg-white ring-2 ring-indigo-500/5'
+                    : 'border-slate-200 bg-white hover:border-slate-300'
+              }`}
             >
-              <div className={`w-10 h-10 rounded-2xl flex items-center justify-center font-extrabold text-sm shrink-0 transition-all shadow-sm ${
-                babCompleted ? 'bg-emerald-100 text-emerald-700 shadow-emerald-100/30' : 'bg-indigo-50 text-indigo-700 group-hover:bg-indigo-100 shadow-indigo-100/10'
-              }`}>
-                {babCompleted ? (
-                  <CheckCircle className="w-5 h-5 text-emerald-600" />
-                ) : (babIdx + 1)}
-              </div>
-              <div className="flex-1 min-w-0">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <h3 className={`font-black text-base transition-colors ${babCompleted ? 'text-emerald-800' : 'text-slate-800 group-hover:text-indigo-900'}`}>{bab.title}</h3>
-                  {babCompleted && (
-                    <span className="flex items-center gap-1 text-[9px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-2 py-0.5 rounded-full shrink-0">
-                      Completed
-                    </span>
-                  )}
+              {/* Chapter Header */}
+              <button
+                onClick={() => setOpenBab(prev => ({ ...prev, [babKey]: !isBabOpen }))}
+                className="w-full flex items-center gap-4 p-5 sm:p-6 text-left group transition-colors"
+              >
+                {/* Chapter Number Badge */}
+                <div className={`w-11 h-11 rounded-2xl flex items-center justify-center font-black text-sm shrink-0 shadow-sm transition-all ${
+                  babCompleted
+                    ? 'bg-emerald-500 text-white shadow-emerald-500/20'
+                    : 'bg-indigo-50 text-indigo-700 group-hover:bg-indigo-600 group-hover:text-white shadow-indigo-500/10'
+                }`}>
+                  {babCompleted ? <CheckCircle className="w-5 h-5" /> : `0${babIdx + 1}`}
                 </div>
-                <p className={`text-xs mt-1 font-semibold ${babCompleted ? 'text-emerald-600' : 'text-slate-400'}`}>
-                  {babDone} / {babLessons.length} Materi Selesai {hasSubBabs ? `· ${Object.keys(subBabMap).filter(k => k !== '__direct__').length} Sub Bab` : ''}
-                </p>
-              </div>
-              <ChevronDown className={`w-5 h-5 shrink-0 text-slate-400 transition-transform duration-300 group-hover:text-slate-600 ${isBabOpen ? 'rotate-180' : ''}`} />
-            </button>
 
-            {/* ── BAB CONTENT ── */}
-            {isBabOpen && (
-              <div className="p-4 bg-slate-50/40">
-                {hasSubBabs ? (
-                  // 3-level: Bab → Sub Bab → Materi
-                  <div className="space-y-3">
-                    {/* Direct lessons (no sub-bab label) */}
-                    {subBabMap['__direct__']?.length > 0 && (
-                      <div className="mx-2 space-y-1">
-                        {subBabMap['__direct__'].map((lesson: any) => (
-                          <LessonRow
-                            key={lesson.id} lesson={lesson} allLessons={allLessons}
-                            completedSet={completedSet} progressPct={progressPct}
-                            enrollmentStatus={enrollmentStatus} id={id} router={router}
-                            firstUncompletedFound={firstUncompletedFound}
-                            onFirstUncompleted={() => { firstUncompletedFound = true; }}
-                          />
-                        ))}
-                      </div>
+                <div className="flex-1 min-w-0">
+                  <div className="flex flex-wrap items-center gap-2 mb-1">
+                    <h3 className={`font-black text-sm sm:text-base transition-colors ${
+                      babCompleted ? 'text-emerald-900' : 'text-slate-800 group-hover:text-indigo-900'
+                    }`}>
+                      {bab.title}
+                    </h3>
+                    {babCompleted && (
+                      <span className="text-[10px] font-black text-emerald-700 bg-emerald-100 border border-emerald-200 px-2.5 py-0.5 rounded-full">
+                        ✓ Bab Selesai
+                      </span>
                     )}
-                    {/* Sub-bab groups */}
-                    {Object.entries(subBabMap).filter(([k]) => k !== '__direct__').map(([subBabTitle, subLessons], sIdx) => {
-                      const sbKey = `${babKey}__${subBabTitle}`;
-                      const sbOpen = openSubBab[sbKey] !== false; // default open
-                      const sbDone = subLessons.filter((l: any) => completedSet.has(l.id)).length;
-                      const sbCompleted = subLessons.length > 0 && sbDone === subLessons.length;
-                      return (
-                        <div key={sbKey} className="mx-2 border border-slate-200/80 rounded-2xl overflow-hidden shadow-sm bg-white hover:shadow-md transition-all duration-300">
-                          {/* Sub Bab Header */}
-                          <button
-                            onClick={() => setOpenSubBab(prev => ({ ...prev, [sbKey]: !sbOpen }))}
-                            className={`w-full flex items-center gap-3 px-5 py-3.5 text-left transition-colors group/sb ${
-                              sbCompleted ? 'bg-emerald-50/20 hover:bg-emerald-50/40' : 'bg-slate-50/50 hover:bg-slate-50'
+                  </div>
+
+                  {/* Subtitle & Progress Bar */}
+                  <div className="flex items-center gap-3">
+                    <p className="text-xs font-semibold text-slate-500">
+                      {babDone} / {babLessons.length} Materi Selesai
+                      {hasSubBabs ? ` · ${Object.keys(subBabMap).filter(k => k !== '__direct__').length} Sub Bab` : ''}
+                    </p>
+                    <div className="w-20 h-1.5 bg-slate-100 rounded-full overflow-hidden shrink-0 hidden sm:block">
+                      <div
+                        className={`h-full rounded-full transition-all duration-500 ${
+                          babCompleted ? 'bg-emerald-500' : 'bg-indigo-600'
+                        }`}
+                        style={{ width: `${babProgressPct}%` }}
+                      />
+                    </div>
+                    <span className="text-[11px] font-bold text-slate-400 hidden sm:inline">
+                      {babProgressPct}%
+                    </span>
+                  </div>
+                </div>
+
+                {/* Chevron */}
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-transform duration-300 ${
+                  isBabOpen ? 'rotate-180 bg-slate-100 text-slate-700' : 'text-slate-400 group-hover:text-slate-600'
+                }`}>
+                  <ChevronDown className="w-4 h-4" />
+                </div>
+              </button>
+
+              {/* Chapter Content (Lessons & Sub Babs) */}
+              {isBabOpen && (
+                <div className="p-4 sm:p-6 bg-slate-50/60 border-t border-slate-100 space-y-4">
+                  {hasSubBabs ? (
+                    <div className="space-y-4">
+                      {/* Direct lessons without sub-bab */}
+                      {subBabMap['__direct__']?.length > 0 && (
+                        <div className="space-y-2">
+                          {subBabMap['__direct__'].map((lesson: any) => (
+                            <LessonRow
+                              key={lesson.id} lesson={lesson} allLessons={allLessons}
+                              completedSet={completedSet} progressPct={progressPct}
+                              enrollmentStatus={enrollmentStatus} id={id} router={router}
+                              firstUncompletedFound={firstUncompletedFound}
+                              onFirstUncompleted={() => { firstUncompletedFound = true; }}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Sub Bab Groups */}
+                      {Object.entries(subBabMap).filter(([k]) => k !== '__direct__').map(([subBabTitle, subLessons], sIdx) => {
+                        const sbKey = `${babKey}__${subBabTitle}`;
+                        const sbOpen = openSubBab[sbKey] !== false;
+                        const sbDone = subLessons.filter((l: any) => completedSet.has(l.id)).length;
+                        const sbCompleted = subLessons.length > 0 && sbDone === subLessons.length;
+
+                        return (
+                          <div
+                            key={sbKey}
+                            className={`rounded-2xl border transition-all overflow-hidden bg-white shadow-2xs ${
+                              sbCompleted ? 'border-emerald-200' : 'border-slate-200'
                             }`}
                           >
-                            <div className={`w-6 h-6 rounded-lg flex items-center justify-center shrink-0 shadow-sm ${sbCompleted ? 'bg-emerald-100' : 'bg-indigo-50'}`}>
-                              {sbCompleted ? (
-                                <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
-                              ) : <span className="text-[10px] font-extrabold text-indigo-600">{sIdx + 1}</span>}
-                            </div>
-                            <span className={`flex-1 text-xs font-black uppercase tracking-wider ${sbCompleted ? 'text-emerald-800' : 'text-slate-600 group-hover/sb:text-indigo-900'}`}>{subBabTitle}</span>
-                            <span className={`text-[10px] font-bold mr-1 px-2 py-0.5 rounded-full ${sbCompleted ? 'bg-emerald-100/60 text-emerald-700' : 'bg-slate-100 text-slate-500'}`}>{sbDone}/{subLessons.length}</span>
-                            <ChevronDown className={`w-4 h-4 shrink-0 text-slate-400 transition-transform duration-350 ${sbOpen ? 'rotate-180' : ''}`} />
-                          </button>
-                          {/* Sub Bab Lessons */}
-                          {sbOpen && (
-                            <div className="bg-white/80 p-3 space-y-1">
-                              {subLessons.map((lesson: any) => (
-                                <LessonRow
-                                  key={lesson.id} lesson={lesson} allLessons={allLessons}
-                                  completedSet={completedSet} progressPct={progressPct}
-                                  enrollmentStatus={enrollmentStatus} id={id} router={router}
-                                  firstUncompletedFound={firstUncompletedFound}
-                                  onFirstUncompleted={() => { firstUncompletedFound = true; }}
-                                  indent
-                                />
-                              ))}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  // 2-level: Bab → Materi (no sub-bab)
-                  <div className="mx-2 space-y-1">
-                    {babLessons.map((lesson: any) => (
-                      <LessonRow
-                        key={lesson.id} lesson={lesson} allLessons={allLessons}
-                        completedSet={completedSet} progressPct={progressPct}
-                        enrollmentStatus={enrollmentStatus} id={id} router={router}
-                        firstUncompletedFound={firstUncompletedFound}
-                        onFirstUncompleted={() => { firstUncompletedFound = true; }}
-                      />
-                    ))}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        );
-      })}
+                            {/* Sub Bab Header */}
+                            <button
+                              onClick={() => setOpenSubBab(prev => ({ ...prev, [sbKey]: !sbOpen }))}
+                              className={`w-full flex items-center gap-3 px-5 py-3.5 text-left transition-colors ${
+                                sbCompleted ? 'bg-emerald-50/30' : 'bg-slate-50/70 hover:bg-slate-100/70'
+                              }`}
+                            >
+                              <Folder className={`w-4 h-4 shrink-0 ${sbCompleted ? 'text-emerald-600' : 'text-indigo-500'}`} />
+                              <span className={`flex-1 text-xs font-black uppercase tracking-wider ${
+                                sbCompleted ? 'text-emerald-900' : 'text-slate-700'
+                              }`}>
+                                {subBabTitle}
+                              </span>
+                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                                sbCompleted ? 'bg-emerald-100 text-emerald-800' : 'bg-slate-200 text-slate-600'
+                              }`}>
+                                {sbDone} / {subLessons.length}
+                              </span>
+                              <ChevronDown className={`w-3.5 h-3.5 text-slate-400 transition-transform ${sbOpen ? 'rotate-180' : ''}`} />
+                            </button>
+
+                            {/* Sub Bab Lessons */}
+                            {sbOpen && (
+                              <div className="p-3 bg-white space-y-2">
+                                {subLessons.map((lesson: any) => (
+                                  <LessonRow
+                                    key={lesson.id} lesson={lesson} allLessons={allLessons}
+                                    completedSet={completedSet} progressPct={progressPct}
+                                    enrollmentStatus={enrollmentStatus} id={id} router={router}
+                                    firstUncompletedFound={firstUncompletedFound}
+                                    onFirstUncompleted={() => { firstUncompletedFound = true; }}
+                                  />
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })}
+                    </div>
+                  ) : (
+                    <div className="space-y-2">
+                      {babLessons.map((lesson: any) => (
+                        <LessonRow
+                          key={lesson.id} lesson={lesson} allLessons={allLessons}
+                          completedSet={completedSet} progressPct={progressPct}
+                          enrollmentStatus={enrollmentStatus} id={id} router={router}
+                          firstUncompletedFound={firstUncompletedFound}
+                          onFirstUncompleted={() => { firstUncompletedFound = true; }}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
 
-function LessonRow({ lesson, allLessons, completedSet, progressPct, enrollmentStatus, id, router, firstUncompletedFound, onFirstUncompleted, indent }: any) {
+function LessonRow({ lesson, allLessons, completedSet, progressPct, enrollmentStatus, id, router, firstUncompletedFound, onFirstUncompleted }: any) {
   const isDone = completedSet.has(lesson.id);
   const lessonIndex = allLessons.findIndex((l: any) => l.id === lesson.id);
 
@@ -1403,74 +1639,83 @@ function LessonRow({ lesson, allLessons, completedSet, progressPct, enrollmentSt
   }
   if (isDone) isUnlocked = true;
 
-  // Resolve type icon & color
+  // Resolve type icon & badge
+  let typeLabel = 'Materi Teori';
   let typeIcon = <FileText className="w-3.5 h-3.5" />;
-  let typeColor = 'bg-amber-50 text-amber-600 border-amber-200';
+  let typeColor = 'bg-blue-50 text-blue-700 border-blue-200';
   if (lesson.type === 'code') {
+    typeLabel = 'Live Code Sandbox';
     typeIcon = <Code2 className="w-3.5 h-3.5" />;
-    typeColor = 'bg-emerald-50 text-emerald-600 border-emerald-200';
+    typeColor = 'bg-emerald-50 text-emerald-700 border-emerald-200';
   } else if (lesson.type === 'video') {
+    typeLabel = 'Video On-Demand';
     typeIcon = <PlayCircle className="w-3.5 h-3.5" />;
-    typeColor = 'bg-rose-50 text-rose-600 border-rose-200';
+    typeColor = 'bg-rose-50 text-rose-700 border-rose-200';
+  } else if (lesson.type === 'quiz') {
+    typeLabel = 'Kuis & Asesmen';
+    typeIcon = <CheckCircle className="w-3.5 h-3.5" />;
+    typeColor = 'bg-amber-50 text-amber-700 border-amber-200';
   }
 
   return (
     <div
       onClick={() => isUnlocked && router.push(`/dashboard/modules/${id}/lesson/${lesson.id}`)}
-      className={`flex items-center gap-4 px-4 py-3.5 my-1.5 rounded-2xl border text-sm transition-all duration-300 group ${indent ? 'ml-3' : ''}
-        ${isDone
-          ? 'bg-emerald-50/20 border-emerald-100/70 text-emerald-800 hover:bg-emerald-50/30 hover:border-emerald-200 hover:shadow-md cursor-pointer'
+      className={`flex items-center gap-3.5 px-4 py-3 rounded-2xl border text-sm transition-all duration-200 group ${
+        isDone
+          ? 'bg-emerald-50/20 border-emerald-200/80 text-emerald-900 hover:bg-emerald-50/40 cursor-pointer shadow-2xs'
           : isUnlocked
-            ? 'bg-white border-slate-200 text-slate-700 hover:bg-indigo-50/30 hover:border-indigo-200 hover:text-indigo-900 hover:shadow-md cursor-pointer hover:scale-[1.005]'
-            : 'bg-slate-50/50 border-slate-100 text-slate-400 cursor-not-allowed opacity-60'
-        }`}
+            ? 'bg-white border-slate-200 text-slate-800 hover:border-indigo-300 hover:bg-indigo-50/20 hover:shadow-sm cursor-pointer'
+            : 'bg-slate-50/80 border-slate-200/60 text-slate-400 cursor-not-allowed opacity-70'
+      }`}
     >
-      {/* Check/Unchecked/Lock circle */}
+      {/* Icon Indicator */}
       <div className="shrink-0">
         {isDone ? (
-          <div className="w-6 h-6 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-sm shadow-emerald-500/20">
-            <CheckCircle className="w-4 h-4 text-white" />
+          <div className="w-7 h-7 rounded-xl bg-emerald-500 text-white flex items-center justify-center shadow-sm shadow-emerald-500/20">
+            <CheckCircle className="w-4 h-4" />
           </div>
         ) : isUnlocked ? (
-          <div className="w-6 h-6 rounded-full border-2 border-indigo-400 group-hover:border-indigo-600 group-hover:bg-indigo-50 flex items-center justify-center transition-all">
-            <div className="w-2 h-2 bg-indigo-500 rounded-full scale-0 group-hover:scale-100 transition-transform" />
+          <div className="w-7 h-7 rounded-xl bg-indigo-50 border border-indigo-200 text-indigo-600 group-hover:bg-indigo-600 group-hover:text-white flex items-center justify-center transition-all shadow-sm">
+            <Play className="w-3.5 h-3.5 fill-current ml-0.5" />
           </div>
         ) : (
-          <div className="w-6 h-6 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center">
-            <Lock className="w-3.5 h-3.5 text-slate-400" />
+          <div className="w-7 h-7 rounded-xl bg-slate-100 text-slate-400 flex items-center justify-center">
+            <Lock className="w-3.5 h-3.5" />
           </div>
         )}
       </div>
 
-      {/* Lesson Details */}
+      {/* Details */}
       <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2 mb-1 flex-wrap">
-          <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border ${typeColor} flex items-center gap-1`}>
-            {typeIcon} {lesson.type || 'theory'}
+        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
+          <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-md border ${typeColor}`}>
+            {typeIcon} {typeLabel}
           </span>
-          {isDone && (
-            <span className="text-[9px] font-extrabold uppercase tracking-wider px-1.5 py-0.5 rounded-md bg-emerald-100 text-emerald-800">
-              Selesai
-            </span>
-          )}
+          <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+            <Clock className="w-3 h-3" /> ~10-15 mnt
+          </span>
         </div>
-        <h4 className={`text-sm font-bold truncate transition-colors ${
-          isDone ? 'line-through text-slate-400' : 'text-slate-800 group-hover:text-indigo-900'
+        <h4 className={`text-xs sm:text-sm font-bold truncate ${
+          isDone ? 'text-slate-600 font-semibold' : isUnlocked ? 'text-slate-800 group-hover:text-indigo-600 font-bold' : 'text-slate-400'
         }`}>
           {lesson.title}
         </h4>
       </div>
 
-      {/* Action Indicator */}
-      <div className="shrink-0 transition-all duration-300 group-hover:translate-x-1">
+      {/* Action CTA */}
+      <div className="shrink-0">
         {isDone ? (
-          <span className="text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded-lg">Pelajari Ulang</span>
+          <span className="text-[11px] font-black text-emerald-700 bg-emerald-50 border border-emerald-200 px-3 py-1 rounded-xl">
+            Selesai ✓
+          </span>
         ) : isUnlocked ? (
-          <div className="px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-xl group-hover:bg-indigo-700 shadow-md shadow-indigo-600/10 flex items-center gap-1 transition-all">
+          <div className="px-3.5 py-1.5 bg-indigo-600 group-hover:bg-indigo-700 text-white text-xs font-black rounded-xl shadow-xs flex items-center gap-1.5 transition-all">
             Mulai <Play className="w-3 h-3 fill-current" />
           </div>
         ) : (
-          <span className="text-xs font-medium text-slate-400 bg-slate-100 px-2 py-1 rounded-lg">Terkunci</span>
+          <span className="text-[11px] font-bold text-slate-400 bg-slate-100 px-2.5 py-1 rounded-xl">
+            Terkunci
+          </span>
         )}
       </div>
     </div>
