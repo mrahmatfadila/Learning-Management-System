@@ -124,28 +124,6 @@ async function main() {
       }
     });
 
-    // Also alias standard slug ID if different
-    if (primaryId !== course.id) {
-      await prisma.module.upsert({
-        where: { id: course.id },
-        update: {
-          title: course.title,
-          category,
-          description: course.description,
-          instructorId,
-          isVerified: true
-        },
-        create: {
-          id: course.id,
-          title: course.title,
-          category,
-          description: course.description,
-          instructorId,
-          isVerified: true
-        }
-      });
-    }
-
     // Enroll student as APPROVED
     await prisma.enrollment.upsert({
       where: { studentId_moduleId: { studentId: student.id, moduleId: mod.id } },
@@ -157,19 +135,6 @@ async function main() {
         progress: 100
       }
     });
-
-    if (primaryId !== course.id) {
-      await prisma.enrollment.upsert({
-        where: { studentId_moduleId: { studentId: student.id, moduleId: course.id } },
-        update: { status: 'APPROVED' },
-        create: {
-          studentId: student.id,
-          moduleId: course.id,
-          status: 'APPROVED',
-          progress: 100
-        }
-      });
-    }
 
     // Seed chapters & lessons
     const courseModulesList: any[] = course.modules || [];
@@ -232,30 +197,6 @@ async function main() {
             order: globalOrder
           }
         });
-
-        // Also duplicate to secondary module ID if alias exists
-        if (primaryId !== course.id) {
-          const aliasLessonId = `${course.id}-${lesRef.id}`;
-          await prisma.lesson.upsert({
-            where: { id: aliasLessonId },
-            update: {
-              title: lesRef.title,
-              chapter: chapTitle,
-              content: contentStr,
-              type: staticData.type || 'code',
-              order: globalOrder
-            },
-            create: {
-              id: aliasLessonId,
-              moduleId: course.id,
-              chapter: chapTitle,
-              title: lesRef.title,
-              type: staticData.type || 'code',
-              content: contentStr,
-              order: globalOrder
-            }
-          });
-        }
       }
     }
   }
