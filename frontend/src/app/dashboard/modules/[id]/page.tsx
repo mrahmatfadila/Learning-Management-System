@@ -227,46 +227,325 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     }
   };
 
+  const getCourseTheme = (title: string): string => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('html') || t.includes('web')) return 'html';
+    if (t.includes('css') || t.includes('styling')) return 'css';
+    if (t.includes('javascript') || t.includes('js') || t.includes('ecmascript')) return 'javascript';
+    if (t.includes('php') || t.includes('backend')) return 'php';
+    if (t.includes('mysql') || t.includes('database') || t.includes('sql')) return 'mysql';
+    if (t.includes('git') || t.includes('version control')) return 'git';
+    if (t.includes('mobile') || t.includes('android') || t.includes('flutter')) return 'mobile';
+    if (t.includes('cisco') || t.includes('network') || t.includes('jaringan')) return 'cisco';
+    return 'default';
+  };
+
+  const resolveCourseId = (dbModule: any): string => {
+    const theme = getCourseTheme(dbModule?.title || '');
+    const catMap: Record<string, string> = { 'Jaringan': 'cisco', 'Mobile': 'mobile' };
+    if (theme !== 'default') return theme;
+    return catMap[dbModule?.category] || 'html';
+  };
+
+  const gradientMap: Record<string, string> = {
+    html: 'from-orange-500 to-pink-500', css: 'from-blue-500 to-teal-400',
+    javascript: 'from-amber-400 to-orange-500', php: 'from-indigo-500 to-purple-500',
+    mysql: 'from-teal-500 to-cyan-500', git: 'from-red-500 to-orange-500',
+    mobile: 'from-emerald-500 to-green-500', cisco: 'from-cyan-500 to-indigo-400',
+    default: 'from-violet-500 to-fuchsia-500'
+  };
+
+  const getLearningPoints = (title: string, category: string): string[] => {
+    const t = (title || '').toLowerCase();
+    if (t.includes('html')) {
+      return [
+        'Memahami arsitektur dasar dan struktur dokumen HTML5 modern',
+        'Menguasai penggunaan tag semantik untuk SEO dan aksesibilitas web',
+        'Membangun form interaktif dengan berbagai tipe input dan validasi data',
+        'Menyisipkan media gambar, audio, video, dan link navigasi standar industri',
+        'Menerapkan praktik terbaik pengkodean web sesuai standar W3C',
+        'Mempersiapkan fondasi kokoh untuk lanjut ke CSS dan JavaScript modern'
+      ];
+    }
+    if (t.includes('css')) {
+      return [
+        'Menguasai styling modern menggunakan CSS3 Box Model (Margin, Padding, Border)',
+        'Mendesain layout responsif canggih dengan Flexbox dan CSS Grid',
+        'Membuat animasi, transisi halus, dan efek visual interaktif tanpa JavaScript',
+        'Mengatur tipografi, palet warna dinamis, dan sistem variabel CSS',
+        'Mengimplementasikan media queries untuk semua ukuran layar (Mobile, Tablet, Desktop)',
+        'Membuat antarmuka web yang memukau dengan standar UI/UX profesional'
+      ];
+    }
+    if (t.includes('javascript') || t.includes('js')) {
+      return [
+        'Memahami konsep fundamental: Variabel, Tipe Data, Operator, dan Fungsi Modern',
+        'Menguasai manipulasi DOM (Document Object Model) dan Event Handling interaktif',
+        'Memahami Asynchronous JavaScript: Promises, Async/Await, dan Fetch API',
+        'Bekerja dengan struktur data kompleks (Array methods: map, filter, reduce)',
+        'Menerapkan Object-Oriented Programming (OOP) dan ES6+ modern syntax',
+        'Membangun logika aplikasi web dinamis yang responsif dan siap pakai'
+      ];
+    }
+    if (t.includes('php')) {
+      return [
+        'Menguasai sintaks dasar dan logika pemrograman server-side dengan PHP',
+        'Mengelola formulir POST/GET, validasi input, dan penanganan upload file',
+        'Memahami Session, Cookies, dan sistem otentikasi login yang aman',
+        'Menghubungkan PHP ke database MySQL menggunakan PDO dan Prepared Statements',
+        'Membangun arsitektur CRUD (Create, Read, Update, Delete) yang modular',
+        'Menerapkan praktik keamanan web: perlindungan terhadap SQL Injection & XSS'
+      ];
+    }
+    if (t.includes('mysql') || t.includes('database') || t.includes('sql')) {
+      return [
+        'Memahami konsep Relational Database Management System (RDBMS) dan schema design',
+        'Menulis query SQL tingkat lanjut: SELECT, JOIN (Inner, Left, Right), GROUP BY, HAVING',
+        'Menguasai manipulasi data: INSERT, UPDATE, DELETE dengan transaksi ACID',
+        'Mendesain relasi antar tabel (Primary Key, Foreign Key, dan Normalisasi Database)',
+        'Mengoptimalkan performa query dengan Indexing dan Query Optimization',
+        'Melakukan backup, restore, dan manajemen hak akses pengguna database'
+      ];
+    }
+    if (t.includes('cisco') || t.includes('network') || t.includes('jaringan')) {
+      return [
+        'Memahami dasar-dasar jaringan komputer, model OSI, dan protokol TCP/IP',
+        'Melakukan konfigurasi router dan switch Cisco menggunakan Packet Tracer',
+        'Mengatur subnetting IPv4/IPv6 dan perutean statis maupun dinamis (RIP, OSPF)',
+        'Menerapkan keamanan jaringan dengan Access Control List (ACL) dan VLAN',
+        'Troubleshooting masalah konektivitas jaringan secara sistematis',
+        'Mempersiapkan diri untuk sertifikasi jaringan standar internasional (CCNA)'
+      ];
+    }
+    if (t.includes('mobile') || t.includes('android')) {
+      return [
+        'Memahami siklus hidup Activity dan Fragment pada aplikasi Android',
+        'Membangun antarmuka pengguna responsif dengan layout XML dan ViewBinding',
+        'Mengelola navigasi aplikasi, Intent, dan passing data antar layar',
+        'Mengintegrasikan RESTful API untuk mengambil dan mengirim data cloud',
+        'Menerapkan penyimpanan lokal menggunakan SQLite atau Room Database',
+        'Mempersiapkan dan mempublikasikan aplikasi ke Google Play Store'
+      ];
+    }
+    return [
+      `Memahami konsep fundamental dan studi kasus nyata dalam bidang ${category || 'teknologi'}`,
+      'Menerapkan metodologi terbaik dan alur kerja standar industri',
+      'Menyelesaikan tugas dan latihan praktek langsung yang terstruktur',
+      'Membangun portofolio karya nyata yang siap dipamerkan ke industri',
+      'Mendapatkan panduan komprehensif dari instruktur berpengalaman',
+      'Mendapatkan sertifikat kelulusan terverifikasi setelah menyelesaikan kursus'
+    ];
+  };
+
+  const formatLastUpdated = (dateString?: string): string => {
+    if (!dateString) return '8/2026';
+    try {
+      const d = new Date(dateString);
+      return `${d.getMonth() + 1}/${d.getFullYear()}`;
+    } catch {
+      return '8/2026';
+    }
+  };
+
+  const courseId = moduleData ? resolveCourseId(moduleData) : 'html';
+  const gradient = gradientMap[courseId] || gradientMap.default;
+
   // ── INSTRUCTOR / ADMIN VIEW ──
   if (role === 'INSTRUCTOR' || role === 'ADMIN') {
     const lessons = (moduleData?.lessons ?? []).slice().sort((a: any, b: any) => a.order - b.order);
     const chapters = (moduleData?.chapters ?? []).slice().sort((a: any, b: any) => a.order - b.order);
+    const learningPoints = getLearningPoints(moduleData?.title || '', moduleData?.category || '');
+    const instructorName = moduleData?.instructor?.name || 'Bagus Rahmat';
+    const lastUpdated = formatLastUpdated(moduleData?.updatedAt);
+    const enrolledCount = moduleData?.enrolledStudentsCount ?? moduleData?.totalStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.status === 'APPROVED').length || moduleData.enrollments.length : 1);
+    const completedCount = moduleData?.completedStudentsCount ?? (moduleData?.enrollments ? moduleData.enrollments.filter((e: any) => e.progress >= 100).length : 0);
+    const avgRating = moduleData?.avgRating || reviewsData.avgRating || 4.9;
+    const totalReviews = reviewsData.totalReviews || moduleData?.totalRatings || 12;
+    const videoLessonsCount = moduleData?.videoLessonsCount ?? lessons.filter((l: any) => l.type === 'video').length;
+    const articleLessonsCount = moduleData?.articleLessonsCount ?? lessons.filter((l: any) => l.type !== 'video').length;
+    const approxVideoHours = (videoLessonsCount > 0 ? (videoLessonsCount * 0.35).toFixed(1) : '16.5');
+    const tasksCount = moduleData?.tasksCount ?? moduleData?.tasks?.length ?? 3;
 
     return (
-      <div className="p-6 md:p-10 max-w-5xl mx-auto">
-        {/* Header */}
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
-          <div className="flex items-center gap-4">
-            <button onClick={() => router.push('/dashboard/manage-modules')} className="p-2.5 bg-white border border-slate-200 rounded-xl hover:bg-slate-50 text-slate-500 hover:text-indigo-600 transition-colors shadow-sm shrink-0">
-              <ArrowLeft className="w-5 h-5" />
+      <div className="min-h-screen bg-[#F8FAFC]">
+        <DashboardNavbar />
+        <div className="p-6 md:p-10 max-w-5xl mx-auto space-y-8">
+          {/* Top Back & Header */}
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+            <button onClick={() => router.push('/dashboard/manage-modules')} className="flex items-center gap-2 text-sm text-slate-500 hover:text-slate-700 font-medium transition-colors">
+              <ArrowLeft className="w-4 h-4" /> Kembali ke Manajemen Kursus
             </button>
-            <div>
-              <div className="text-xs font-bold text-indigo-500 uppercase tracking-widest mb-0.5">Content Builder</div>
-              <h1 className="text-2xl font-black text-slate-800">{moduleData?.title || 'Loading...'}</h1>
-              <p className="text-sm text-slate-500">{moduleData?.category}{moduleData?.description && ` · ${moduleData.description.slice(0, 70)}...`}</p>
+            <div className="flex items-center gap-3">
+              <span className="px-3 py-1 bg-indigo-50 border border-indigo-200 text-indigo-700 font-black text-xs rounded-full">
+                Mode Instruktur · Content Builder
+              </span>
+              <button onClick={() => setIsAddLessonModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md shadow-indigo-200 text-sm shrink-0 transition-all">
+                <Plus className="w-4 h-4" /> Tambah Materi
+              </button>
             </div>
           </div>
-          <button onClick={() => setIsAddLessonModalOpen(true)} className="flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md shadow-indigo-200 text-sm shrink-0 transition-all">
-            <Plus className="w-4 h-4" /> Tambah Materi
-          </button>
-        </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {[
-            { label: 'Total Materi', value: lessons.length, icon: BookOpen, color: 'text-indigo-600 bg-indigo-50' },
-            { label: 'Total Bab', value: chapters.length, icon: Folder, color: 'text-purple-600 bg-purple-50' },
-            { label: 'Tipe Reading', value: lessons.filter((l: any) => l.type === 'reading').length, icon: FileText, color: 'text-amber-600 bg-amber-50' },
-          ].map(s => (
-            <div key={s.label} className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
-              <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color} shrink-0`}><s.icon className="w-5 h-5" /></div>
-              <div><p className="text-2xl font-black text-slate-800">{s.value}</p><p className="text-xs text-slate-500 font-medium">{s.label}</p></div>
+          {/* Hero Banner Header with Complete Metadata */}
+          <div className={`bg-gradient-to-r ${gradient} rounded-3xl p-6 sm:p-10 text-white shadow-xl relative overflow-hidden`}>
+            <div className="absolute -top-24 -right-24 w-80 h-80 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+            <div className="absolute -bottom-24 -left-24 w-80 h-80 bg-black/10 rounded-full blur-3xl pointer-events-none" />
+
+            <div className="relative z-10 space-y-4">
+              {/* Badges Row */}
+              <div className="flex flex-wrap items-center gap-2.5">
+                <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-white text-[11px] font-black tracking-wide uppercase border border-white/30">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-300 animate-pulse" /> Access 28,000+ top-rated courses with DevGrow [Personal Plan]
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-wider bg-black/25 px-3 py-1 rounded-full border border-white/10">
+                  {moduleData?.category || 'Programming'}
+                </span>
+                <span className="text-[11px] font-black uppercase tracking-wider bg-emerald-500/30 px-3 py-1 rounded-full border border-emerald-300/40 text-emerald-200">
+                  ✓ Verified by DevGrow
+                </span>
+              </div>
+
+              {/* Title & Tagline */}
+              <h1 className="text-2xl sm:text-4xl font-black leading-tight tracking-tight text-white drop-shadow-sm">
+                {moduleData?.title || 'Kursus Pembelajaran'}
+              </h1>
+              <p className="text-white/90 text-sm sm:text-base leading-relaxed max-w-3xl">
+                {moduleData?.description || 'Kuasai fondasi utama dan lanjutan dengan konsep terstruktur, live coding playground, serta sertifikat kelulusan resmi.'}
+              </p>
+
+              {/* Key Metadata Stats Bar */}
+              <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
+                {/* Rating */}
+                <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-2.5 py-1 rounded-xl">
+                  <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
+                  <span className="font-black text-white">{avgRating}</span>
+                  <span className="text-white/80">({totalReviews} rating)</span>
+                </div>
+
+                {/* Enrolled Students (Order) */}
+                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
+                  <Users className="w-4 h-4 text-emerald-200" />
+                  <span><strong>{enrolledCount}</strong> siswa terdaftar (Order)</span>
+                </div>
+
+                {/* Completed Students */}
+                <div className="flex items-center gap-1.5 bg-white/15 backdrop-blur-sm border border-white/20 px-2.5 py-1 rounded-xl">
+                  <GraduationCap className="w-4 h-4 text-cyan-200" />
+                  <span><strong>{completedCount}</strong> siswa lulus (100% Selesai)</span>
+                </div>
+
+                {/* Created by */}
+                <div className="flex items-center gap-1.5">
+                  <User className="w-4 h-4 text-white/75" />
+                  <span>Dibuat oleh <strong className="underline decoration-white/40">{instructorName}</strong></span>
+                </div>
+
+                {/* Last updated */}
+                <div className="flex items-center gap-1.5">
+                  <Clock className="w-4 h-4 text-white/75" />
+                  <span>Terakhir diperbarui <strong>{lastUpdated}</strong></span>
+                </div>
+
+                {/* Language & CC */}
+                <div className="flex items-center gap-1.5">
+                  <Globe className="w-4 h-4 text-white/75" />
+                  <span>English · Indonesia [Auto]</span>
+                </div>
+
+                <div className="flex items-center gap-1.5">
+                  <Subtitles className="w-4 h-4 text-white/75" />
+                  <span>CC: Indonesia [Auto], English</span>
+                </div>
+              </div>
             </div>
-          ))}
-        </div>
+          </div>
 
-        {/* Lessons List */}
-        <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
+          {/* ── SECTION 1: WHAT YOU'LL LEARN ── */}
+          <div className="bg-white rounded-3xl border border-slate-200 p-6 sm:p-8 shadow-sm">
+            <h2 className="text-xl font-black text-slate-800 mb-5 flex items-center gap-2.5">
+              <Sparkles className="w-5 h-5 text-indigo-600" />
+              Yang Akan Anda Pelajari (What you&apos;ll learn)
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {learningPoints.map((point, idx) => (
+                <div key={idx} className="flex items-start gap-3">
+                  <div className="w-5 h-5 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center shrink-0 mt-0.5 font-black text-xs border border-emerald-200">
+                    ✓
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 font-medium leading-relaxed">
+                    {point}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ── SECTION 2: THIS COURSE INCLUDES ── */}
+          <div className="bg-slate-50 border border-slate-200 rounded-3xl p-6 sm:p-8 shadow-sm">
+            <h3 className="text-lg font-black text-slate-800 mb-4 flex items-center gap-2">
+              <BookOpen className="w-5 h-5 text-indigo-600" />
+              Modul Ini Mencakup (This course includes):
+            </h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm font-semibold text-slate-700">
+              {videoLessonsCount > 0 ? (
+                <div className="flex items-center gap-3">
+                  <PlayCircle className="w-4 h-4 text-indigo-500 shrink-0" />
+                  <span>{approxVideoHours} jam video pembelajaran on-demand ({videoLessonsCount} video)</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-3">
+                  <Code2 className="w-4 h-4 text-emerald-500 shrink-0" />
+                  <span>{lessons.length} materi pembelajaran interaktif &amp; Live Coding Editor</span>
+                </div>
+              )}
+
+              <div className="flex items-center gap-3">
+                <FileText className="w-4 h-4 text-blue-500 shrink-0" />
+                <span>{articleLessonsCount > 0 ? articleLessonsCount : lessons.length} artikel &amp; dokumentasi materi terstruktur</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Clock className="w-4 h-4 text-amber-500 shrink-0" />
+                <span>{tasksCount} tugas praktek &amp; asesmen proyek hands-on</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Smartphone className="w-4 h-4 text-purple-500 shrink-0" />
+                <span>Akses di perangkat Mobile, Tablet, dan TV (Access on mobile and TV)</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Infinity className="w-4 h-4 text-cyan-500 shrink-0" />
+                <span>Akses seumur hidup penuh (Full lifetime access)</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Subtitles className="w-4 h-4 text-teal-500 shrink-0" />
+                <span>Closed captions / Teks terjemahan otomatis [Auto]</span>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <Award className="w-4 h-4 text-rose-500 shrink-0" />
+                <span>Sertifikat kelulusan resmi DevGrow (Certificate of completion)</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Quick Metrics Bar */}
+          <div className="grid grid-cols-3 gap-4">
+            {[
+              { label: 'Total Materi', value: lessons.length, icon: BookOpen, color: 'text-indigo-600 bg-indigo-50' },
+              { label: 'Total Bab', value: chapters.length, icon: Folder, color: 'text-purple-600 bg-purple-50' },
+              { label: 'Siswa Selesai', value: completedCount, icon: GraduationCap, color: 'text-emerald-600 bg-emerald-50' },
+            ].map(s => (
+              <div key={s.label} className="bg-white rounded-2xl border border-slate-200 p-4 flex items-center gap-4 shadow-sm">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${s.color} shrink-0`}><s.icon className="w-5 h-5" /></div>
+                <div><p className="text-2xl font-black text-slate-800">{s.value}</p><p className="text-xs text-slate-500 font-medium">{s.label}</p></div>
+              </div>
+            ))}
+          </div>
+
+          {/* Lessons List / Content Builder */}
+          <div className="bg-white rounded-[2rem] border border-slate-200 shadow-sm overflow-hidden">
           <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
             <h2 className="font-black text-slate-800 text-lg">Daftar Bab & Materi</h2>
             <span className="text-xs font-bold text-slate-500 bg-slate-100 px-3 py-1 rounded-full">{lessons.length} materi</span>
@@ -393,13 +672,13 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
 
         {/* Add Lesson Modal */}
         {isAddLessonModalOpen && (
-          <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-            <div className="bg-white rounded-[24px] w-full max-w-lg shadow-2xl overflow-hidden">
-              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-100">
-                <h2 className="text-lg font-black text-slate-800">Tambah Materi Baru</h2>
-                <button onClick={() => setIsAddLessonModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-xl transition-colors"><X className="w-5 h-5" /></button>
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm animate-fadeIn">
+            <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-lg w-full shadow-2xl relative">
+              <div className="flex items-center justify-between pb-4 mb-4 border-b border-slate-100">
+                <h3 className="font-black text-slate-800 text-lg">Tambah Materi Baru</h3>
+                <button onClick={() => setIsAddLessonModalOpen(false)} className="p-2 text-slate-400 hover:text-slate-600 rounded-lg hover:bg-slate-100"><X className="w-5 h-5" /></button>
               </div>
-              <form onSubmit={handleCreateLesson} className="p-6 space-y-5">
+              <form onSubmit={handleCreateLesson} className="space-y-4">
                 <div>
                   <label className="block text-sm font-bold text-slate-700 mb-2">Bab (Chapter)</label>
                   <input type="text" value={newLessonData.chapter} onChange={e => setNewLessonData({ ...newLessonData, chapter: e.target.value })} placeholder="Misal: Bab 1 — Dasar PHP" className="w-full px-4 py-3 rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 text-slate-800 font-medium mb-3" />
@@ -430,33 +709,12 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
             </div>
           </div>
         )}
+        </div>
       </div>
     );
   }
 
   // ── STUDENT VIEW ──
-  const getCourseTheme = (title: string): string => {
-    const t = (title || '').toLowerCase();
-    if (t.includes('html') || t.includes('web')) return 'html';
-    if (t.includes('css') || t.includes('styling')) return 'css';
-    if (t.includes('javascript') || t.includes('js') || t.includes('ecmascript')) return 'javascript';
-    if (t.includes('php') || t.includes('backend')) return 'php';
-    if (t.includes('mysql') || t.includes('database') || t.includes('sql')) return 'mysql';
-    if (t.includes('git') || t.includes('version control')) return 'git';
-    if (t.includes('mobile') || t.includes('android') || t.includes('flutter')) return 'mobile';
-    if (t.includes('cisco') || t.includes('network') || t.includes('jaringan')) return 'cisco';
-    return 'default';
-  };
-
-  const resolveCourseId = (dbModule: any): string => {
-    const theme = getCourseTheme(dbModule?.title || '');
-    const catMap: Record<string, string> = { 'Jaringan': 'cisco', 'Mobile': 'mobile' };
-    if (theme !== 'default') return theme;
-    return catMap[dbModule?.category] || 'html';
-  };
-
-  const courseId = moduleData ? resolveCourseId(moduleData) : 'html';
-  
   const chapters = (moduleData?.chapters ?? []).slice().sort((a: any, b: any) => a.order - b.order);
   const lessons = (moduleData?.lessons ?? []).slice().sort((a: any, b: any) => a.order - b.order);
 
@@ -496,15 +754,6 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
     );
   }
 
-  const gradientMap: Record<string, string> = {
-    html: 'from-orange-500 to-pink-500', css: 'from-blue-500 to-teal-400',
-    javascript: 'from-amber-400 to-orange-500', php: 'from-indigo-500 to-purple-500',
-    mysql: 'from-teal-500 to-cyan-500', git: 'from-red-500 to-orange-500',
-    mobile: 'from-emerald-500 to-green-500', cisco: 'from-cyan-500 to-indigo-400',
-    default: 'from-violet-500 to-fuchsia-500'
-  };
-  const gradient = gradientMap[courseId] || gradientMap.default;
-
   const progressKey = `progress_${id}`;
   const progressData = typeof window !== 'undefined' ? localStorage.getItem(progressKey) : null;
   const localCompleted: Set<string> = progressData ? new Set<string>(JSON.parse(progressData)) : completedLessons;
@@ -530,98 +779,6 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const handleStart = () => {
     const first = getFirstLesson();
     if (first) router.push(`/dashboard/modules/${id}/lesson/${first}`);
-  };
-
-  const getLearningPoints = (title: string, category: string): string[] => {
-    const t = (title || '').toLowerCase();
-    if (t.includes('html')) {
-      return [
-        'Memahami arsitektur dasar dan struktur dokumen HTML5 modern',
-        'Menguasai penggunaan tag semantik untuk SEO dan aksesibilitas web',
-        'Membangun form interaktif dengan berbagai tipe input dan validasi data',
-        'Menyisipkan media gambar, audio, video, dan link navigasi standar industri',
-        'Menerapkan praktik terbaik pengkodean web sesuai standar W3C',
-        'Mempersiapkan fondasi kokoh untuk lanjut ke CSS dan JavaScript modern'
-      ];
-    }
-    if (t.includes('css')) {
-      return [
-        'Menguasai styling modern menggunakan CSS3 Box Model (Margin, Padding, Border)',
-        'Mendesain layout responsif canggih dengan Flexbox dan CSS Grid',
-        'Membuat animasi, transisi halus, dan efek visual interaktif tanpa JavaScript',
-        'Mengatur tipografi, palet warna dinamis, dan sistem variabel CSS',
-        'Mengimplementasikan media queries untuk semua ukuran layar (Mobile, Tablet, Desktop)',
-        'Membuat antarmuka web yang memukau dengan standar UI/UX profesional'
-      ];
-    }
-    if (t.includes('javascript') || t.includes('js')) {
-      return [
-        'Memahami konsep fundamental: Variabel, Tipe Data, Operator, dan Fungsi Modern',
-        'Menguasai manipulasi DOM (Document Object Model) dan Event Handling interaktif',
-        'Memahami Asynchronous JavaScript: Promises, Async/Await, dan Fetch API',
-        'Bekerja dengan struktur data kompleks (Array methods: map, filter, reduce)',
-        'Menerapkan Object-Oriented Programming (OOP) dan ES6+ modern syntax',
-        'Membangun logika aplikasi web dinamis yang responsif dan siap pakai'
-      ];
-    }
-    if (t.includes('php')) {
-      return [
-        'Menguasai sintaks dasar dan logika pemrograman server-side dengan PHP',
-        'Mengelola formulir POST/GET, validasi input, dan penanganan upload file',
-        'Memahami Session, Cookies, dan sistem otentikasi login yang aman',
-        'Menghubungkan PHP ke database MySQL menggunakan PDO dan Prepared Statements',
-        'Membangun arsitektur CRUD (Create, Read, Update, Delete) yang modular',
-        'Menerapkan praktik keamanan web: perlindungan terhadap SQL Injection & XSS'
-      ];
-    }
-    if (t.includes('mysql') || t.includes('database') || t.includes('sql')) {
-      return [
-        'Memahami konsep Relational Database Management System (RDBMS) dan schema design',
-        'Menulis query SQL tingkat lanjut: SELECT, JOIN (Inner, Left, Right), GROUP BY, HAVING',
-        'Menguasai manipulasi data: INSERT, UPDATE, DELETE dengan transaksi ACID',
-        'Mendesain relasi antar tabel (Primary Key, Foreign Key, dan Normalisasi Database)',
-        'Mengoptimalkan performa query dengan Indexing dan Query Optimization',
-        'Melakukan backup, restore, dan manajemen hak akses pengguna database'
-      ];
-    }
-    if (t.includes('cisco') || t.includes('network') || t.includes('jaringan')) {
-      return [
-        'Memahami dasar-dasar jaringan komputer, model OSI, dan protokol TCP/IP',
-        'Melakukan konfigurasi router dan switch Cisco menggunakan Packet Tracer',
-        'Mengatur subnetting IPv4/IPv6 dan perutean statis maupun dinamis (RIP, OSPF)',
-        'Menerapkan keamanan jaringan dengan Access Control List (ACL) dan VLAN',
-        'Troubleshooting masalah konektivitas jaringan secara sistematis',
-        'Mempersiapkan diri untuk sertifikasi jaringan standar internasional (CCNA)'
-      ];
-    }
-    if (t.includes('mobile') || t.includes('android')) {
-      return [
-        'Memahami siklus hidup Activity dan Fragment pada aplikasi Android',
-        'Membangun antarmuka pengguna responsif dengan layout XML dan ViewBinding',
-        'Mengelola navigasi aplikasi, Intent, dan passing data antar layar',
-        'Mengintegrasikan RESTful API untuk mengambil dan mengirim data cloud',
-        'Menerapkan penyimpanan lokal menggunakan SQLite atau Room Database',
-        'Mempersiapkan dan mempublikasikan aplikasi ke Google Play Store'
-      ];
-    }
-    return [
-      `Memahami konsep fundamental dan studi kasus nyata dalam bidang ${category || 'teknologi'}`,
-      'Menerapkan metodologi terbaik dan alur kerja standar industri',
-      'Menyelesaikan tugas dan latihan praktek langsung yang terstruktur',
-      'Membangun portofolio karya nyata yang siap dipamerkan ke industri',
-      'Mendapatkan panduan komprehensif dari instruktur berpengalaman',
-      'Mendapatkan sertifikat kelulusan terverifikasi setelah menyelesaikan kursus'
-    ];
-  };
-
-  const formatLastUpdated = (dateString?: string): string => {
-    if (!dateString) return '8/2026';
-    try {
-      const d = new Date(dateString);
-      return `${d.getMonth() + 1}/${d.getFullYear()}`;
-    } catch {
-      return '8/2026';
-    }
   };
 
   const learningPoints = getLearningPoints(moduleData?.title || '', moduleData?.category || '');
