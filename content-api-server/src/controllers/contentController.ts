@@ -51,11 +51,20 @@ export const getAllModules = async (req: Request, res: Response): Promise<any> =
 // Mendukung query ?full=true jika ingin memuat seluruh isi materi lengkap di daftar
 export const getModuleById = async (req: Request, res: Response): Promise<any> => {
   try {
-    const id = req.params.id as string;
+    const rawId = req.params.id as string;
     const isFull = req.query.full === 'true' || req.query.content === 'true';
 
-    const moduleItem = await prisma.module.findUnique({
-      where: { id },
+    const aliasMap: Record<string, string> = {
+      'html': '67adde6d-81a6-4470-b88d-506b733f87ee',
+      '67adde6d-81a6-4470-b88d-506b733f87ee': '67adde6d-81a6-4470-b88d-506b733f87ee',
+      'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
+      'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'ba1383a2-219d-44ab-bf63-804d5a0f0902'
+    };
+
+    const targetId = aliasMap[rawId] || rawId;
+
+    let moduleItem = await prisma.module.findUnique({
+      where: { id: targetId },
       include: {
         chapters: {
           orderBy: { order: 'asc' },
@@ -72,7 +81,31 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
     });
 
     if (!moduleItem) {
-      return res.status(404).json({ success: false, message: `Module with ID '${id}' not found` });
+      moduleItem = await prisma.module.findFirst({
+        where: {
+          OR: [
+            { id: { contains: rawId, mode: 'insensitive' } },
+            { title: { contains: rawId, mode: 'insensitive' } }
+          ]
+        },
+        include: {
+          chapters: {
+            orderBy: { order: 'asc' },
+            include: {
+              lessons: {
+                orderBy: { order: 'asc' }
+              }
+            }
+          },
+          lessons: {
+            orderBy: { order: 'asc' }
+          }
+        }
+      });
+    }
+
+    if (!moduleItem) {
+      return res.status(404).json({ success: false, message: `Module with ID '${rawId}' not found` });
     }
 
     // Helper untuk mem-parsing konten JSON jika ?full=true diminta
