@@ -170,6 +170,7 @@ export default function LessonPage() {
   // Course Review & Rating Modal State
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isShareStoryModalOpen, setIsShareStoryModalOpen] = useState(false);
+  const [sessionStartTime, setSessionStartTime] = useState<number>(() => Date.now());
   const [currentStudentName, setCurrentStudentName] = useState('Student DevGrow');
   const [currentStudentAvatar, setCurrentStudentAvatar] = useState<string | undefined>(undefined);
   const [existingUserReview, setExistingUserReview] = useState<any>(null);
@@ -322,6 +323,7 @@ export default function LessonPage() {
     } else {
       setEnrollmentChecked(true);
     }
+    setSessionStartTime(Date.now());
   }, [id, lessonId]);
 
   // Course theme detection helper
@@ -1876,9 +1878,9 @@ export default function LessonPage() {
         courseTitle={dbModuleData?.title || lessonData.courseId?.toUpperCase() || 'Kursus DevGrow'}
         chapterTitle={lessonData.chapter || 'Materi Pemrograman'}
         lessonTitle={lessonData.title || 'Materi DevGrow'}
-        durationMinutes={15}
+        durationMinutes={Math.max(1, Math.round((Date.now() - sessionStartTime) / 60000))}
         xpEarned={50}
-        quizScore={quizAnswered[1] === true ? '100%' : '100%'}
+        quizScore={quizAnswered[1] === true ? '100% Lulus' : isCurrentLessonDone ? '100% Selesai' : 'Sedang Belajar'}
         progressPct={progressPct}
         completedLessonsCount={completedLessons.size || 1}
         totalLessonsCount={totalLessons || 124}

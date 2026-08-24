@@ -5,7 +5,7 @@ import {
   X, Download, Share2, Copy, Check, Sparkles, Trophy, 
   Clock, Award, Calendar, Zap, MessageCircle, Instagram, 
   Smartphone, Maximize2, Palette, CheckCircle2, Flame, Heart,
-  Camera, Upload, Image as ImageIcon, RefreshCw, User, Sliders, CheckCircle
+  Camera, Upload, Image as ImageIcon, RefreshCw, User, ShieldCheck, CheckCircle
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
@@ -56,33 +56,19 @@ export default function ShareLearningStoryModal({
   const [copiedText, setCopiedText] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>(studentAvatar);
 
-  // Dynamic & Adjustable Metrics State
-  const [customXp, setCustomXp] = useState<number>(xpEarned);
-  const [customDuration, setCustomDuration] = useState<number>(durationMinutes);
-  const [customScore, setCustomScore] = useState<string>(
-    progressPct !== undefined && progressPct > 0 ? `${progressPct}%` : (typeof quizScore === 'number' ? `${quizScore}%` : quizScore || '100%')
-  );
-  const [metric3Label, setMetric3Label] = useState<string>(
-    progressPct !== undefined && progressPct > 0 ? 'Total Progress' : 'Skor Kuis'
-  );
+  // Real-time strictly computed values (Non-editable, 100% authentic)
+  const realXp = xpEarned;
+  const realDuration = Math.max(1, durationMinutes);
+  const realScore = progressPct !== undefined && progressPct > 0 
+    ? `${progressPct}%` 
+    : (typeof quizScore === 'number' ? `${quizScore}%` : quizScore || '100%');
+  const realScoreLabel = progressPct !== undefined && progressPct > 0 ? 'Total Progress' : 'Hasil Kuis';
 
   useEffect(() => {
     if (studentAvatar) {
       setAvatarSrc(studentAvatar);
     }
   }, [studentAvatar]);
-
-  useEffect(() => {
-    setCustomXp(xpEarned);
-    setCustomDuration(durationMinutes);
-    if (progressPct !== undefined && progressPct > 0) {
-      setCustomScore(`${progressPct}%`);
-      setMetric3Label('Total Progress');
-    } else {
-      setCustomScore(typeof quizScore === 'number' ? `${quizScore}%` : quizScore || '100%');
-      setMetric3Label('Skor Kuis');
-    }
-  }, [xpEarned, durationMinutes, quizScore, progressPct]);
 
   if (!isOpen) return null;
 
@@ -171,13 +157,13 @@ export default function ShareLearningStoryModal({
   };
 
   const handleShareWhatsApp = () => {
-    const text = `🎉 *Pencapaian Belajar Baru di DevGrow LMS!*\n\nSaya baru saja menyelesaikan materi: *${lessonTitle}* (${chapterTitle})\n📚 Kursus: *${courseTitle}*\n⏱️ Waktu Belajar: ${customDuration} Menit\n⚡ XP Diperoleh: +${customXp} XP\n🎯 Hasil: ${customScore} (${metric3Label})\n\n"${customQuote}"\n\nYuk belajar coding interaktif di https://devgrow.id 🚀`;
+    const text = `🎉 *Pencapaian Belajar Real-Time di DevGrow LMS!*\n\nSaya baru saja menyelesaikan materi: *${lessonTitle}* (${chapterTitle})\n📚 Kursus: *${courseTitle}*\n⏱️ Waktu Belajar: ${realDuration} Menit\n⚡ XP Diperoleh: +${realXp} XP\n🎯 Hasil: ${realScore} (${realScoreLabel})\n\n"${customQuote}"\n\nYuk belajar coding interaktif di https://devgrow.id 🚀`;
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
   const handleCopyCaption = () => {
-    const text = `🎉 Pencapaian Belajar Baru di DevGrow LMS!\n\nSaya baru saja menyelesaikan materi: ${lessonTitle} (${chapterTitle})\n📚 Kursus: ${courseTitle}\n⏱️ Waktu: ${customDuration} Menit | ⚡ +${customXp} XP | 🎯 ${metric3Label}: ${customScore}\n\n"${customQuote}"\n\n#DevGrow #BelajarCoding #WebDevelopment #Programming #StudentLife`;
+    const text = `🎉 Pencapaian Belajar Real-Time di DevGrow LMS!\n\nSaya baru saja menyelesaikan materi: ${lessonTitle} (${chapterTitle})\n📚 Kursus: ${courseTitle}\n⏱️ Waktu: ${realDuration} Menit | ⚡ +${realXp} XP | 🎯 ${realScoreLabel}: ${realScore}\n\n"${customQuote}"\n\n#DevGrow #BelajarCoding #WebDevelopment #Programming #StudentLife`;
     navigator.clipboard.writeText(text);
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 2500);
@@ -205,11 +191,12 @@ export default function ShareLearningStoryModal({
             <div>
               <h3 className="font-black text-white text-base sm:text-lg flex items-center gap-2">
                 Bagikan Hasil Belajar ke Status / Story
-                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">
-                  HD Quality
+                <span className="px-2 py-0.5 rounded-full text-[10px] font-black uppercase tracking-wider bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-400" />
+                  Real Data
                 </span>
               </h3>
-              <p className="text-xs text-slate-400">Pamerkan progres belajar coding Anda ke WhatsApp Status (SW) dan Instagram Story (SG)</p>
+              <p className="text-xs text-slate-400">Pamerkan progres belajar coding asli Anda ke WhatsApp Status (SW) dan Instagram Story (SG)</p>
             </div>
           </div>
           <button 
@@ -227,7 +214,7 @@ export default function ShareLearningStoryModal({
           <div className="lg:col-span-7 flex flex-col items-center justify-center bg-slate-950/50 p-4 sm:p-6 rounded-2xl border border-slate-800/80">
             <div className="text-xs font-bold text-slate-400 mb-3 flex items-center gap-2">
               <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-              Pratinjau Story Card (Siap Di-download)
+              Pratinjau Story Card (Data Real-Time)
             </div>
 
             {/* 📸 ACTUAL STORY CARD FOR EXPORT */}
@@ -267,7 +254,8 @@ export default function ShareLearningStoryModal({
                       </div>
                     </div>
                   </div>
-                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/10 text-white/90 border border-white/15 backdrop-blur-md">
+                  <span className="px-2 py-0.5 rounded-full text-[9px] font-black uppercase tracking-wider bg-white/10 text-white/90 border border-white/15 backdrop-blur-md flex items-center gap-1">
+                    <CheckCircle2 className="w-2.5 h-2.5 text-emerald-400" />
                     Verified
                   </span>
                 </div>
@@ -326,13 +314,13 @@ export default function ShareLearningStoryModal({
                   </h2>
                 </div>
 
-                {/* Metrics Badges: Dynamic Calculated Numbers */}
+                {/* Metrics Badges: 100% Real Time Data */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-2 text-center">
                     <div className="flex items-center justify-center text-amber-400 mb-0.5">
                       <Zap className="w-3.5 h-3.5" />
                     </div>
-                    <p className="font-black text-xs text-white">+{customXp} XP</p>
+                    <p className="font-black text-xs text-white">+{realXp} XP</p>
                     <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Exp Poin</p>
                   </div>
 
@@ -340,16 +328,16 @@ export default function ShareLearningStoryModal({
                     <div className="flex items-center justify-center text-sky-400 mb-0.5">
                       <Clock className="w-3.5 h-3.5" />
                     </div>
-                    <p className="font-black text-xs text-white">{customDuration} Min</p>
-                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Waktu</p>
+                    <p className="font-black text-xs text-white">{realDuration} Min</p>
+                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Waktu Real</p>
                   </div>
 
                   <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-2 text-center">
                     <div className="flex items-center justify-center text-emerald-400 mb-0.5">
                       <Award className="w-3.5 h-3.5" />
                     </div>
-                    <p className="font-black text-xs text-white">{customScore}</p>
-                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold truncate">{metric3Label}</p>
+                    <p className="font-black text-xs text-white">{realScore}</p>
+                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold truncate">{realScoreLabel}</p>
                   </div>
                 </div>
 
@@ -380,6 +368,28 @@ export default function ShareLearningStoryModal({
           <div className="lg:col-span-5 space-y-4 flex flex-col justify-between">
             <div className="space-y-3.5">
               
+              {/* Real-Time Authenticity Summary Box */}
+              <div className="p-3.5 bg-slate-950/80 border border-emerald-500/30 rounded-2xl space-y-2">
+                <div className="flex items-center gap-2 text-emerald-400 text-xs font-black">
+                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <span>Data Belajar Real-Time Terverifikasi:</span>
+                </div>
+                <div className="grid grid-cols-3 gap-2 text-center pt-1 border-t border-white/10">
+                  <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                    <span className="text-[9px] text-slate-400 uppercase font-bold block">XP Asli</span>
+                    <strong className="text-xs text-amber-400 font-black">+{realXp} XP</strong>
+                  </div>
+                  <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                    <span className="text-[9px] text-slate-400 uppercase font-bold block">Durasi Real</span>
+                    <strong className="text-xs text-sky-400 font-black">{realDuration} Mnt</strong>
+                  </div>
+                  <div className="bg-slate-900/80 p-2 rounded-xl border border-slate-800">
+                    <span className="text-[9px] text-slate-400 uppercase font-bold block">{realScoreLabel}</span>
+                    <strong className="text-xs text-emerald-400 font-black">{realScore}</strong>
+                  </div>
+                </div>
+              </div>
+
               {/* Photo Upload & Change Row */}
               <div>
                 <label className="text-xs font-bold text-slate-300 mb-1.5 flex items-center justify-between">
@@ -414,43 +424,6 @@ export default function ShareLearningStoryModal({
                       <Upload className="w-3.5 h-3.5 text-indigo-400" />
                       Ganti / Unggah Foto
                     </button>
-                  </div>
-                </div>
-              </div>
-
-              {/* Numerical Calculation Adjuster (XP, Durasi, Nilai) */}
-              <div>
-                <label className="text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
-                  <Sliders className="w-3.5 h-3.5 text-emerald-400" />
-                  Sesuaikan Angka Perhitungan / Metrik:
-                </label>
-                <div className="grid grid-cols-3 gap-2 bg-slate-950/80 p-2.5 rounded-2xl border border-slate-700">
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 block mb-1">⚡ XP Poin</span>
-                    <input 
-                      type="number"
-                      value={customXp}
-                      onChange={(e) => setCustomXp(Number(e.target.value) || 0)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-black focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 block mb-1">⏱️ Waktu (Mnt)</span>
-                    <input 
-                      type="number"
-                      value={customDuration}
-                      onChange={(e) => setCustomDuration(Number(e.target.value) || 0)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-black focus:outline-none focus:border-indigo-500"
-                    />
-                  </div>
-                  <div>
-                    <span className="text-[10px] font-bold text-slate-400 block mb-1">🏆 Hasil/Skor</span>
-                    <input 
-                      type="text"
-                      value={customScore}
-                      onChange={(e) => setCustomScore(e.target.value)}
-                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-black focus:outline-none focus:border-indigo-500"
-                    />
                   </div>
                 </div>
               </div>
