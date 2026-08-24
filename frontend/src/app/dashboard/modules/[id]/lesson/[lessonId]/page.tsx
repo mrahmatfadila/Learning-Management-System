@@ -1024,6 +1024,7 @@ export default function LessonPage() {
               `}
               >
                 <style>{`
+                  /* 1. Hero Gradient Banners */
                   .prose-custom [class*="from-teal-"] {
                     background: linear-gradient(135deg, #0d9488 0%, #047857 100%) !important;
                     color: #ffffff !important;
@@ -1091,6 +1092,136 @@ export default function LessonPage() {
                     background: rgba(255, 255, 255, 0.22) !important;
                     border: 1px solid rgba(255, 255, 255, 0.35) !important;
                     color: #ffffff !important;
+                  }
+
+                  /* 2. Number Badges (e.g. 1 Apa itu CSS?, 1 External CSS) */
+                  .prose-custom [class*="w-8"][class*="h-8"],
+                  .prose-custom [class*="w-10"][class*="h-10"] {
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    font-weight: 900 !important;
+                    flex-shrink: 0 !important;
+                    border-radius: 0.75rem !important;
+                  }
+
+                  .prose-custom [class*="bg-indigo-50"],
+                  .prose-custom [class*="text-indigo-600"] {
+                    background-color: #e0e7ff !important;
+                    color: #4338ca !important;
+                    border: 1px solid #c7d2fe !important;
+                  }
+                  .prose-custom [class*="bg-blue-50"],
+                  .prose-custom [class*="text-blue-600"] {
+                    background-color: #dbeafe !important;
+                    color: #1d4ed8 !important;
+                    border: 1px solid #bfdbfe !important;
+                  }
+                  .prose-custom [class*="bg-teal-50"],
+                  .prose-custom [class*="text-teal-600"] {
+                    background-color: #ccfbf1 !important;
+                    color: #0f766e !important;
+                    border: 1px solid #99f6e4 !important;
+                  }
+                  .prose-custom [class*="bg-emerald-50"],
+                  .prose-custom [class*="text-emerald-600"] {
+                    background-color: #d1fae5 !important;
+                    color: #047857 !important;
+                    border: 1px solid #a7f3d0 !important;
+                  }
+                  .prose-custom [class*="bg-amber-50"],
+                  .prose-custom [class*="text-amber-600"] {
+                    background-color: #fef3c7 !important;
+                    color: #b45309 !important;
+                    border: 1px solid #fde68a !important;
+                  }
+                  .prose-custom [class*="bg-purple-50"],
+                  .prose-custom [class*="text-purple-600"] {
+                    background-color: #f3e8ff !important;
+                    color: #7e22ce !important;
+                    border: 1px solid #e9d5ff !important;
+                  }
+                  .prose-custom [class*="bg-rose-50"],
+                  .prose-custom [class*="text-rose-600"],
+                  .prose-custom [class*="bg-pink-50"],
+                  .prose-custom [class*="text-pink-600"] {
+                    background-color: #ffe4e6 !important;
+                    color: #be123c !important;
+                    border: 1px solid #fecdd3 !important;
+                  }
+
+                  /* 3. White Cards & Grid Boxes */
+                  .prose-custom [class*="bg-white"] {
+                    background-color: #ffffff !important;
+                    border: 1px solid #e2e8f0 !important;
+                    border-radius: 1rem !important;
+                  }
+                  .prose-custom [class*="bg-slate-50"] {
+                    background-color: #f8fafc !important;
+                    border: 1px solid #e2e8f0 !important;
+                  }
+                  .prose-custom [class*="bg-slate-100"] {
+                    background-color: #f1f5f9 !important;
+                    border: 1px solid #cbd5e1 !important;
+                  }
+                  .prose-custom [class*="bg-slate-900"] {
+                    background-color: #0f172a !important;
+                    color: #f8fafc !important;
+                  }
+
+                  /* Dark Mode Specific Overrides */
+                  .dark .prose-custom [class*="bg-indigo-50"],
+                  .dark .prose-custom [class*="text-indigo-600"] {
+                    background-color: rgba(79, 70, 229, 0.25) !important;
+                    color: #a5b4fc !important;
+                    border: 1px solid rgba(99, 102, 241, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-blue-50"],
+                  .dark .prose-custom [class*="text-blue-600"] {
+                    background-color: rgba(37, 99, 235, 0.25) !important;
+                    color: #93c5fd !important;
+                    border: 1px solid rgba(59, 130, 246, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-teal-50"],
+                  .dark .prose-custom [class*="text-teal-600"] {
+                    background-color: rgba(13, 148, 136, 0.25) !important;
+                    color: #5eead4 !important;
+                    border: 1px solid rgba(20, 184, 166, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-emerald-50"],
+                  .dark .prose-custom [class*="text-emerald-600"] {
+                    background-color: rgba(5, 150, 105, 0.25) !important;
+                    color: #6ee7b7 !important;
+                    border: 1px solid rgba(16, 185, 129, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-amber-50"],
+                  .dark .prose-custom [class*="text-amber-600"] {
+                    background-color: rgba(217, 119, 6, 0.25) !important;
+                    color: #fcd34d !important;
+                    border: 1px solid rgba(245, 158, 11, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-purple-50"],
+                  .dark .prose-custom [class*="text-purple-600"] {
+                    background-color: rgba(126, 34, 206, 0.25) !important;
+                    color: #d8b4fe !important;
+                    border: 1px solid rgba(147, 51, 234, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-rose-50"],
+                  .dark .prose-custom [class*="text-rose-600"] {
+                    background-color: rgba(136, 19, 55, 0.25) !important;
+                    color: #fda4af !important;
+                    border: 1px solid rgba(225, 29, 72, 0.4) !important;
+                  }
+                  .dark .prose-custom [class*="bg-white"] {
+                    background-color: #0f172a !important;
+                    border: 1px solid #1e293b !important;
+                    color: #f8fafc !important;
+                  }
+                  .dark .prose-custom [class*="bg-slate-50"],
+                  .dark .prose-custom [class*="bg-slate-100"] {
+                    background-color: #1e293b !important;
+                    border: 1px solid #334155 !important;
+                    color: #cbd5e1 !important;
                   }
                 `}</style>
                 <div dangerouslySetInnerHTML={{ __html: lessonData?.theory || '' }} />
