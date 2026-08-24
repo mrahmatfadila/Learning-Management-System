@@ -1022,8 +1022,79 @@ export default function LessonPage() {
                 [&_pre]:${isDark ? 'text-slate-200' : 'text-slate-700'}
                 [&_h4]:${isDark ? 'text-indigo-200' : 'text-indigo-900'}
               `}
-                dangerouslySetInnerHTML={{ __html: lessonData?.theory || '' }}
-              />
+              >
+                <style>{`
+                  .prose-custom [class*="from-teal-"] {
+                    background: linear-gradient(135deg, #0d9488 0%, #047857 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-blue-"] {
+                    background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-indigo-"] {
+                    background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-violet-"] {
+                    background: linear-gradient(135deg, #7c3aed 0%, #581c87 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-pink-"],
+                  .prose-custom [class*="from-rose-"] {
+                    background: linear-gradient(135deg, #db2777 0%, #be123c 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-cyan-"] {
+                    background: linear-gradient(135deg, #0891b2 0%, #1d4ed8 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-amber-"] {
+                    background: linear-gradient(135deg, #d97706 0%, #c2410c 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="from-slate-700"] {
+                    background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important;
+                    color: #ffffff !important;
+                    border-radius: 1.5rem !important;
+                    padding: 2rem !important;
+                  }
+                  .prose-custom [class*="text-white"] h1,
+                  .prose-custom [class*="text-white"] h2,
+                  .prose-custom [class*="text-white"] h3,
+                  .prose-custom [class*="text-white"] h4,
+                  .prose-custom [class*="text-white"] p,
+                  .prose-custom [class*="text-white"] span,
+                  .prose-custom [class*="text-white"] strong,
+                  .prose-custom [class*="text-white"] code {
+                    color: #ffffff !important;
+                  }
+                  .prose-custom [class*="text-white"] p {
+                    color: rgba(255, 255, 255, 0.94) !important;
+                  }
+                  .prose-custom [class*="text-white"] [class*="bg-white/20"],
+                  .prose-custom [class*="text-white"] [class*="backdrop-blur-md"] {
+                    background: rgba(255, 255, 255, 0.22) !important;
+                    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+                    color: #ffffff !important;
+                  }
+                `}</style>
+                <div dangerouslySetInnerHTML={{ __html: lessonData?.theory || '' }} />
+              </div>
 
               {/* Try It Yourself */}
               <div className={`relative flex items-center gap-4 p-5 rounded-2xl mb-8 border overflow-hidden ${

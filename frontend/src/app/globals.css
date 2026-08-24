@@ -100,62 +100,61 @@ select:disabled,
   overflow: hidden;
 }
 
-/* Specific Gradient Backgrounds */
-.prose-custom .from-teal-600.to-emerald-700,
-.prose-custom .from-teal-700.to-emerald-800,
-.prose-custom .from-teal-700.to-emerald-900 {
+/* Specific Gradient Backgrounds via Attribute Selectors */
+.prose-custom [class*="from-teal-600"],
+.prose-custom [class*="from-teal-700"] {
   background: linear-gradient(135deg, #0d9488 0%, #047857 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-blue-600.to-indigo-700,
-.prose-custom .from-blue-700.to-indigo-800,
-.prose-custom .from-blue-700.to-cyan-800,
-.prose-custom .from-blue-600.to-emerald-700 {
+.prose-custom [class*="from-blue-600"],
+.prose-custom [class*="from-blue-700"] {
   background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-indigo-600.to-purple-700,
-.prose-custom .from-indigo-700.to-blue-800,
-.prose-custom .from-indigo-800.to-purple-900 {
+.prose-custom [class*="from-indigo-600"],
+.prose-custom [class*="from-indigo-700"],
+.prose-custom [class*="from-indigo-800"] {
   background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-violet-600.to-indigo-700,
-.prose-custom .from-violet-600.to-purple-800,
-.prose-custom .from-violet-700.to-indigo-900 {
+.prose-custom [class*="from-violet-600"],
+.prose-custom [class*="from-violet-700"] {
   background: linear-gradient(135deg, #7c3aed 0%, #581c87 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-pink-600.to-rose-700,
-.prose-custom .from-pink-700.to-rose-800,
-.prose-custom .from-rose-700.to-pink-800 {
+.prose-custom [class*="from-pink-600"],
+.prose-custom [class*="from-pink-700"] {
   background: linear-gradient(135deg, #db2777 0%, #be123c 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-cyan-600.to-blue-700,
-.prose-custom .from-cyan-700.to-blue-800 {
+.prose-custom [class*="from-rose-700"] {
+  background: linear-gradient(135deg, #e11d48 0%, #9f1239 100%) !important;
+  color: #ffffff !important;
+}
+
+.prose-custom [class*="from-cyan-600"],
+.prose-custom [class*="from-cyan-700"] {
   background: linear-gradient(135deg, #0891b2 0%, #1d4ed8 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-amber-600.to-orange-700,
-.prose-custom .from-amber-600.to-orange-800 {
+.prose-custom [class*="from-amber-600"] {
   background: linear-gradient(135deg, #d97706 0%, #c2410c 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-emerald-700.to-teal-800,
-.prose-custom .from-emerald-600.to-teal-700 {
+.prose-custom [class*="from-emerald-600"],
+.prose-custom [class*="from-emerald-700"] {
   background: linear-gradient(135deg, #059669 0%, #115e59 100%) !important;
   color: #ffffff !important;
 }
 
-.prose-custom .from-slate-700.to-slate-900 {
+.prose-custom [class*="from-slate-700"] {
   background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important;
   color: #ffffff !important;
 }
