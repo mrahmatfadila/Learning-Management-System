@@ -747,16 +747,8 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   }
 
   // ── STUDENT VIEW ──
-  const courseFromLocal = coursesData.find(c => c.id === id || c.id === courseId);
-  const localModules = courseFromLocal?.modules;
-
   let syllabus: any[] = [];
-  if (localModules && localModules.length > 0) {
-    syllabus = localModules.map((mod: any) => ({
-      title: mod.title,
-      lessons: mod.lessons || []
-    }));
-  } else {
+  if (moduleData?.chapters && moduleData.chapters.length > 0) {
     const chapters = (moduleData?.chapters ?? []).slice().sort((a: any, b: any) => a.order - b.order);
     const lessons = (moduleData?.lessons ?? []).slice().sort((a: any, b: any) => a.order - b.order);
 
@@ -781,6 +773,15 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
       }));
       
       syllabus = [...syllabus, ...fallbackSyllabus];
+    }
+  } else {
+    const courseFromLocal = coursesData.find(c => c.id === id || c.id === courseId);
+    const localModules = courseFromLocal?.modules;
+    if (localModules && localModules.length > 0) {
+      syllabus = localModules.map((mod: any) => ({
+        title: mod.title,
+        lessons: mod.lessons || []
+      }));
     }
   }
 

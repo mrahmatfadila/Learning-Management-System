@@ -54,6 +54,8 @@ export const cssCourseModules = [
     lessons: [
       { id: 'css-rounded-corners', title: 'CSS Rounded Corners' },
       { id: 'css-border-images', title: 'CSS Border Images' },
+      { id: 'css-adv-backgrounds', title: 'CSS Backgrounds' },
+      { id: 'css-adv-colors', title: 'CSS Colors' },
       { id: 'css-gradients', title: 'CSS Gradients' },
       { id: 'css-shadows', title: 'CSS Shadows' },
       { id: 'css-text-effects', title: 'CSS Text Effects' },
@@ -64,12 +66,19 @@ export const cssCourseModules = [
       { id: 'css-animations', title: 'CSS Animations' },
       { id: 'css-tooltips', title: 'CSS Tooltips' },
       { id: 'css-image-styling', title: 'CSS Image Styling' },
+      { id: 'css-image-modal', title: 'CSS Image Modal' },
+      { id: 'css-image-centering', title: 'CSS Image Centering' },
+      { id: 'css-image-filters', title: 'CSS Image Filters' },
+      { id: 'css-image-shapes', title: 'CSS Image Shapes' },
       { id: 'css-object-fit', title: 'CSS object-fit' },
+      { id: 'css-object-position', title: 'CSS object-position' },
       { id: 'css-masking', title: 'CSS Masking' },
       { id: 'css-buttons', title: 'CSS Buttons' },
       { id: 'css-pagination', title: 'CSS Pagination' },
-      { id: 'css-columns', title: 'CSS Multiple Columns' },
+      { id: 'css-multiple-columns', title: 'CSS Multiple Columns' },
+      { id: 'css-user-interface', title: 'CSS User Interface' },
       { id: 'css-variables', title: 'CSS Variables' },
+      { id: 'css-property', title: 'CSS @property' },
       { id: 'css-box-sizing', title: 'CSS Box Sizing' },
       { id: 'css-media-queries', title: 'CSS Media Queries' },
     ]
@@ -77,18 +86,20 @@ export const cssCourseModules = [
   {
     id: 'css-mod-3', title: 'CSS Flexbox',
     lessons: [
-      { id: 'css-flexbox-intro', title: 'Flexbox Intro' },
-      { id: 'css-flex-container', title: 'Flex Container' },
-      { id: 'css-flex-items', title: 'Flex Items' },
-      { id: 'css-flex-responsive', title: 'Flex Responsive' },
+      { id: 'flex-intro', title: 'Flexbox Intro' },
+      { id: 'flex-container', title: 'Flex Container' },
+      { id: 'flex-items', title: 'Flex Items' },
+      { id: 'flex-responsive', title: 'Flex Responsive' },
     ]
   },
   {
     id: 'css-mod-4', title: 'CSS Grid',
     lessons: [
-      { id: 'css-grid-intro', title: 'Grid Intro' },
-      { id: 'css-grid-container', title: 'Grid Container' },
-      { id: 'css-grid-items', title: 'Grid Items' },
+      { id: 'grid-intro', title: 'Grid Intro' },
+      { id: 'grid-container', title: 'Grid Container' },
+      { id: 'grid-items', title: 'Grid Items' },
+      { id: 'grid-12-column-layout', title: 'Grid 12-column Layout' },
+      { id: 'css-supports', title: 'CSS @supports' },
     ]
   },
   {
@@ -99,6 +110,52 @@ export const cssCourseModules = [
       { id: 'css-rwd-grid', title: 'RWD Grid View' },
       { id: 'css-rwd-media', title: 'RWD Media Queries' },
       { id: 'css-rwd-images', title: 'RWD Images' },
+      { id: 'css-rwd-videos', title: 'RWD Videos' },
+      { id: 'css-rwd-frameworks', title: 'RWD Frameworks' },
+      { id: 'css-rwd-templates', title: 'RWD Templates' },
+    ]
+  },
+  {
+    id: 'css-mod-6', title: 'CSS Certificate',
+    lessons: [
+      { id: 'css-cert-exam', title: 'CSS Certificate Exam' },
+    ]
+  },
+  {
+    id: 'css-mod-7', title: 'SASS Tutorial',
+    lessons: [
+      { id: 'sass-home', title: 'SASS HOME' },
+    ]
+  },
+  {
+    id: 'css-mod-8', title: 'CSS Examples',
+    lessons: [
+      { id: 'css-examples-templates', title: 'CSS Templates' },
+      { id: 'css-examples-editor', title: 'CSS Editor' },
+      { id: 'css-examples-quiz', title: 'CSS Quiz' },
+      { id: 'css-examples-exercises', title: 'CSS Exercises' },
+      { id: 'css-examples-interview', title: 'CSS Interview Prep' },
+    ]
+  },
+  {
+    id: 'css-mod-9', title: 'CSS References',
+    lessons: [
+      { id: 'css-ref-main', title: 'CSS Reference' },
+      { id: 'css-ref-selectors', title: 'CSS Selectors' },
+      { id: 'css-ref-combinators', title: 'CSS Combinators' },
+      { id: 'css-ref-pseudo-classes', title: 'CSS Pseudo-classes' },
+      { id: 'css-ref-pseudo-elements', title: 'CSS Pseudo-elements' },
+      { id: 'css-ref-at-rules', title: 'CSS At-rules' },
+      { id: 'css-ref-functions', title: 'CSS Functions' },
+      { id: 'css-ref-aural', title: 'CSS Reference Aural' },
+      { id: 'css-ref-web-safe-fonts', title: 'CSS Web Safe Fonts' },
+      { id: 'css-ref-animatable', title: 'CSS Animatable' },
+      { id: 'css-ref-units', title: 'CSS Units' },
+      { id: 'css-ref-px-em-converter', title: 'CSS PX-EM Converter' },
+      { id: 'css-ref-colors', title: 'CSS Colors' },
+      { id: 'css-ref-color-values', title: 'CSS Color Values' },
+      { id: 'css-ref-default-values', title: 'CSS Default Values' },
+      { id: 'css-ref-browser-support', title: 'CSS Browser Support' },
     ]
   },
 ];
