@@ -3,7 +3,7 @@
 import {
   CheckCircle, ChevronLeft, ChevronRight, Code2, Play, Copy, RefreshCw,
   X, Zap, List, Moon, Sun, Sparkles, Send, ChevronDown, ChevronUp,
-  MonitorPlay, BookOpen, Trophy, Clock, Video, FileText, Users, Trash, MessageSquare, Lock, Star, Edit
+  MonitorPlay, BookOpen, Trophy, Clock, Video, FileText, Users, Trash, MessageSquare, Lock, Star, Edit, Share2
 } from 'lucide-react';
 import Link from 'next/link';
 import { useState, useEffect, useRef, Suspense } from 'react';
@@ -11,6 +11,7 @@ import { useParams, useRouter } from 'next/navigation';
 import { lessons, coursesData } from '@/data/lessonData';
 import dynamic from 'next/dynamic';
 import DevGrowLoader from '@/components/DevGrowLoader';
+import ShareLearningStoryModal from '@/components/ShareLearningStoryModal';
 
 if (typeof window !== 'undefined') {
   const originalError = console.error;
@@ -168,6 +169,8 @@ export default function LessonPage() {
 
   // Course Review & Rating Modal State
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
+  const [isShareStoryModalOpen, setIsShareStoryModalOpen] = useState(false);
+  const [currentStudentName, setCurrentStudentName] = useState('Student DevGrow');
   const [existingUserReview, setExistingUserReview] = useState<any>(null);
   const [isEditingModuleReview, setIsEditingModuleReview] = useState(false);
   const [moduleUserRating, setModuleUserRating] = useState(5);
@@ -289,6 +292,9 @@ export default function LessonPage() {
     if (stored) {
       try {
         const user = JSON.parse(stored);
+        if (user?.name || user?.fullName || user?.username) {
+          setCurrentStudentName(user.name || user.fullName || user.username);
+        }
         if (user?.role?.toUpperCase() === 'STUDENT' && user.id) {
           setIsStudentRole(true);
           fetch(`http://localhost:5000/api/enrollments/check?studentId=${user.id}&moduleId=${id}`)
@@ -923,6 +929,18 @@ export default function LessonPage() {
               <Star className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
               <span className="hidden sm:inline">Rating Kursus</span>
             </button>
+            <button
+              onClick={() => setIsShareStoryModalOpen(true)}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                isDark
+                  ? 'bg-gradient-to-r from-indigo-500/20 to-purple-500/20 text-indigo-300 hover:from-indigo-500/30 hover:to-purple-500/30 border border-indigo-500/30'
+                  : 'bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 hover:from-indigo-100 hover:to-purple-100 border border-indigo-200 shadow-2xs'
+              }`}
+              title="Pamerkan Progres Belajar ke Story WA / IG"
+            >
+              <Share2 className="w-3.5 h-3.5 text-indigo-500" />
+              <span className="hidden sm:inline">Bagikan Story</span>
+            </button>
             <button onClick={() => setAiOpen(p => !p)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                 aiOpen
@@ -1388,8 +1406,16 @@ export default function LessonPage() {
                     <CheckCircle className="w-4 h-4" /> Tandai Selesai & Lanjut
                   </button>
                 ) : (
-                  <div className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-emerald-700 bg-emerald-50 border-2 border-emerald-200">
-                    <CheckCircle className="w-4 h-4" /> Materi Ini Sudah Selesai ✓
+                  <div className="space-y-2.5">
+                    <div className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-emerald-700 bg-emerald-50 border-2 border-emerald-200">
+                      <CheckCircle className="w-4 h-4" /> Materi Ini Sudah Selesai ✓
+                    </div>
+                    <button
+                      onClick={() => setIsShareStoryModalOpen(true)}
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-2xl text-sm font-bold text-white transition-all bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 shadow-lg shadow-purple-500/20 active:scale-[0.99]"
+                    >
+                      <Share2 className="w-4 h-4" /> Pamerkan Hasil Belajar ke Status WA / Story IG 🚀
+                    </button>
                   </div>
                 )}
 
@@ -1837,6 +1863,18 @@ export default function LessonPage() {
           </div>
         </div>
       )}
+      {/* ── Modal Bagikan Hasil Belajar ke Status WA / Story IG ── */}
+      <ShareLearningStoryModal
+        isOpen={isShareStoryModalOpen}
+        onClose={() => setIsShareStoryModalOpen(false)}
+        studentName={currentStudentName}
+        courseTitle={dbModuleData?.title || lessonData.courseId?.toUpperCase() || 'Kursus DevGrow'}
+        chapterTitle={lessonData.chapter || 'Materi Pemrograman'}
+        lessonTitle={lessonData.title || 'Materi DevGrow'}
+        durationMinutes={15}
+        xpEarned={50}
+        courseTheme={getCourseTheme(dbModuleData?.title || lessonData.courseId || '')}
+      />
     </div>
     )}
     </>

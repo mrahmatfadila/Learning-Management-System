@@ -1,12 +1,13 @@
 'use client';
 
-import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star, Sparkles, GraduationCap, Award, Subtitles, Infinity, Send } from 'lucide-react';
+import { PlayCircle, FileText, Code2, ArrowLeft, CheckCircle, Search, BarChart, BookOpen, Users, Clock, Plus, Settings, Folder, MessageSquare, Book, MoreHorizontal, Edit, ChevronDown, ChevronUp, AlignLeft, Layout, Database, Globe, BarChart2, User, X, Filter, AlarmClock, Trash, ChevronRight, Play, Server, Smartphone, Lock, Star, Sparkles, GraduationCap, Award, Subtitles, Infinity, Send, Share2 } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useState, use, useRef } from 'react';
 import { coursesData } from '@/data/lessonData';
 import DashboardSidebar from '@/components/DashboardSidebar';
 import DevGrowLoader from '@/components/DevGrowLoader';
 import { useRouter } from 'next/navigation';
+import ShareLearningStoryModal from '@/components/ShareLearningStoryModal';
 
 export default function ModuleDetail({ params }: { params: Promise<{ id: string }> }) {
   const router = useRouter();
@@ -24,6 +25,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const [newLessonData, setNewLessonData] = useState({ chapter: '', subChapter: '', title: '', type: 'code', content: '' });
   const [isSavingLesson, setIsSavingLesson] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [isShareStoryModalOpen, setIsShareStoryModalOpen] = useState(false);
 
   // Reviews & Ratings State
   const [reviewsData, setReviewsData] = useState<{
@@ -1197,10 +1199,19 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
               )}
 
               {enrollmentStatus === 'APPROVED' && (
-                <button onClick={handleStart} className="w-full px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-600/20 hover:scale-[1.02] flex items-center justify-center gap-2 text-sm">
-                  <BookOpen className="w-4 h-4 text-white" />
-                  {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar Sekarang →'}
-                </button>
+                <div className="space-y-2.5">
+                  <button onClick={handleStart} className="w-full px-8 py-3.5 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-2xl transition-all shadow-lg shadow-emerald-600/20 hover:scale-[1.02] flex items-center justify-center gap-2 text-sm">
+                    <BookOpen className="w-4 h-4 text-white" />
+                    {progressPct >= 100 ? '📖 Pelajari Ulang' : progressPct > 0 ? 'Lanjutkan Belajar →' : 'Mulai Belajar Sekarang →'}
+                  </button>
+                  <button
+                    onClick={() => setIsShareStoryModalOpen(true)}
+                    className="w-full flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-black rounded-2xl transition-all shadow-md shadow-indigo-500/20 text-xs active:scale-[0.98]"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    Bagikan Progres ke Story WA / IG 🚀
+                  </button>
+                </div>
               )}
             </div>
 
@@ -1594,6 +1605,18 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
           </div>
         </div>
       )}
+      {/* ── Modal Bagikan Hasil Belajar ke Status WA / Story IG ── */}
+      <ShareLearningStoryModal
+        isOpen={isShareStoryModalOpen}
+        onClose={() => setIsShareStoryModalOpen(false)}
+        studentName={currentUser?.name || currentUser?.fullName || currentUser?.username || 'Student DevGrow'}
+        courseTitle={moduleData?.title || 'Kursus DevGrow'}
+        chapterTitle={`Progress: ${progressPct}% Selesai`}
+        lessonTitle={progressPct >= 100 ? '🎉 Lulus & Menyelesaikan Seluruh Modul!' : `${validCompletedCount} dari ${totalLessonsCount} Materi Selesai`}
+        durationMinutes={Math.max(15, validCompletedCount * 12)}
+        xpEarned={validCompletedCount * 50}
+        courseTheme={moduleData?.category?.toLowerCase() || 'default'}
+      />
     </div>
   );
 }
