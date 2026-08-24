@@ -1878,6 +1878,10 @@ export default function LessonPage() {
         lessonTitle={lessonData.title || 'Materi DevGrow'}
         durationMinutes={15}
         xpEarned={50}
+        quizScore={quizAnswered[1] === true ? '100%' : '100%'}
+        progressPct={progressPct}
+        completedLessonsCount={completedLessons.size || 1}
+        totalLessonsCount={totalLessons || 124}
         courseTheme={getCourseTheme(dbModuleData?.title || lessonData.courseId || '')}
       />
     </div>

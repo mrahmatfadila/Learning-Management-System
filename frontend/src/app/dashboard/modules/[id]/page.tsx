@@ -1616,6 +1616,10 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         lessonTitle={progressPct >= 100 ? '🎉 Lulus & Menyelesaikan Seluruh Modul!' : `${validCompletedCount} dari ${totalLessonsCount} Materi Selesai`}
         durationMinutes={Math.max(15, validCompletedCount * 12)}
         xpEarned={validCompletedCount * 50}
+        progressPct={progressPct}
+        completedLessonsCount={validCompletedCount}
+        totalLessonsCount={totalLessonsCount}
+        achievementType="course"
         courseTheme={moduleData?.category?.toLowerCase() || 'default'}
       />
     </div>

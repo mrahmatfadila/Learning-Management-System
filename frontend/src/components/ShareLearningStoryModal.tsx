@@ -5,7 +5,7 @@ import {
   X, Download, Share2, Copy, Check, Sparkles, Trophy, 
   Clock, Award, Calendar, Zap, MessageCircle, Instagram, 
   Smartphone, Maximize2, Palette, CheckCircle2, Flame, Heart,
-  Camera, Upload, Image as ImageIcon, RefreshCw, User
+  Camera, Upload, Image as ImageIcon, RefreshCw, User, Sliders, CheckCircle
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
@@ -21,7 +21,11 @@ interface ShareLearningStoryModalProps {
   completedAt?: string;
   durationMinutes?: number;
   xpEarned?: number;
-  skillsLearned?: string[];
+  quizScore?: number | string;
+  progressPct?: number;
+  completedLessonsCount?: number;
+  totalLessonsCount?: number;
+  achievementType?: 'lesson' | 'course';
   courseTheme?: string;
 }
 
@@ -36,7 +40,11 @@ export default function ShareLearningStoryModal({
   completedAt,
   durationMinutes = 15,
   xpEarned = 50,
-  skillsLearned = ['CSS Syntax', 'Cascading Priority', 'Web Design'],
+  quizScore = '100%',
+  progressPct,
+  completedLessonsCount,
+  totalLessonsCount,
+  achievementType = 'lesson',
   courseTheme = 'css'
 }: ShareLearningStoryModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -48,11 +56,33 @@ export default function ShareLearningStoryModal({
   const [copiedText, setCopiedText] = useState(false);
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>(studentAvatar);
 
+  // Dynamic & Adjustable Metrics State
+  const [customXp, setCustomXp] = useState<number>(xpEarned);
+  const [customDuration, setCustomDuration] = useState<number>(durationMinutes);
+  const [customScore, setCustomScore] = useState<string>(
+    progressPct !== undefined && progressPct > 0 ? `${progressPct}%` : (typeof quizScore === 'number' ? `${quizScore}%` : quizScore || '100%')
+  );
+  const [metric3Label, setMetric3Label] = useState<string>(
+    progressPct !== undefined && progressPct > 0 ? 'Total Progress' : 'Skor Kuis'
+  );
+
   useEffect(() => {
     if (studentAvatar) {
       setAvatarSrc(studentAvatar);
     }
   }, [studentAvatar]);
+
+  useEffect(() => {
+    setCustomXp(xpEarned);
+    setCustomDuration(durationMinutes);
+    if (progressPct !== undefined && progressPct > 0) {
+      setCustomScore(`${progressPct}%`);
+      setMetric3Label('Total Progress');
+    } else {
+      setCustomScore(typeof quizScore === 'number' ? `${quizScore}%` : quizScore || '100%');
+      setMetric3Label('Skor Kuis');
+    }
+  }, [xpEarned, durationMinutes, quizScore, progressPct]);
 
   if (!isOpen) return null;
 
@@ -141,13 +171,13 @@ export default function ShareLearningStoryModal({
   };
 
   const handleShareWhatsApp = () => {
-    const text = `🎉 *Pencapaian Belajar Baru di DevGrow LMS!*\n\nSaya baru saja menyelesaikan materi: *${lessonTitle}* (${chapterTitle})\n📚 Kursus: *${courseTitle}*\n⏱️ Waktu Belajar: ${durationMinutes} Menit\n⚡ XP: +${xpEarned} XP\n\n"${customQuote}"\n\nYuk belajar coding interaktif di https://devgrow.id 🚀`;
+    const text = `🎉 *Pencapaian Belajar Baru di DevGrow LMS!*\n\nSaya baru saja menyelesaikan materi: *${lessonTitle}* (${chapterTitle})\n📚 Kursus: *${courseTitle}*\n⏱️ Waktu Belajar: ${customDuration} Menit\n⚡ XP Diperoleh: +${customXp} XP\n🎯 Hasil: ${customScore} (${metric3Label})\n\n"${customQuote}"\n\nYuk belajar coding interaktif di https://devgrow.id 🚀`;
     const url = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
     window.open(url, '_blank');
   };
 
   const handleCopyCaption = () => {
-    const text = `🎉 Pencapaian Belajar Baru di DevGrow LMS!\n\nSaya baru saja menyelesaikan materi: ${lessonTitle} (${chapterTitle})\n📚 Kursus: ${courseTitle}\n⏱️ Waktu: ${durationMinutes} Menit | ⚡ +${xpEarned} XP\n\n"${customQuote}"\n\n#DevGrow #BelajarCoding #WebDevelopment #Programming #StudentLife`;
+    const text = `🎉 Pencapaian Belajar Baru di DevGrow LMS!\n\nSaya baru saja menyelesaikan materi: ${lessonTitle} (${chapterTitle})\n📚 Kursus: ${courseTitle}\n⏱️ Waktu: ${customDuration} Menit | ⚡ +${customXp} XP | 🎯 ${metric3Label}: ${customScore}\n\n"${customQuote}"\n\n#DevGrow #BelajarCoding #WebDevelopment #Programming #StudentLife`;
     navigator.clipboard.writeText(text);
     setCopiedText(true);
     setTimeout(() => setCopiedText(false), 2500);
@@ -281,7 +311,9 @@ export default function ShareLearningStoryModal({
                   }}
                 >
                   <Trophy className="w-3 h-3 text-amber-400" />
-                  Materi Berhasil Diselesaikan!
+                  {completedLessonsCount !== undefined && totalLessonsCount !== undefined 
+                    ? `Materi ${completedLessonsCount} dari ${totalLessonsCount} Selesai`
+                    : 'Materi Berhasil Diselesaikan!'}
                 </div>
 
                 {/* Lesson & Course Title */}
@@ -294,13 +326,13 @@ export default function ShareLearningStoryModal({
                   </h2>
                 </div>
 
-                {/* Metrics Badges */}
+                {/* Metrics Badges: Dynamic Calculated Numbers */}
                 <div className="grid grid-cols-3 gap-2">
                   <div className="bg-white/5 border border-white/10 backdrop-blur-md rounded-xl p-2 text-center">
                     <div className="flex items-center justify-center text-amber-400 mb-0.5">
                       <Zap className="w-3.5 h-3.5" />
                     </div>
-                    <p className="font-black text-xs text-white">+{xpEarned} XP</p>
+                    <p className="font-black text-xs text-white">+{customXp} XP</p>
                     <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Exp Poin</p>
                   </div>
 
@@ -308,7 +340,7 @@ export default function ShareLearningStoryModal({
                     <div className="flex items-center justify-center text-sky-400 mb-0.5">
                       <Clock className="w-3.5 h-3.5" />
                     </div>
-                    <p className="font-black text-xs text-white">{durationMinutes} Min</p>
+                    <p className="font-black text-xs text-white">{customDuration} Min</p>
                     <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Waktu</p>
                   </div>
 
@@ -316,8 +348,8 @@ export default function ShareLearningStoryModal({
                     <div className="flex items-center justify-center text-emerald-400 mb-0.5">
                       <Award className="w-3.5 h-3.5" />
                     </div>
-                    <p className="font-black text-xs text-white">100%</p>
-                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold">Lulus Kuis</p>
+                    <p className="font-black text-xs text-white">{customScore}</p>
+                    <p className="text-[8px] uppercase tracking-wider text-slate-400 font-bold truncate">{metric3Label}</p>
                   </div>
                 </div>
 
@@ -345,12 +377,12 @@ export default function ShareLearningStoryModal({
           </div>
 
           {/* RIGHT: Customization Controls & Share Action Buttons */}
-          <div className="lg:col-span-5 space-y-5 flex flex-col justify-between">
-            <div className="space-y-4">
+          <div className="lg:col-span-5 space-y-4 flex flex-col justify-between">
+            <div className="space-y-3.5">
               
               {/* Photo Upload & Change Row */}
               <div>
-                <label className="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+                <label className="text-xs font-bold text-slate-300 mb-1.5 flex items-center justify-between">
                   <span className="flex items-center gap-1.5">
                     <Camera className="w-3.5 h-3.5 text-pink-400" />
                     Foto Profil di Story:
@@ -365,8 +397,8 @@ export default function ShareLearningStoryModal({
                     </button>
                   )}
                 </label>
-                <div className="flex items-center gap-3 p-2.5 bg-slate-950/80 border border-slate-700 rounded-2xl">
-                  <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0 border border-white/20">
+                <div className="flex items-center gap-3 p-2 bg-slate-950/80 border border-slate-700 rounded-2xl">
+                  <div className="w-9 h-9 rounded-xl overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs shrink-0 border border-white/20">
                     {avatarSrc ? (
                       <img src={avatarSrc} alt="Avatar Preview" className="w-full h-full object-cover" />
                     ) : (
@@ -386,76 +418,115 @@ export default function ShareLearningStoryModal({
                 </div>
               </div>
 
-              {/* Aspect Ratio Selector */}
+              {/* Numerical Calculation Adjuster (XP, Durasi, Nilai) */}
               <div>
-                <label className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-                  <Maximize2 className="w-3.5 h-3.5 text-indigo-400" />
-                  Format Rasio Story:
+                <label className="text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1.5">
+                  <Sliders className="w-3.5 h-3.5 text-emerald-400" />
+                  Sesuaikan Angka Perhitungan / Metrik:
                 </label>
-                <div className="grid grid-cols-2 gap-2.5">
-                  <button
-                    type="button"
-                    onClick={() => setAspectRatio('story')}
-                    className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all ${
-                      aspectRatio === 'story'
-                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
-                        : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:border-slate-600'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4" />
-                    Story (9:16)
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setAspectRatio('square')}
-                    className={`flex items-center justify-center gap-2 py-2.5 px-3 rounded-xl border text-xs font-bold transition-all ${
-                      aspectRatio === 'square'
-                        ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
-                        : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:border-slate-600'
-                    }`}
-                  >
-                    <Maximize2 className="w-4 h-4" />
-                    Square Post (1:1)
-                  </button>
+                <div className="grid grid-cols-3 gap-2 bg-slate-950/80 p-2.5 rounded-2xl border border-slate-700">
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 block mb-1">⚡ XP Poin</span>
+                    <input 
+                      type="number"
+                      value={customXp}
+                      onChange={(e) => setCustomXp(Number(e.target.value) || 0)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-black focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 block mb-1">⏱️ Waktu (Mnt)</span>
+                    <input 
+                      type="number"
+                      value={customDuration}
+                      onChange={(e) => setCustomDuration(Number(e.target.value) || 0)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-black focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
+                  <div>
+                    <span className="text-[10px] font-bold text-slate-400 block mb-1">🏆 Hasil/Skor</span>
+                    <input 
+                      type="text"
+                      value={customScore}
+                      onChange={(e) => setCustomScore(e.target.value)}
+                      className="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1 text-xs text-white font-black focus:outline-none focus:border-indigo-500"
+                    />
+                  </div>
                 </div>
               </div>
 
-              {/* Color Theme Selector */}
-              <div>
-                <label className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">
-                  <Palette className="w-3.5 h-3.5 text-purple-400" />
-                  Pilih Tema Warna:
-                </label>
-                <div className="grid grid-cols-2 gap-2">
-                  {(Object.keys(themes) as Array<keyof typeof themes>).map((key) => {
-                    const t = themes[key];
-                    const isSelected = colorTheme === key;
-                    return (
-                      <button
-                        key={key}
-                        type="button"
-                        onClick={() => setColorTheme(key)}
-                        className={`flex items-center gap-2 p-2.5 rounded-xl border text-xs font-bold transition-all text-left ${
-                          isSelected
-                            ? 'border-indigo-400 bg-slate-800 text-white ring-2 ring-indigo-500/20'
-                            : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
-                        }`}
-                      >
-                        <div 
-                          className="w-4 h-4 rounded-full shrink-0 border border-white/20"
-                          style={{ background: t.glow }}
-                        />
-                        <span className="truncate">{t.name}</span>
-                      </button>
-                    );
-                  })}
+              {/* Aspect Ratio & Color Theme Grid */}
+              <div className="grid grid-cols-2 gap-3">
+                {/* Format Rasio */}
+                <div>
+                  <label className="text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1">
+                    <Maximize2 className="w-3.5 h-3.5 text-indigo-400" />
+                    Format Rasio:
+                  </label>
+                  <div className="flex flex-col gap-1.5">
+                    <button
+                      type="button"
+                      onClick={() => setAspectRatio('story')}
+                      className={`flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        aspectRatio === 'story'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                          : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:border-slate-600'
+                      }`}
+                    >
+                      <Smartphone className="w-3.5 h-3.5" />
+                      Story (9:16)
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setAspectRatio('square')}
+                      className={`flex items-center justify-center gap-1.5 py-1.5 px-2.5 rounded-xl border text-xs font-bold transition-all ${
+                        aspectRatio === 'square'
+                          ? 'bg-indigo-600 text-white border-indigo-500 shadow-md shadow-indigo-600/30'
+                          : 'bg-slate-800/80 text-slate-400 border-slate-700 hover:border-slate-600'
+                      }`}
+                    >
+                      <Maximize2 className="w-3.5 h-3.5" />
+                      Square (1:1)
+                    </button>
+                  </div>
+                </div>
+
+                {/* Color Theme */}
+                <div>
+                  <label className="text-xs font-bold text-slate-300 mb-1.5 flex items-center gap-1">
+                    <Palette className="w-3.5 h-3.5 text-purple-400" />
+                    Tema Warna:
+                  </label>
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {(Object.keys(themes) as Array<keyof typeof themes>).map((key) => {
+                      const t = themes[key];
+                      const isSelected = colorTheme === key;
+                      return (
+                        <button
+                          key={key}
+                          type="button"
+                          onClick={() => setColorTheme(key)}
+                          className={`flex items-center gap-1.5 p-1.5 rounded-xl border text-[11px] font-bold transition-all text-left ${
+                            isSelected
+                              ? 'border-indigo-400 bg-slate-800 text-white ring-2 ring-indigo-500/20'
+                              : 'border-slate-800 bg-slate-900/60 text-slate-400 hover:border-slate-700'
+                          }`}
+                        >
+                          <div 
+                            className="w-3 h-3 rounded-full shrink-0 border border-white/20"
+                            style={{ background: t.glow }}
+                          />
+                          <span className="truncate">{t.name.split(' ')[0]}</span>
+                        </button>
+                      );
+                    })}
+                  </div>
                 </div>
               </div>
 
               {/* Custom Quote Input */}
               <div>
-                <label className="text-xs font-bold text-slate-300 mb-1.5 block">
+                <label className="text-xs font-bold text-slate-300 mb-1 block">
                   Tulis Catatan / Quote Pamer Belajar:
                 </label>
                 <textarea
@@ -463,18 +534,18 @@ export default function ShareLearningStoryModal({
                   onChange={(e) => setCustomQuote(e.target.value)}
                   placeholder="Tulis pesan semangat atau caption kamu..."
                   rows={2}
-                  className="w-full bg-slate-950/80 border border-slate-700 rounded-xl p-3 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all resize-none"
+                  className="w-full bg-slate-950/80 border border-slate-700 rounded-xl p-2.5 text-xs text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/40 focus:border-indigo-500 transition-all resize-none"
                 />
               </div>
             </div>
 
             {/* Action Buttons */}
-            <div className="space-y-2.5 pt-2">
+            <div className="space-y-2 pt-1">
               <button
                 type="button"
                 onClick={handleDownload}
                 disabled={isGenerating}
-                className="w-full flex items-center justify-center gap-2.5 py-3.5 px-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-60 active:scale-[0.98]"
+                className="w-full flex items-center justify-center gap-2 py-3 px-4 bg-gradient-to-r from-indigo-600 via-purple-600 to-pink-600 hover:from-indigo-500 hover:to-pink-500 text-white font-black text-sm rounded-2xl shadow-lg shadow-indigo-500/25 transition-all disabled:opacity-60 active:scale-[0.98]"
               >
                 <Download className="w-4 h-4" />
                 {isGenerating ? 'Menghasilkan Gambar HD...' : 'Download Gambar Story (PNG HD)'}
@@ -484,7 +555,7 @@ export default function ShareLearningStoryModal({
                 <button
                   type="button"
                   onClick={handleShareWhatsApp}
-                  className="flex items-center justify-center gap-2 py-2.5 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-3 bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs rounded-xl shadow-md shadow-emerald-600/20 transition-all"
                 >
                   <MessageCircle className="w-4 h-4" />
                   Share ke WhatsApp
@@ -493,7 +564,7 @@ export default function ShareLearningStoryModal({
                 <button
                   type="button"
                   onClick={handleCopyCaption}
-                  className="flex items-center justify-center gap-2 py-2.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-all"
+                  className="flex items-center justify-center gap-2 py-2 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold text-xs rounded-xl border border-slate-700 transition-all"
                 >
                   {copiedText ? (
                     <>
@@ -508,10 +579,6 @@ export default function ShareLearningStoryModal({
                   )}
                 </button>
               </div>
-
-              <p className="text-[10px] text-slate-500 text-center leading-relaxed">
-                💡 Gambar yang di-download beresolusi tinggi (HD) dan dapat langsung di-upload ke WhatsApp Status (SW), Instagram Story (SG), TikTok, atau LinkedIn.
-              </p>
             </div>
 
           </div>
