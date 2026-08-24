@@ -1,10 +1,11 @@
 'use client';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { 
   X, Download, Share2, Copy, Check, Sparkles, Trophy, 
   Clock, Award, Calendar, Zap, MessageCircle, Instagram, 
-  Smartphone, Maximize2, Palette, CheckCircle2, Flame, Heart
+  Smartphone, Maximize2, Palette, CheckCircle2, Flame, Heart,
+  Camera, Upload, Image as ImageIcon, RefreshCw, User
 } from 'lucide-react';
 import { toPng } from 'html-to-image';
 
@@ -12,6 +13,7 @@ interface ShareLearningStoryModalProps {
   isOpen: boolean;
   onClose: () => void;
   studentName: string;
+  studentAvatar?: string;
   studentEmail?: string;
   courseTitle: string;
   chapterTitle: string;
@@ -27,6 +29,7 @@ export default function ShareLearningStoryModal({
   isOpen,
   onClose,
   studentName = 'Student DevGrow',
+  studentAvatar,
   courseTitle = 'CSS Styling: Desain Web',
   chapterTitle = 'CSS Tutorial',
   lessonTitle = 'CSS How To',
@@ -37,12 +40,19 @@ export default function ShareLearningStoryModal({
   courseTheme = 'css'
 }: ShareLearningStoryModalProps) {
   const cardRef = useRef<HTMLDivElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const [aspectRatio, setAspectRatio] = useState<'story' | 'square'>('story');
   const [colorTheme, setColorTheme] = useState<'midnight' | 'emerald' | 'sunset' | 'ocean'>('midnight');
   const [customQuote, setCustomQuote] = useState('Alhamdulillah menyelesaikan materi ini dengan lancar! On progress menuju Web Developer handal 🚀🔥');
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedText, setCopiedText] = useState(false);
-  const [copiedImage, setCopiedImage] = useState(false);
+  const [avatarSrc, setAvatarSrc] = useState<string | undefined>(studentAvatar);
+
+  useEffect(() => {
+    if (studentAvatar) {
+      setAvatarSrc(studentAvatar);
+    }
+  }, [studentAvatar]);
 
   if (!isOpen) return null;
 
@@ -96,6 +106,18 @@ export default function ShareLearningStoryModal({
 
   const currentTheme = themes[colorTheme];
 
+  const handleCustomPhotoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      if (typeof event.target?.result === 'string') {
+        setAvatarSrc(event.target.result);
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
   const handleDownload = async () => {
     if (!cardRef.current) return;
     setIsGenerating(true);
@@ -135,6 +157,15 @@ export default function ShareLearningStoryModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6 bg-slate-950/80 backdrop-blur-md overflow-y-auto animate-fadeIn">
       <div className="bg-slate-900 border border-slate-800 rounded-3xl w-full max-w-4xl shadow-2xl overflow-hidden flex flex-col my-auto max-h-[92vh]">
         
+        {/* Hidden File Input for Avatar Upload */}
+        <input 
+          type="file" 
+          ref={fileInputRef} 
+          onChange={handleCustomPhotoUpload} 
+          accept="image/*" 
+          className="hidden" 
+        />
+
         {/* Header Bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-800 bg-slate-900/90 sticky top-0 z-20">
           <div className="flex items-center gap-3">
@@ -211,15 +242,24 @@ export default function ShareLearningStoryModal({
                   </span>
                 </div>
 
-                {/* Student Profile Row */}
+                {/* Student Profile Row with Real Avatar Image */}
                 <div className="flex items-center gap-3 pt-1">
-                  <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center font-black text-sm text-white shadow-lg shadow-purple-500/20 border border-white/20">
-                    {studentName.charAt(0).toUpperCase()}
+                  <div className="w-12 h-12 rounded-2xl overflow-hidden bg-gradient-to-tr from-indigo-600 via-purple-600 to-pink-500 flex items-center justify-center font-black text-base text-white shadow-lg shadow-purple-500/20 border-2 border-white/30 shrink-0">
+                    {avatarSrc ? (
+                      <img 
+                        src={avatarSrc} 
+                        alt={studentName} 
+                        className="w-full h-full object-cover"
+                        crossOrigin="anonymous"
+                      />
+                    ) : (
+                      <span>{studentName.charAt(0).toUpperCase()}</span>
+                    )}
                   </div>
                   <div className="min-w-0 flex-1">
                     <h4 className="font-black text-sm text-white truncate flex items-center gap-1.5">
                       {studentName}
-                      <CheckCircle2 className="w-3.5 h-3.5 text-sky-400 shrink-0 inline" />
+                      <CheckCircle2 className="w-4 h-4 text-sky-400 shrink-0 inline" />
                     </h4>
                     <p className="text-[10px] text-slate-300 font-medium">
                       Student @ DevGrow Pro Track
@@ -307,6 +347,45 @@ export default function ShareLearningStoryModal({
           {/* RIGHT: Customization Controls & Share Action Buttons */}
           <div className="lg:col-span-5 space-y-5 flex flex-col justify-between">
             <div className="space-y-4">
+              
+              {/* Photo Upload & Change Row */}
+              <div>
+                <label className="text-xs font-bold text-slate-300 mb-2 flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <Camera className="w-3.5 h-3.5 text-pink-400" />
+                    Foto Profil di Story:
+                  </span>
+                  {avatarSrc && (
+                    <button
+                      type="button"
+                      onClick={() => setAvatarSrc(undefined)}
+                      className="text-[10px] font-bold text-rose-400 hover:underline"
+                    >
+                      Reset ke Inisial
+                    </button>
+                  )}
+                </label>
+                <div className="flex items-center gap-3 p-2.5 bg-slate-950/80 border border-slate-700 rounded-2xl">
+                  <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-tr from-indigo-500 to-purple-600 flex items-center justify-center text-white font-bold text-sm shrink-0 border border-white/20">
+                    {avatarSrc ? (
+                      <img src={avatarSrc} alt="Avatar Preview" className="w-full h-full object-cover" />
+                    ) : (
+                      <span>{studentName.charAt(0).toUpperCase()}</span>
+                    )}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <button
+                      type="button"
+                      onClick={() => fileInputRef.current?.click()}
+                      className="w-full py-1.5 px-3 bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-600 text-xs font-bold rounded-xl transition-colors flex items-center justify-center gap-1.5"
+                    >
+                      <Upload className="w-3.5 h-3.5 text-indigo-400" />
+                      Ganti / Unggah Foto
+                    </button>
+                  </div>
+                </div>
+              </div>
+
               {/* Aspect Ratio Selector */}
               <div>
                 <label className="text-xs font-bold text-slate-300 mb-2 flex items-center gap-1.5">

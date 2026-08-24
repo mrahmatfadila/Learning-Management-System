@@ -1610,6 +1610,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
         isOpen={isShareStoryModalOpen}
         onClose={() => setIsShareStoryModalOpen(false)}
         studentName={currentUser?.name || currentUser?.fullName || currentUser?.username || 'Student DevGrow'}
+        studentAvatar={currentUser?.profilePicture || currentUser?.avatar || currentUser?.image}
         courseTitle={moduleData?.title || 'Kursus DevGrow'}
         chapterTitle={`Progress: ${progressPct}% Selesai`}
         lessonTitle={progressPct >= 100 ? '🎉 Lulus & Menyelesaikan Seluruh Modul!' : `${validCompletedCount} dari ${totalLessonsCount} Materi Selesai`}

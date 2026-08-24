@@ -171,6 +171,7 @@ export default function LessonPage() {
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isShareStoryModalOpen, setIsShareStoryModalOpen] = useState(false);
   const [currentStudentName, setCurrentStudentName] = useState('Student DevGrow');
+  const [currentStudentAvatar, setCurrentStudentAvatar] = useState<string | undefined>(undefined);
   const [existingUserReview, setExistingUserReview] = useState<any>(null);
   const [isEditingModuleReview, setIsEditingModuleReview] = useState(false);
   const [moduleUserRating, setModuleUserRating] = useState(5);
@@ -294,6 +295,9 @@ export default function LessonPage() {
         const user = JSON.parse(stored);
         if (user?.name || user?.fullName || user?.username) {
           setCurrentStudentName(user.name || user.fullName || user.username);
+        }
+        if (user?.profilePicture || user?.avatar || user?.image) {
+          setCurrentStudentAvatar(user.profilePicture || user.avatar || user.image);
         }
         if (user?.role?.toUpperCase() === 'STUDENT' && user.id) {
           setIsStudentRole(true);
@@ -1868,6 +1872,7 @@ export default function LessonPage() {
         isOpen={isShareStoryModalOpen}
         onClose={() => setIsShareStoryModalOpen(false)}
         studentName={currentStudentName}
+        studentAvatar={currentStudentAvatar}
         courseTitle={dbModuleData?.title || lessonData.courseId?.toUpperCase() || 'Kursus DevGrow'}
         chapterTitle={lessonData.chapter || 'Materi Pemrograman'}
         lessonTitle={lessonData.title || 'Materi DevGrow'}
