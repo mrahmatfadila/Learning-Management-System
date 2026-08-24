@@ -1150,24 +1150,46 @@ export default function LessonPage() {
                     border: 1px solid #fecdd3 !important;
                   }
 
-                  /* 3. White Cards & Grid Boxes */
+                  /* 3. Grid Boxes & Cards */
                   .prose-custom [class*="bg-white"] {
                     background-color: #ffffff !important;
                     border: 1px solid #e2e8f0 !important;
                     border-radius: 1rem !important;
                   }
-                  .prose-custom [class*="bg-slate-50"] {
+                  .prose-custom div[class*="bg-slate-50"] {
                     background-color: #f8fafc !important;
                     border: 1px solid #e2e8f0 !important;
+                    color: #1e293b !important;
                   }
-                  .prose-custom [class*="bg-slate-100"] {
+                  .prose-custom div[class*="bg-slate-50"] p {
+                    color: #475569 !important;
+                  }
+                  .prose-custom div[class*="bg-slate-100"] {
                     background-color: #f1f5f9 !important;
                     border: 1px solid #cbd5e1 !important;
+                    color: #1e293b !important;
                   }
-                  .prose-custom [class*="bg-slate-900"] {
+                  .prose-custom div[class*="bg-slate-100"] p {
+                    color: #475569 !important;
+                  }
+
+                  /* Code Block Snippet (Dark Terminal Style) */
+                  .prose-custom div[class*="font-mono"][class*="bg-slate-900"],
+                  .prose-custom pre[class*="bg-slate-900"],
+                  .prose-custom div[class*="shadow-inner"][class*="bg-slate-900"] {
                     background-color: #0f172a !important;
                     color: #f8fafc !important;
+                    border: 1px solid #1e293b !important;
+                    border-radius: 1rem !important;
                   }
+                  .prose-custom div[class*="bg-slate-900"] p,
+                  .prose-custom div[class*="bg-slate-900"] span {
+                    color: inherit;
+                  }
+                  .prose-custom div[class*="bg-slate-900"] [class*="text-amber-400"] { color: #fbbf24 !important; }
+                  .prose-custom div[class*="bg-slate-900"] [class*="text-sky-400"] { color: #38bdf8 !important; }
+                  .prose-custom div[class*="bg-slate-900"] [class*="text-emerald-400"] { color: #34d399 !important; }
+                  .prose-custom div[class*="bg-slate-900"] [class*="text-slate-400"] { color: #94a3b8 !important; }
 
                   /* Dark Mode Specific Overrides */
                   .dark .prose-custom [class*="bg-indigo-50"],
@@ -1217,12 +1239,20 @@ export default function LessonPage() {
                     border: 1px solid #1e293b !important;
                     color: #f8fafc !important;
                   }
-                  .dark .prose-custom [class*="bg-slate-50"],
-                  .dark .prose-custom [class*="bg-slate-100"] {
+                  .dark .prose-custom div[class*="bg-slate-50"],
+                  .dark .prose-custom div[class*="bg-slate-100"] {
                     background-color: #1e293b !important;
                     border: 1px solid #334155 !important;
+                    color: #f8fafc !important;
+                  }
+                  .dark .prose-custom div[class*="bg-slate-50"] p,
+                  .dark .prose-custom div[class*="bg-slate-100"] p {
                     color: #cbd5e1 !important;
                   }
+                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-amber-600"] { color: #fcd34d !important; }
+                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-sky-600"] { color: #38bdf8 !important; }
+                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-emerald-600"] { color: #34d399 !important; }
+                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-slate-700"] { color: #e2e8f0 !important; }
                 `}</style>
                 <div dangerouslySetInnerHTML={{ __html: lessonData?.theory || '' }} />
               </div>
