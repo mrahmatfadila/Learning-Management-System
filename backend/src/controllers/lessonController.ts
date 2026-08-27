@@ -4,7 +4,7 @@ import prisma from '../lib/prisma';
 export const getLessonsByModuleId = async (req: Request, res: Response): Promise<any> => {
   try {
     const moduleId = req.params.moduleId as string;
-    const contentApiSlug = moduleId === '67adde6d-81a6-4470-b88d-506b733f87ee' ? 'html' : (moduleId === 'ba1383a2-219d-44ab-bf63-804d5a0f0902' ? 'css' : moduleId);
+    const contentApiSlug = moduleId === '67adde6d-81a6-4470-b88d-506b733f87ee' ? 'html' : (moduleId === 'ba1383a2-219d-44ab-bf63-804d5a0f0902' ? 'css' : (moduleId === 'mastering-ui-design-for-impactful-solutions' ? 'javascript' : moduleId));
 
     // Coba ambil dari Content API terlebih dahulu
     try {
