@@ -1167,7 +1167,121 @@ export default function LessonPage() {
                     color: ${isDark ? '#cbd5e1' : '#475569'} !important;
                   }
 
-                  /* ── 5. NUMBER BADGES & ICONS ── */
+                  /* ── 5. DARK FEATURE CARDS (e.g. "Mengapa Anda Wajib Menguasai JavaScript?") ── */
+                  .prose-custom div[class*="bg-slate-900"],
+                  .prose-custom div[class*="bg-slate-800"],
+                  .prose-custom div[class*="bg-gray-900"],
+                  .prose-custom div[class*="bg-black"] {
+                    background-color: #0f172a !important;
+                    color: #f8fafc !important;
+                    border: 1px solid #334155 !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] h2,
+                  .prose-custom div[class*="bg-slate-900"] h3,
+                  .prose-custom div[class*="bg-slate-900"] h4,
+                  .prose-custom div[class*="bg-slate-800"] h2,
+                  .prose-custom div[class*="bg-slate-800"] h3,
+                  .prose-custom div[class*="bg-slate-800"] h4 {
+                    color: #fbbf24 !important; /* amber-400 */
+                    font-weight: 900 !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0.75rem !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] p,
+                  .prose-custom div[class*="bg-slate-800"] p {
+                    color: #cbd5e1 !important;
+                    line-height: 1.7 !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] ul,
+                  .prose-custom div[class*="bg-slate-800"] ul,
+                  .prose-custom div[class*="bg-slate-900"] ol,
+                  .prose-custom div[class*="bg-slate-800"] ol {
+                    list-style: none !important;
+                    padding-left: 0 !important;
+                    margin-bottom: 0 !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] li,
+                  .prose-custom div[class*="bg-slate-800"] li {
+                    color: #e2e8f0 !important;
+                    display: flex !important;
+                    align-items: flex-start !important;
+                    gap: 0.625rem !important;
+                    margin-bottom: 0.625rem !important;
+                    font-size: 0.875rem !important;
+                    line-height: 1.6 !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] li strong,
+                  .prose-custom div[class*="bg-slate-800"] li strong {
+                    color: #ffffff !important;
+                    font-weight: 800 !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] li span,
+                  .prose-custom div[class*="bg-slate-800"] li span {
+                    color: #cbd5e1 !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-900"] span[class*="text-amber-"],
+                  .prose-custom div[class*="bg-slate-800"] span[class*="text-amber-"],
+                  .prose-custom div[class*="bg-slate-900"] span[class*="text-yellow-"],
+                  .prose-custom div[class*="bg-slate-800"] span[class*="text-yellow-"] {
+                    color: #fbbf24 !important;
+                    font-weight: 900 !important;
+                    flex-shrink: 0 !important;
+                  }
+
+                  /* ── 6. TINTED COMPARISON CARDS (HTML, CSS, JS) ── */
+                  .prose-custom div[class*="bg-yellow-50"] {
+                    background-color: ${isDark ? 'rgba(245, 158, 11, 0.12)' : '#fefce8'} !important;
+                    border: 1px solid ${isDark ? 'rgba(245, 158, 11, 0.3)' : '#fef08a'} !important;
+                    border-radius: 0.875rem !important;
+                  }
+                  .prose-custom div[class*="bg-yellow-50"] div[class*="text-yellow-"] {
+                    color: ${isDark ? '#fcd34d' : '#a16207'} !important;
+                    font-weight: 800 !important;
+                  }
+                  .prose-custom div[class*="bg-yellow-50"] p {
+                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
+                  }
+
+                  .prose-custom div[class*="bg-blue-50"] {
+                    background-color: ${isDark ? 'rgba(37, 99, 235, 0.12)' : '#eff6ff'} !important;
+                    border: 1px solid ${isDark ? 'rgba(37, 99, 235, 0.3)' : '#bfdbfe'} !important;
+                    border-radius: 0.875rem !important;
+                  }
+                  .prose-custom div[class*="bg-blue-50"] div[class*="text-blue-"] {
+                    color: ${isDark ? '#93c5fd' : '#1d4ed8'} !important;
+                    font-weight: 800 !important;
+                  }
+                  .prose-custom div[class*="bg-blue-50"] p {
+                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
+                  }
+
+                  .prose-custom div[class*="bg-orange-50"],
+                  .prose-custom div[class*="bg-amber-50"] {
+                    background-color: ${isDark ? 'rgba(234, 88, 12, 0.12)' : '#fff7ed'} !important;
+                    border: 1px solid ${isDark ? 'rgba(234, 88, 12, 0.3)' : '#fed7aa'} !important;
+                    border-radius: 0.875rem !important;
+                  }
+                  .prose-custom div[class*="bg-orange-50"] div[class*="text-orange-"],
+                  .prose-custom div[class*="bg-amber-50"] div[class*="text-amber-"] {
+                    color: ${isDark ? '#fdba74' : '#c2410c'} !important;
+                    font-weight: 800 !important;
+                  }
+                  .prose-custom div[class*="bg-orange-50"] p,
+                  .prose-custom div[class*="bg-amber-50"] p {
+                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
+                  }
+
+                  /* ── 7. NUMBER BADGES & ICONS ── */
                   .prose-custom div[class*="w-8"][class*="h-8"],
                   .prose-custom div[class*="w-10"][class*="h-10"] {
                     display: inline-flex !important;
@@ -1178,7 +1292,7 @@ export default function LessonPage() {
                     border-radius: 0.75rem !important;
                   }
 
-                  /* ── 6. CODE BLOCK SNIPPETS (TERMINAL) ── */
+                  /* ── 8. CODE BLOCK SNIPPETS (TERMINAL) ── */
                   .prose-custom div[class*="font-mono"][class*="bg-slate-900"],
                   .prose-custom pre[class*="bg-slate-900"],
                   .prose-custom div[class*="shadow-inner"][class*="bg-slate-900"] {
