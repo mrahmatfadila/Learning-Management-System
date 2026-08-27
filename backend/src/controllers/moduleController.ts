@@ -129,7 +129,7 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
     // 🌐 INTEGRASI CONTENT-API-SERVER (lms_content_db)
     // Ambil materi kurikulum resmi langsung dari Content API port 5001
     try {
-      const contentApiSlug = id === '67adde6d-81a6-4470-b88d-506b733f87ee' ? 'html' : (id === 'ba1383a2-219d-44ab-bf63-804d5a0f0902' ? 'css' : (id === 'mastering-ui-design-for-impactful-solutions' || id === 'javascript' ? 'javascript' : id));
+      const contentApiSlug = id === '67adde6d-81a6-4470-b88d-506b733f87ee' ? 'html' : (id === 'ba1383a2-219d-44ab-bf63-804d5a0f0902' ? 'css' : (id === 'mastering-ui-design-for-impactful-solutions' || id === 'javascript' ? 'javascript' : (id === 'php-backend-mastery' || id === 'php' ? 'php' : id)));
       const contentRes = await fetch(`http://127.0.0.1:5001/api/v1/modules/${contentApiSlug}`, {
         signal: AbortSignal.timeout(2000)
       });

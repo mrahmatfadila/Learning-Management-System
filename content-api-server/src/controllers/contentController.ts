@@ -60,7 +60,9 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
       'css': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
       'ba1383a2-219d-44ab-bf63-804d5a0f0902': 'ba1383a2-219d-44ab-bf63-804d5a0f0902',
       'mastering-ui-design-for-impactful-solutions': 'javascript',
-      'javascript': 'javascript'
+      'javascript': 'javascript',
+      'php-backend-mastery': 'php',
+      'php': 'php'
     };
 
     const targetId = aliasMap[rawId] || rawId;
