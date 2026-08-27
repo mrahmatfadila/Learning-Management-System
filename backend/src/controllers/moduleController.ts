@@ -235,7 +235,7 @@ export const createModule = async (req: Request, res: Response): Promise<any> =>
 export const updateModule = async (req: Request, res: Response): Promise<any> => {
   try {
     const id = req.params.id as string;
-    const { title, category, description, thumbnail } = req.body;
+    const { title, category, description, instructorId, thumbnail, isVerified } = req.body;
 
     const existingModule = await prisma.module.findUnique({ where: { id } });
     if (!existingModule) {
@@ -248,7 +248,12 @@ export const updateModule = async (req: Request, res: Response): Promise<any> =>
         title: title || existingModule.title,
         category: category || existingModule.category,
         description: description !== undefined ? description : existingModule.description,
-        thumbnail: thumbnail !== undefined ? (thumbnail || null) : existingModule.thumbnail
+        instructorId: instructorId || existingModule.instructorId,
+        thumbnail: thumbnail !== undefined ? (thumbnail || null) : existingModule.thumbnail,
+        isVerified: isVerified !== undefined ? Boolean(isVerified) : existingModule.isVerified
+      },
+      include: {
+        instructor: { select: { id: true, name: true, email: true, role: true, profilePicture: true } }
       }
     });
 
@@ -256,6 +261,44 @@ export const updateModule = async (req: Request, res: Response): Promise<any> =>
   } catch (error) {
     console.error('Error updating module:', error);
     res.status(500).json({ message: 'Error updating module' });
+  }
+};
+
+export const reassignInstructor = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const { fromInstructorId, toInstructorId } = req.body;
+    if (!fromInstructorId || !toInstructorId) {
+      return res.status(400).json({ message: 'fromInstructorId and toInstructorId are required' });
+    }
+    const result = await prisma.module.updateMany({
+      where: { instructorId: fromInstructorId },
+      data: { instructorId: toInstructorId }
+    });
+    res.json({ message: 'Semua modul berhasil dipindahkan ke instruktur baru', count: result.count });
+  } catch (error) {
+    console.error('Error reassigning instructor:', error);
+    res.status(500).json({ message: 'Error reassigning instructor' });
+  }
+};
+
+export const reassignSingleModule = async (req: Request, res: Response): Promise<any> => {
+  try {
+    const id = req.params.id as string;
+    const { instructorId } = req.body;
+    if (!instructorId) {
+      return res.status(400).json({ message: 'instructorId is required' });
+    }
+    const updated = await prisma.module.update({
+      where: { id },
+      data: { instructorId },
+      include: {
+        instructor: { select: { id: true, name: true, email: true, role: true, profilePicture: true } }
+      }
+    });
+    res.json({ message: 'Instruktur pengampu berhasil diperbarui', module: updated });
+  } catch (error) {
+    console.error('Error reassigning single module:', error);
+    res.status(500).json({ message: 'Error reassigning module' });
   }
 };
 

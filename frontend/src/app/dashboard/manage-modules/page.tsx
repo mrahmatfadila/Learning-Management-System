@@ -118,10 +118,11 @@ export default function ManageModulesPage() {
   // Fetch data
   const fetchInstructors = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/users?role=INSTRUCTOR');
+      const res = await fetch('http://localhost:5000/api/users');
       if (res.ok) {
         const data = await res.json();
-        setInstructors(data);
+        const eligible = data.filter((u: any) => u.role === 'INSTRUCTOR' || u.role === 'ADMIN');
+        setInstructors(eligible);
       }
     } catch (err) {
       console.error('Failed to fetch instructors', err);
@@ -204,7 +205,7 @@ export default function ManageModulesPage() {
         title: mod.title,
         category: mod.category,
         description: mod.description || '',
-        instructorId: mod.instructor?.id || user?.id || '',
+        instructorId: mod.instructorId || mod.instructor?.id || user?.id || '',
         thumbnail: mod.thumbnail || ''
       });
       setThumbnailPreview(mod.thumbnail || '');
@@ -1543,10 +1544,10 @@ export default function ManageModulesPage() {
                       onChange={(e) => setFormData({ ...formData, instructorId: e.target.value })}
                       className="w-full px-4 py-3 bg-slate-50 dark:bg-[#0d101d] border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-bold text-slate-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500/30 focus:border-indigo-500"
                     >
-                      <option value={user?.id}>Saya Sendiri ({user?.name})</option>
-                      {instructors.map(ins => (
+                      <option value={user?.id}>Saya Sendiri ({user?.name || 'Admin'})</option>
+                      {instructors.filter(ins => ins.id !== user?.id).map(ins => (
                         <option key={ins.id} value={ins.id}>
-                          {ins.name} ({ins.email})
+                          {ins.name} ({ins.email}) {ins.role === 'ADMIN' ? '[Admin]' : '[Instruktur]'}
                         </option>
                       ))}
                     </select>
@@ -1727,8 +1728,8 @@ export default function ManageModulesPage() {
                   className="w-full px-4 py-2.5 bg-slate-50 dark:bg-[#0d101d] border border-slate-200 dark:border-slate-800 rounded-xl text-sm font-bold text-slate-800 dark:text-white focus:outline-none"
                 >
                   <option value="">-- Pilih Instruktur Tujuan --</option>
-                  <option value={user?.id}>Saya Sendiri ({user?.name})</option>
-                  {instructors.map(ins => (
+                  <option value={user?.id}>Saya Sendiri ({user?.name || 'Admin'})</option>
+                  {instructors.filter(ins => ins.id !== user?.id).map(ins => (
                     <option key={ins.id} value={ins.id}>{ins.name} ({ins.email})</option>
                   ))}
                 </select>
