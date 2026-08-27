@@ -1071,8 +1071,8 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 return (
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 bg-slate-50/70 rounded-2xl border border-slate-100 text-xs">
                     {[5, 4, 3, 2, 1].map(st => {
-                      const count = counts[st] || (st === 5 ? Math.round(totalReviews * 0.75) : st === 4 ? Math.round(totalReviews * 0.2) : 0);
-                      const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : (st === 5 ? 80 : st === 4 ? 20 : 0);
+                      const count = counts[st] || 0;
+                      const pct = totalReviews > 0 ? Math.round((count / totalReviews) * 100) : 0;
                       return (
                         <div key={st} className="flex items-center gap-2">
                           <span className="w-12 font-bold text-slate-600 flex items-center gap-1 shrink-0">

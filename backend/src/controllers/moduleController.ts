@@ -180,7 +180,7 @@ export const getModuleById = async (req: Request, res: Response): Promise<any> =
     const reviews = moduleItem.reviews || [];
     const avgRating = reviews.length > 0
       ? Number((reviews.reduce((acc, r) => acc + r.rating, 0) / reviews.length).toFixed(1))
-      : 4.9;
+      : 0;
 
     const lessons = moduleItem.lessons || [];
     const videoLessons = lessons.filter(l => l.type === 'video');
