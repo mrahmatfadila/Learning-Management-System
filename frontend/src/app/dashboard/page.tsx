@@ -1936,8 +1936,11 @@ export default function DashboardPage() {
       const totalProgress = enrolledStudents.filter(s => s.status === 'APPROVED').reduce((sum, s) => sum + (s.progress || 0), 0);
       const avgProgress = approvedCount > 0 ? Math.round(totalProgress / approvedCount) : 0;
 
-      // Unique Modules Instructor Teaches (for drop down filter)
-      const instructorModules = modules.filter(m => m.instructor?.id === user.id);
+      const instructorModules = modules.filter((m: any) => 
+        m.instructor?.id === user.id || 
+        m.instructorId === user.id ||
+        (m.instructor?.email && user?.email && m.instructor.email.toLowerCase() === user.email.toLowerCase())
+      );
 
       // Filtering Logic
       const filteredStudents = enrolledStudents.filter(s => {

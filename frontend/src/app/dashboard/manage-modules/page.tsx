@@ -137,7 +137,11 @@ export default function ManageModulesPage() {
         const data = await res.json();
         const r = currentUser?.role?.toUpperCase();
         if (r === 'INSTRUCTOR') {
-          setModules(data.filter((m: any) => m.instructor?.id === currentUser.id));
+          setModules(data.filter((m: any) => 
+            m.instructor?.id === currentUser.id ||
+            m.instructorId === currentUser.id ||
+            (m.instructor?.email && currentUser?.email && m.instructor.email.toLowerCase() === currentUser.email.toLowerCase())
+          ));
         } else {
           setModules(data);
         }

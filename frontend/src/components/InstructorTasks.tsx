@@ -43,7 +43,11 @@ export default function InstructorTasks({ user, activeMenu }: { user: any; activ
         const res = await fetch(`http://localhost:5000/api/modules`);
         if (res.ok) {
           const all = await res.json();
-          const filtered = all.filter((m: any) => m.instructor?.id === user.id);
+          const filtered = all.filter((m: any) => 
+            m.instructor?.id === user.id || 
+            m.instructorId === user.id ||
+            (m.instructor?.email && user?.email && m.instructor.email.toLowerCase() === user.email.toLowerCase())
+          );
           setModules(filtered);
           if (filtered.length > 0 && !selectedModule) {
             setSelectedModule(filtered[0].id);
