@@ -448,9 +448,9 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
                   {/* Rating */}
                   <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-3 py-1 rounded-xl">
-                    <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
-                    <span className="font-black text-white">{Number(avgRating).toFixed(1)}</span>
-                    <span className="text-white/80">({totalReviews} rating)</span>
+                    <Star className={`w-4 h-4 ${avgRating > 0 ? 'fill-amber-300 text-amber-300' : 'text-white/60'}`} />
+                    <span className="font-black text-white">{avgRating > 0 ? Number(avgRating).toFixed(1) : '–'}</span>
+                    <span className="text-white/80">({totalReviews > 0 ? `${totalReviews} rating` : 'Belum ada rating'})</span>
                   </div>
 
                   {/* Enrolled Students (Order) */}
@@ -882,9 +882,9 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
               <div className="pt-2 flex flex-wrap items-center gap-y-2.5 gap-x-4 text-xs sm:text-sm font-semibold text-white/90">
                 {/* Rating */}
                 <div className="flex items-center gap-1.5 bg-amber-400/20 backdrop-blur-sm border border-amber-300/40 px-3 py-1 rounded-xl">
-                  <Star className="w-4 h-4 fill-amber-300 text-amber-300" />
-                  <span className="font-black text-white">{Number(avgRating).toFixed(1)}</span>
-                  <span className="text-white/80">({totalReviews} ulasan)</span>
+                  <Star className={`w-4 h-4 ${avgRating > 0 ? 'fill-amber-300 text-amber-300' : 'text-white/60'}`} />
+                  <span className="font-black text-white">{avgRating > 0 ? Number(avgRating).toFixed(1) : '–'}</span>
+                  <span className="text-white/80">({totalReviews > 0 ? `${totalReviews} ulasan` : 'Belum ada ulasan'})</span>
                 </div>
 
                 {/* Enrolled Students (Order) */}
@@ -929,7 +929,7 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
               <div className="flex items-center justify-between">
                 <span className="text-xs font-black uppercase tracking-wider text-white/80">Kurikulum Resmi</span>
                 <span className="px-2.5 py-0.5 bg-emerald-400/20 border border-emerald-300/30 text-emerald-200 text-[10px] font-black rounded-full">
-                  8 Bab Lengkap
+                  {syllabus.length} Bab Lengkap
                 </span>
               </div>
               <div className="grid grid-cols-2 gap-2 text-center">
@@ -938,8 +938,8 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                   <p className="text-[10px] text-white/75 font-semibold uppercase">Total Materi</p>
                 </div>
                 <div className="bg-black/20 rounded-xl p-2.5 border border-white/10">
-                  <p className="text-lg font-black text-amber-300">{Number(avgRating).toFixed(1)}</p>
-                  <p className="text-[10px] text-white/75 font-semibold uppercase">Skor Rating</p>
+                  <p className="text-lg font-black text-amber-300">{avgRating > 0 ? Number(avgRating).toFixed(1) : '–'}</p>
+                  <p className="text-[10px] text-white/75 font-semibold uppercase">{avgRating > 0 ? 'Skor Rating' : 'Belum Dinilai'}</p>
                 </div>
               </div>
               <p className="text-[11px] text-white/80 text-center leading-relaxed">
@@ -1036,17 +1036,23 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
                 {/* Score Hero */}
                 <div className="flex items-center gap-4 bg-gradient-to-br from-amber-50 to-orange-50 border border-amber-200/80 px-6 py-4 rounded-3xl shrink-0 shadow-sm">
                   <div className="text-center">
-                    <div className="text-3xl sm:text-4xl font-black text-amber-800 tracking-tight">{Number(avgRating).toFixed(1)}</div>
-                    <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">dari 5.0</div>
+                    <div className="text-3xl sm:text-4xl font-black text-amber-800 tracking-tight">
+                      {avgRating > 0 ? Number(avgRating).toFixed(1) : '–'}
+                    </div>
+                    <div className="text-[10px] font-bold text-amber-600 uppercase tracking-wider">
+                      {avgRating > 0 ? 'dari 5.0' : 'Belum Ada Rating'}
+                    </div>
                   </div>
                   <div className="h-10 w-px bg-amber-200" />
                   <div>
                     <div className="flex text-amber-400 mb-1">
                       {[1, 2, 3, 4, 5].map(st => (
-                        <Star key={st} className={`w-4 h-4 ${st <= Math.round(avgRating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
+                        <Star key={st} className={`w-4 h-4 ${avgRating > 0 && st <= Math.round(avgRating) ? 'fill-amber-400 text-amber-400' : 'text-slate-200'}`} />
                       ))}
                     </div>
-                    <p className="text-[11px] font-bold text-amber-900">{totalReviews} Ulasan Terverifikasi</p>
+                    <p className="text-[11px] font-bold text-amber-900">
+                      {totalReviews > 0 ? `${totalReviews} Ulasan Terverifikasi` : 'Belum ada ulasan dari siswa'}
+                    </p>
                   </div>
                 </div>
               </div>
