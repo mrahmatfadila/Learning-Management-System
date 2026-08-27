@@ -1048,79 +1048,128 @@ export default function LessonPage() {
               `}
               >
                 <style>{`
-                  /* 1. Hero Gradient Banners */
-                  .prose-custom [class*="from-teal-"] {
-                    background: linear-gradient(135deg, #0d9488 0%, #047857 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-blue-"] {
-                    background: linear-gradient(135deg, #2563eb 0%, #4338ca 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-indigo-"] {
-                    background: linear-gradient(135deg, #4f46e5 0%, #7e22ce 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-violet-"] {
-                    background: linear-gradient(135deg, #7c3aed 0%, #581c87 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-pink-"],
-                  .prose-custom [class*="from-rose-"] {
-                    background: linear-gradient(135deg, #db2777 0%, #be123c 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-cyan-"] {
-                    background: linear-gradient(135deg, #0891b2 0%, #1d4ed8 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-amber-"] {
-                    background: linear-gradient(135deg, #d97706 0%, #c2410c 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="from-slate-700"] {
-                    background: linear-gradient(135deg, #334155 0%, #0f172a 100%) !important;
-                    color: #ffffff !important;
-                    border-radius: 1.5rem !important;
-                    padding: 2rem !important;
-                  }
-                  .prose-custom [class*="text-white"] h1,
-                  .prose-custom [class*="text-white"] h2,
-                  .prose-custom [class*="text-white"] h3,
-                  .prose-custom [class*="text-white"] h4,
-                  .prose-custom [class*="text-white"] p,
-                  .prose-custom [class*="text-white"] span,
-                  .prose-custom [class*="text-white"] strong,
-                  .prose-custom [class*="text-white"] code {
-                    color: #ffffff !important;
-                  }
-                  .prose-custom [class*="text-white"] p {
-                    color: rgba(255, 255, 255, 0.94) !important;
-                  }
-                  .prose-custom [class*="text-white"] [class*="bg-white/20"],
-                  .prose-custom [class*="text-white"] [class*="backdrop-blur-md"] {
-                    background: rgba(255, 255, 255, 0.22) !important;
-                    border: 1px solid rgba(255, 255, 255, 0.35) !important;
-                    color: #ffffff !important;
+                  /* ── 1. HERO BANNERS & CARDS ── */
+                  .prose-custom div[class*="from-amber-"],
+                  .prose-custom div[class*="from-yellow-"] {
+                    background: ${isDark ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(30, 41, 59, 0.85) 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)'} !important;
+                    border: 1px solid ${isDark ? 'rgba(245, 158, 11, 0.35)' : '#fde68a'} !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                    box-shadow: ${isDark ? '0 4px 20px -2px rgba(0, 0, 0, 0.5)' : '0 4px 16px -2px rgba(245, 158, 11, 0.08)'} !important;
                   }
 
-                  /* 2. Number Badges (e.g. 1 Apa itu CSS?, 1 External CSS) */
-                  .prose-custom [class*="w-8"][class*="h-8"],
-                  .prose-custom [class*="w-10"][class*="h-10"] {
+                  .prose-custom div[class*="from-teal-"] {
+                    background: ${isDark ? 'linear-gradient(135deg, rgba(13, 148, 136, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 40%, #ffffff 100%)'} !important;
+                    border: 1px solid ${isDark ? 'rgba(20, 184, 166, 0.35)' : '#99f6e4'} !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                  }
+
+                  .prose-custom div[class*="from-blue-"] {
+                    background: ${isDark ? 'linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #ffffff 100%)'} !important;
+                    border: 1px solid ${isDark ? 'rgba(59, 130, 246, 0.35)' : '#bfdbfe'} !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                  }
+
+                  .prose-custom div[class*="from-indigo-"] {
+                    background: ${isDark ? 'linear-gradient(135deg, rgba(79, 70, 229, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 40%, #ffffff 100%)'} !important;
+                    border: 1px solid ${isDark ? 'rgba(99, 102, 241, 0.35)' : '#c7d2fe'} !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                  }
+
+                  .prose-custom div[class*="from-violet-"],
+                  .prose-custom div[class*="from-purple-"] {
+                    background: ${isDark ? 'linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 40%, #ffffff 100%)'} !important;
+                    border: 1px solid ${isDark ? 'rgba(139, 92, 246, 0.35)' : '#ddd6fe'} !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                  }
+
+                  .prose-custom div[class*="from-rose-"],
+                  .prose-custom div[class*="from-pink-"] {
+                    background: ${isDark ? 'linear-gradient(135deg, rgba(225, 29, 72, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 40%, #ffffff 100%)'} !important;
+                    border: 1px solid ${isDark ? 'rgba(244, 63, 94, 0.35)' : '#fecdd3'} !important;
+                    border-radius: 1.25rem !important;
+                    padding: 1.5rem !important;
+                  }
+
+                  /* ── 2. TYPOGRAPHY & CONTRAST IN BANNERS ── */
+                  .prose-custom div[class*="from-"] h2,
+                  .prose-custom div[class*="from-"] h3,
+                  .prose-custom div[class*="from-"] h4 {
+                    color: ${isDark ? '#f8fafc' : '#0f172a'} !important;
+                    font-weight: 900 !important;
+                  }
+
+                  .prose-custom div[class*="from-"] p {
+                    color: ${isDark ? '#cbd5e1' : '#334155'} !important;
+                    line-height: 1.75 !important;
+                  }
+
+                  .prose-custom div[class*="from-"] span[class*="text-yellow-"],
+                  .prose-custom div[class*="from-"] span[class*="text-amber-"] {
+                    color: ${isDark ? '#fcd34d' : '#b45309'} !important;
+                    font-weight: 800 !important;
+                  }
+
+                  /* ── 3. BADGES & PILLS ── */
+                  .prose-custom span[class*="bg-yellow-500"],
+                  .prose-custom span[class*="bg-amber-500"] {
+                    background-color: #f59e0b !important;
+                    color: #020617 !important;
+                    font-weight: 900 !important;
+                    border: 1px solid #d97706 !important;
+                    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+                  }
+
+                  .prose-custom span[class*="bg-indigo-600"],
+                  .prose-custom span[class*="bg-indigo-500"] {
+                    background-color: #4f46e5 !important;
+                    color: #ffffff !important;
+                    font-weight: 900 !important;
+                  }
+
+                  .prose-custom span[class*="bg-emerald-600"],
+                  .prose-custom span[class*="bg-emerald-500"] {
+                    background-color: #10b981 !important;
+                    color: #ffffff !important;
+                    font-weight: 900 !important;
+                  }
+
+                  /* ── 4. CONTENT CARDS, BOXES & GRIDS ── */
+                  .prose-custom div[class*="bg-white"] {
+                    background-color: ${isDark ? '#161b22' : '#ffffff'} !important;
+                    border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'} !important;
+                    border-radius: 1rem !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-50"] {
+                    background-color: ${isDark ? '#1e293b' : '#f8fafc'} !important;
+                    border: 1px solid ${isDark ? '#334155' : '#e2e8f0'} !important;
+                    color: ${isDark ? '#f8fafc' : '#1e293b'} !important;
+                    border-radius: 1rem !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-50"] p {
+                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-100"] {
+                    background-color: ${isDark ? '#1e293b' : '#f1f5f9'} !important;
+                    border: 1px solid ${isDark ? '#334155' : '#cbd5e1'} !important;
+                    color: ${isDark ? '#f8fafc' : '#1e293b'} !important;
+                    border-radius: 1rem !important;
+                  }
+
+                  .prose-custom div[class*="bg-slate-100"] p {
+                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
+                  }
+
+                  /* ── 5. NUMBER BADGES & ICONS ── */
+                  .prose-custom div[class*="w-8"][class*="h-8"],
+                  .prose-custom div[class*="w-10"][class*="h-10"] {
                     display: inline-flex !important;
                     align-items: center !important;
                     justify-content: center !important;
@@ -1129,83 +1178,16 @@ export default function LessonPage() {
                     border-radius: 0.75rem !important;
                   }
 
-                  .prose-custom [class*="bg-indigo-50"],
-                  .prose-custom [class*="text-indigo-600"] {
-                    background-color: #e0e7ff !important;
-                    color: #4338ca !important;
-                    border: 1px solid #c7d2fe !important;
-                  }
-                  .prose-custom [class*="bg-blue-50"],
-                  .prose-custom [class*="text-blue-600"] {
-                    background-color: #dbeafe !important;
-                    color: #1d4ed8 !important;
-                    border: 1px solid #bfdbfe !important;
-                  }
-                  .prose-custom [class*="bg-teal-50"],
-                  .prose-custom [class*="text-teal-600"] {
-                    background-color: #ccfbf1 !important;
-                    color: #0f766e !important;
-                    border: 1px solid #99f6e4 !important;
-                  }
-                  .prose-custom [class*="bg-emerald-50"],
-                  .prose-custom [class*="text-emerald-600"] {
-                    background-color: #d1fae5 !important;
-                    color: #047857 !important;
-                    border: 1px solid #a7f3d0 !important;
-                  }
-                  .prose-custom [class*="bg-amber-50"],
-                  .prose-custom [class*="text-amber-600"] {
-                    background-color: #fef3c7 !important;
-                    color: #b45309 !important;
-                    border: 1px solid #fde68a !important;
-                  }
-                  .prose-custom [class*="bg-purple-50"],
-                  .prose-custom [class*="text-purple-600"] {
-                    background-color: #f3e8ff !important;
-                    color: #7e22ce !important;
-                    border: 1px solid #e9d5ff !important;
-                  }
-                  .prose-custom [class*="bg-rose-50"],
-                  .prose-custom [class*="text-rose-600"],
-                  .prose-custom [class*="bg-pink-50"],
-                  .prose-custom [class*="text-pink-600"] {
-                    background-color: #ffe4e6 !important;
-                    color: #be123c !important;
-                    border: 1px solid #fecdd3 !important;
-                  }
-
-                  /* 3. Grid Boxes & Cards */
-                  .prose-custom [class*="bg-white"] {
-                    background-color: #ffffff !important;
-                    border: 1px solid #e2e8f0 !important;
-                    border-radius: 1rem !important;
-                  }
-                  .prose-custom div[class*="bg-slate-50"] {
-                    background-color: #f8fafc !important;
-                    border: 1px solid #e2e8f0 !important;
-                    color: #1e293b !important;
-                  }
-                  .prose-custom div[class*="bg-slate-50"] p {
-                    color: #475569 !important;
-                  }
-                  .prose-custom div[class*="bg-slate-100"] {
-                    background-color: #f1f5f9 !important;
-                    border: 1px solid #cbd5e1 !important;
-                    color: #1e293b !important;
-                  }
-                  .prose-custom div[class*="bg-slate-100"] p {
-                    color: #475569 !important;
-                  }
-
-                  /* Code Block Snippet (Dark Terminal Style) */
+                  /* ── 6. CODE BLOCK SNIPPETS (TERMINAL) ── */
                   .prose-custom div[class*="font-mono"][class*="bg-slate-900"],
                   .prose-custom pre[class*="bg-slate-900"],
                   .prose-custom div[class*="shadow-inner"][class*="bg-slate-900"] {
-                    background-color: #0f172a !important;
+                    background-color: #0d1117 !important;
                     color: #f8fafc !important;
-                    border: 1px solid #1e293b !important;
+                    border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : '#1e293b'} !important;
                     border-radius: 1rem !important;
                   }
+
                   .prose-custom div[class*="bg-slate-900"] p,
                   .prose-custom div[class*="bg-slate-900"] span {
                     color: inherit;
@@ -1214,69 +1196,6 @@ export default function LessonPage() {
                   .prose-custom div[class*="bg-slate-900"] [class*="text-sky-400"] { color: #38bdf8 !important; }
                   .prose-custom div[class*="bg-slate-900"] [class*="text-emerald-400"] { color: #34d399 !important; }
                   .prose-custom div[class*="bg-slate-900"] [class*="text-slate-400"] { color: #94a3b8 !important; }
-
-                  /* Dark Mode Specific Overrides */
-                  .dark .prose-custom [class*="bg-indigo-50"],
-                  .dark .prose-custom [class*="text-indigo-600"] {
-                    background-color: rgba(79, 70, 229, 0.25) !important;
-                    color: #a5b4fc !important;
-                    border: 1px solid rgba(99, 102, 241, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-blue-50"],
-                  .dark .prose-custom [class*="text-blue-600"] {
-                    background-color: rgba(37, 99, 235, 0.25) !important;
-                    color: #93c5fd !important;
-                    border: 1px solid rgba(59, 130, 246, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-teal-50"],
-                  .dark .prose-custom [class*="text-teal-600"] {
-                    background-color: rgba(13, 148, 136, 0.25) !important;
-                    color: #5eead4 !important;
-                    border: 1px solid rgba(20, 184, 166, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-emerald-50"],
-                  .dark .prose-custom [class*="text-emerald-600"] {
-                    background-color: rgba(5, 150, 105, 0.25) !important;
-                    color: #6ee7b7 !important;
-                    border: 1px solid rgba(16, 185, 129, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-amber-50"],
-                  .dark .prose-custom [class*="text-amber-600"] {
-                    background-color: rgba(217, 119, 6, 0.25) !important;
-                    color: #fcd34d !important;
-                    border: 1px solid rgba(245, 158, 11, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-purple-50"],
-                  .dark .prose-custom [class*="text-purple-600"] {
-                    background-color: rgba(126, 34, 206, 0.25) !important;
-                    color: #d8b4fe !important;
-                    border: 1px solid rgba(147, 51, 234, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-rose-50"],
-                  .dark .prose-custom [class*="text-rose-600"] {
-                    background-color: rgba(136, 19, 55, 0.25) !important;
-                    color: #fda4af !important;
-                    border: 1px solid rgba(225, 29, 72, 0.4) !important;
-                  }
-                  .dark .prose-custom [class*="bg-white"] {
-                    background-color: #0f172a !important;
-                    border: 1px solid #1e293b !important;
-                    color: #f8fafc !important;
-                  }
-                  .dark .prose-custom div[class*="bg-slate-50"],
-                  .dark .prose-custom div[class*="bg-slate-100"] {
-                    background-color: #1e293b !important;
-                    border: 1px solid #334155 !important;
-                    color: #f8fafc !important;
-                  }
-                  .dark .prose-custom div[class*="bg-slate-50"] p,
-                  .dark .prose-custom div[class*="bg-slate-100"] p {
-                    color: #cbd5e1 !important;
-                  }
-                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-amber-600"] { color: #fcd34d !important; }
-                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-sky-600"] { color: #38bdf8 !important; }
-                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-emerald-600"] { color: #34d399 !important; }
-                  .dark .prose-custom div[class*="bg-slate-50"] [class*="text-slate-700"] { color: #e2e8f0 !important; }
                 `}</style>
                 <div dangerouslySetInnerHTML={{ __html: lessonData?.theory || '' }} />
               </div>
