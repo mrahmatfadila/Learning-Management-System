@@ -1161,353 +1161,111 @@ export default function LessonPage() {
               `}
               >
                 <style>{`
-                  /* ── 1. HERO BANNERS & CARDS ── */
+                  /* ── 1. HERO / BANNER HEADERS ── */
                   .prose-custom div[class*="from-amber-"],
                   .prose-custom div[class*="from-yellow-"] {
                     background: ${isDark ? 'linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(30, 41, 59, 0.85) 100%)' : 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 40%, #ffffff 100%)'} !important;
                     border: 1px solid ${isDark ? 'rgba(245, 158, 11, 0.35)' : '#fde68a'} !important;
                     border-radius: 1.25rem !important;
                     padding: 1.5rem !important;
-                    box-shadow: ${isDark ? '0 4px 20px -2px rgba(0, 0, 0, 0.5)' : '0 4px 16px -2px rgba(245, 158, 11, 0.08)'} !important;
-                  }
-
-                  .prose-custom div[class*="from-teal-"] {
-                    background: ${isDark ? 'linear-gradient(135deg, rgba(13, 148, 136, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 40%, #ffffff 100%)'} !important;
-                    border: 1px solid ${isDark ? 'rgba(20, 184, 166, 0.35)' : '#99f6e4'} !important;
-                    border-radius: 1.25rem !important;
-                    padding: 1.5rem !important;
-                  }
-
-                  .prose-custom div[class*="from-blue-"] {
-                    background: ${isDark ? 'linear-gradient(135deg, rgba(37, 99, 235, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #eff6ff 0%, #dbeafe 40%, #ffffff 100%)'} !important;
-                    border: 1px solid ${isDark ? 'rgba(59, 130, 246, 0.35)' : '#bfdbfe'} !important;
-                    border-radius: 1.25rem !important;
-                    padding: 1.5rem !important;
-                  }
-
-                  .prose-custom div[class*="from-indigo-"] {
-                    background: ${isDark ? 'linear-gradient(135deg, rgba(79, 70, 229, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #eef2ff 0%, #e0e7ff 40%, #ffffff 100%)'} !important;
-                    border: 1px solid ${isDark ? 'rgba(99, 102, 241, 0.35)' : '#c7d2fe'} !important;
-                    border-radius: 1.25rem !important;
-                    padding: 1.5rem !important;
                   }
 
                   .prose-custom div[class*="from-violet-"],
-                  .prose-custom div[class*="from-purple-"] {
+                  .prose-custom div[class*="from-purple-"],
+                  .prose-custom div[class*="from-indigo-"],
+                  .prose-custom div[class*="from-blue-"],
+                  .prose-custom div[class*="from-teal-"],
+                  .prose-custom div[class*="from-rose-"] {
                     background: ${isDark ? 'linear-gradient(135deg, rgba(124, 58, 237, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #f5f3ff 0%, #ede9fe 40%, #ffffff 100%)'} !important;
                     border: 1px solid ${isDark ? 'rgba(139, 92, 246, 0.35)' : '#ddd6fe'} !important;
                     border-radius: 1.25rem !important;
                     padding: 1.5rem !important;
                   }
 
-                  .prose-custom div[class*="from-rose-"],
-                  .prose-custom div[class*="from-pink-"] {
-                    background: ${isDark ? 'linear-gradient(135deg, rgba(225, 29, 72, 0.18) 0%, rgba(15, 23, 42, 0.85) 100%)' : 'linear-gradient(135deg, #fff1f2 0%, #ffe4e6 40%, #ffffff 100%)'} !important;
-                    border: 1px solid ${isDark ? 'rgba(244, 63, 94, 0.35)' : '#fecdd3'} !important;
-                    border-radius: 1.25rem !important;
-                    padding: 1.5rem !important;
-                  }
-
-                  /* ── 2. TYPOGRAPHY & CONTRAST IN BANNERS ── */
-                  .prose-custom div[class*="from-"] h2,
-                  .prose-custom div[class*="from-"] h3,
-                  .prose-custom div[class*="from-"] h4 {
+                  /* ── 2. GLOBAL HEADINGS & CONTRAST ── */
+                  .prose-custom h1,
+                  .prose-custom h2,
+                  .prose-custom h3,
+                  .prose-custom h4,
+                  .prose-custom h5 {
                     color: ${isDark ? '#f8fafc' : '#0f172a'} !important;
                     font-weight: 900 !important;
+                    letter-spacing: -0.015em !important;
                   }
 
-                  .prose-custom div[class*="from-"] p {
-                    color: ${isDark ? '#cbd5e1' : '#334155'} !important;
+                  .prose-custom p,
+                  .prose-custom li {
+                    color: ${isDark ? '#e2e8f0' : '#334155'} !important;
                     line-height: 1.75 !important;
+                    font-size: 0.9375rem !important;
                   }
 
-                  .prose-custom div[class*="from-"] span[class*="text-yellow-"],
-                  .prose-custom div[class*="from-"] span[class*="text-amber-"] {
-                    color: ${isDark ? '#fcd34d' : '#b45309'} !important;
+                  .prose-custom strong,
+                  .prose-custom b {
+                    color: ${isDark ? '#ffffff' : '#0f172a'} !important;
                     font-weight: 800 !important;
                   }
 
-                  /* ── 3. BADGES & PILLS ── */
-                  .prose-custom span[class*="bg-yellow-500"],
-                  .prose-custom span[class*="bg-amber-500"] {
-                    background-color: #f59e0b !important;
-                    color: #020617 !important;
-                    font-weight: 900 !important;
-                    border: 1px solid #d97706 !important;
-                    box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
-                  }
-
-                  .prose-custom span[class*="bg-indigo-600"],
-                  .prose-custom span[class*="bg-indigo-500"] {
-                    background-color: #4f46e5 !important;
-                    color: #ffffff !important;
-                    font-weight: 900 !important;
-                  }
-
-                  .prose-custom span[class*="bg-emerald-600"],
-                  .prose-custom span[class*="bg-emerald-500"] {
-                    background-color: #10b981 !important;
-                    color: #ffffff !important;
-                    font-weight: 900 !important;
-                  }
-
-                  /* ── 4. CONTENT CARDS, BOXES & GRIDS ── */
-                  .prose-custom div[class*="bg-white"] {
-                    background-color: ${isDark ? '#161b22' : '#ffffff'} !important;
-                    border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.1)' : '#e2e8f0'} !important;
-                    border-radius: 1rem !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-50"] {
-                    background-color: ${isDark ? '#1e293b' : '#f8fafc'} !important;
-                    border: 1px solid ${isDark ? '#334155' : '#e2e8f0'} !important;
-                    color: ${isDark ? '#f8fafc' : '#1e293b'} !important;
-                    border-radius: 1rem !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-50"] p {
-                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-100"] {
-                    background-color: ${isDark ? '#1e293b' : '#f1f5f9'} !important;
-                    border: 1px solid ${isDark ? '#334155' : '#cbd5e1'} !important;
-                    color: ${isDark ? '#f8fafc' : '#1e293b'} !important;
-                    border-radius: 1rem !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-100"] p {
-                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
-                  }
-
-                  /* ── 5. DARK FEATURE CARDS (e.g. "Mengapa Anda Wajib Menguasai JavaScript?") ── */
-                  .prose-custom div[class*="bg-slate-900"],
-                  .prose-custom div[class*="bg-slate-800"],
-                  .prose-custom div[class*="bg-gray-900"],
-                  .prose-custom div[class*="bg-black"] {
-                    background-color: #0f172a !important;
-                    color: #f8fafc !important;
-                    border: 1px solid #334155 !important;
-                    border-radius: 1.25rem !important;
-                    padding: 1.5rem !important;
-                    box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.4) !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] h2,
-                  .prose-custom div[class*="bg-slate-900"] h3,
-                  .prose-custom div[class*="bg-slate-900"] h4,
-                  .prose-custom div[class*="bg-slate-800"] h2,
-                  .prose-custom div[class*="bg-slate-800"] h3,
-                  .prose-custom div[class*="bg-slate-800"] h4 {
-                    color: #fbbf24 !important; /* amber-400 */
-                    font-weight: 900 !important;
-                    margin-top: 0 !important;
-                    margin-bottom: 0.75rem !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] p,
-                  .prose-custom div[class*="bg-slate-800"] p {
-                    color: #cbd5e1 !important;
-                    line-height: 1.7 !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] ul,
-                  .prose-custom div[class*="bg-slate-800"] ul,
-                  .prose-custom div[class*="bg-slate-900"] ol,
-                  .prose-custom div[class*="bg-slate-800"] ol {
-                    list-style: none !important;
-                    padding-left: 0 !important;
-                    margin-bottom: 0 !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] li,
-                  .prose-custom div[class*="bg-slate-800"] li {
-                    color: #e2e8f0 !important;
-                    display: flex !important;
-                    align-items: flex-start !important;
-                    gap: 0.625rem !important;
-                    margin-bottom: 0.625rem !important;
-                    font-size: 0.875rem !important;
-                    line-height: 1.6 !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] li strong,
-                  .prose-custom div[class*="bg-slate-800"] li strong {
-                    color: #ffffff !important;
-                    font-weight: 800 !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] li span,
-                  .prose-custom div[class*="bg-slate-800"] li span {
-                    color: #cbd5e1 !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] span[class*="text-amber-"],
-                  .prose-custom div[class*="bg-slate-800"] span[class*="text-amber-"],
-                  .prose-custom div[class*="bg-slate-900"] span[class*="text-yellow-"],
-                  .prose-custom div[class*="bg-slate-800"] span[class*="text-yellow-"] {
-                    color: #fbbf24 !important;
-                    font-weight: 900 !important;
-                    flex-shrink: 0 !important;
-                  }
-
-                  /* ── 6. TINTED COMPARISON CARDS (HTML, CSS, JS) ── */
-                  .prose-custom div[class*="bg-yellow-50"] {
-                    background-color: ${isDark ? 'rgba(245, 158, 11, 0.12)' : '#fefce8'} !important;
-                    border: 1px solid ${isDark ? 'rgba(245, 158, 11, 0.3)' : '#fef08a'} !important;
-                    border-radius: 0.875rem !important;
-                  }
-                  .prose-custom div[class*="bg-yellow-50"] div[class*="text-yellow-"] {
-                    color: ${isDark ? '#fcd34d' : '#a16207'} !important;
-                    font-weight: 800 !important;
-                  }
-                  .prose-custom div[class*="bg-yellow-50"] p {
-                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
-                  }
-
-                  .prose-custom div[class*="bg-blue-50"] {
-                    background-color: ${isDark ? 'rgba(37, 99, 235, 0.12)' : '#eff6ff'} !important;
-                    border: 1px solid ${isDark ? 'rgba(37, 99, 235, 0.3)' : '#bfdbfe'} !important;
-                    border-radius: 0.875rem !important;
-                  }
-                  .prose-custom div[class*="bg-blue-50"] div[class*="text-blue-"] {
-                    color: ${isDark ? '#93c5fd' : '#1d4ed8'} !important;
-                    font-weight: 800 !important;
-                  }
-                  .prose-custom div[class*="bg-blue-50"] p {
-                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
-                  }
-
-                  .prose-custom div[class*="bg-orange-50"],
-                  .prose-custom div[class*="bg-amber-50"] {
-                    background-color: ${isDark ? 'rgba(234, 88, 12, 0.12)' : '#fff7ed'} !important;
-                    border: 1px solid ${isDark ? 'rgba(234, 88, 12, 0.3)' : '#fed7aa'} !important;
-                    border-radius: 0.875rem !important;
-                  }
-                  .prose-custom div[class*="bg-orange-50"] div[class*="text-orange-"],
-                  .prose-custom div[class*="bg-amber-50"] div[class*="text-amber-"] {
-                    color: ${isDark ? '#fdba74' : '#c2410c'} !important;
-                    font-weight: 800 !important;
-                  }
-                  .prose-custom div[class*="bg-orange-50"] p,
-                  .prose-custom div[class*="bg-amber-50"] p {
-                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
-                  }
-
-                  /* ── 7. NUMBER BADGES & ICONS ── */
-                  .prose-custom div[class*="w-8"][class*="h-8"],
-                  .prose-custom div[class*="w-10"][class*="h-10"] {
-                    display: inline-flex !important;
-                    align-items: center !important;
-                    justify-content: center !important;
-                    font-weight: 900 !important;
-                    flex-shrink: 0 !important;
-                    border-radius: 0.75rem !important;
-                  }
-
-                  /* ── 8. CODE BLOCK SNIPPETS (TERMINAL) ── */
-                  .prose-custom div[class*="font-mono"][class*="bg-slate-900"],
-                  .prose-custom pre[class*="bg-slate-900"],
-                  .prose-custom div[class*="shadow-inner"][class*="bg-slate-900"] {
-                    background-color: #0d1117 !important;
-                    color: #f8fafc !important;
-                    border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : '#1e293b'} !important;
-                    border-radius: 1rem !important;
-                  }
-
-                  .prose-custom div[class*="bg-slate-900"] p,
-                  .prose-custom div[class*="bg-slate-900"] span {
-                    color: inherit;
-                  }
-                  .prose-custom div[class*="bg-slate-900"] [class*="text-amber-400"] { color: #fbbf24 !important; }
-                  .prose-custom div[class*="bg-slate-900"] [class*="text-sky-400"] { color: #38bdf8 !important; }
-                  .prose-custom div[class*="bg-slate-900"] [class*="text-emerald-400"] { color: #34d399 !important; }
-                  .prose-custom div[class*="bg-slate-900"] [class*="text-slate-400"] { color: #94a3b8 !important; }
-
-                  /* ── 9. INTERACTIVE GRID & STACKED CARDS ── */
+                  /* ── 3. ALL CONTENT CARDS, BOXES, AND STEPS (e.g. Paket All-in-One, CLI Server) ── */
                   .prose-custom .grid > div,
-                  .prose-custom div[class*="space-y-3"] > div[class*="rounded-xl"],
-                  .prose-custom div[class*="space-y-4"] > div[class*="rounded-xl"],
-                  .prose-custom div[class*="rounded-xl"][class*="border"] {
+                  .prose-custom div[class*="space-y-"] > div[class*="rounded-"],
+                  .prose-custom div[class*="rounded-2xl"],
+                  .prose-custom div[class*="rounded-xl"],
+                  .prose-custom div[class*="rounded-lg"][class*="p-"] {
                     background-color: ${isDark ? '#161b22' : '#ffffff'} !important;
                     border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : '#e2e8f0'} !important;
                     border-radius: 1rem !important;
                     padding: 1.25rem !important;
-                    box-shadow: ${isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.04)'} !important;
+                    box-shadow: ${isDark ? '0 4px 16px rgba(0, 0, 0, 0.3)' : '0 2px 8px -2px rgba(15, 23, 42, 0.05), 0 1px 4px -1px rgba(15, 23, 42, 0.03)'} !important;
                   }
 
-                  .prose-custom div[class*="space-y-"] > div h4,
-                  .prose-custom div[class*="rounded-xl"] h4 {
-                    font-size: 0.95rem !important;
+                  .prose-custom div[class*="rounded-"] h3,
+                  .prose-custom div[class*="rounded-"] h4 {
+                    color: ${isDark ? '#f8fafc' : '#0f172a'} !important;
+                    font-size: 1rem !important;
                     font-weight: 900 !important;
                     margin-top: 0 !important;
                     margin-bottom: 0.5rem !important;
                     display: flex !important;
                     align-items: center !important;
-                    gap: 0.5rem !important;
+                    gap: 0.625rem !important;
                   }
 
-                  .prose-custom h4[class*="text-emerald-"],
-                  .prose-custom h4[class*="text-green-"] {
-                    color: ${isDark ? '#34d399' : '#059669'} !important;
-                  }
-
-                  .prose-custom h4[class*="text-blue-"],
-                  .prose-custom h4[class*="text-sky-"] {
-                    color: ${isDark ? '#60a5fa' : '#2563eb'} !important;
-                  }
-
-                  .prose-custom h4[class*="text-amber-"],
-                  .prose-custom h4[class*="text-yellow-"] {
-                    color: ${isDark ? '#fbbf24' : '#d97706'} !important;
-                  }
-
-                  .prose-custom .grid > div strong[class*="text-amber-"],
-                  .prose-custom .grid > div strong[class*="text-yellow-"],
-                  .prose-custom .grid > div strong[class*="text-orange-"],
-                  .prose-custom .grid > div strong {
-                    color: ${isDark ? '#fbbf24' : '#d97706'} !important;
-                    font-size: 0.95rem !important;
-                    font-weight: 900 !important;
-                    display: flex !important;
-                    align-items: center !important;
-                    gap: 0.5rem !important;
-                  }
-
-                  .prose-custom .grid > div p,
-                  .prose-custom div[class*="space-y-"] > div p,
-                  .prose-custom div[class*="rounded-xl"] p {
-                    color: ${isDark ? '#cbd5e1' : '#334155'} !important;
-                    font-size: 0.85rem !important;
+                  .prose-custom div[class*="rounded-"] p {
+                    color: ${isDark ? '#cbd5e1' : '#475569'} !important;
+                    font-size: 0.875rem !important;
                     line-height: 1.65 !important;
-                    margin-top: 0.35rem !important;
-                    margin-bottom: 0.75rem !important;
+                    margin-top: 0.25rem !important;
+                    margin-bottom: 0.5rem !important;
                   }
 
-                  .prose-custom .grid > div div[class*="font-mono"],
-                  .prose-custom div[class*="bg-slate-100"][class*="font-mono"],
-                  .prose-custom div[class*="bg-slate-800"][class*="font-mono"] {
-                    background-color: #0f172a !important;
-                    color: #38bdf8 !important; /* sky-400 syntax code */
-                    border: 1px solid #1e293b !important;
-                    border-radius: 0.625rem !important;
-                    padding: 0.625rem 0.875rem !important;
-                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
-                    font-size: 0.8125rem !important;
-                    font-weight: 700 !important;
-                    line-height: 1.5 !important;
-                    overflow-x: auto !important;
-                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+                  /* ── 4. NUMBER BADGES & ICONS (e.g. 1, 2, 3) ── */
+                  .prose-custom span[class*="w-7"],
+                  .prose-custom span[class*="w-8"],
+                  .prose-custom div[class*="w-8"],
+                  .prose-custom div[class*="w-10"],
+                  .prose-custom span[class*="rounded-lg"][class*="flex"] {
+                    background: linear-gradient(135deg, #7c3aed 0%, #6366f1 100%) !important;
+                    color: #ffffff !important;
+                    font-weight: 900 !important;
+                    border-radius: 0.5rem !important;
+                    display: inline-flex !important;
+                    align-items: center !important;
+                    justify-content: center !important;
+                    box-shadow: 0 2px 6px rgba(99, 102, 241, 0.3) !important;
+                    flex-shrink: 0 !important;
                   }
 
-                  /* ── 10. PRE-FORMATTED MULTI-LINE CODE TERMINAL ── */
+                  /* ── 5. TERMINAL / CLI PRE-FORMATTED BLOCKS ── */
                   .prose-custom pre,
                   .prose-custom div[class*="space-y-"] pre,
-                  .prose-custom div[class*="rounded-xl"] pre {
-                    background-color: #0f172a !important;
-                    color: #38bdf8 !important; /* sky-400 code */
+                  .prose-custom div[class*="rounded-"] pre,
+                  .prose-custom pre[class*="font-mono"],
+                  .prose-custom div[class*="font-mono"][class*="bg-"] {
+                    background-color: #0d1117 !important;
+                    color: #38bdf8 !important; /* sky-400 vivid syntax text */
                     border: 1px solid #1e293b !important;
-                    border-radius: 0.625rem !important;
+                    border-radius: 0.75rem !important;
                     padding: 0.75rem 1rem !important;
                     font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
                     font-size: 0.8125rem !important;
@@ -1515,13 +1273,13 @@ export default function LessonPage() {
                     line-height: 1.6 !important;
                     white-space: pre-wrap !important;
                     word-break: break-word !important;
-                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+                    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3) !important;
                     margin-top: 0.5rem !important;
                     margin-bottom: 0 !important;
                   }
 
-                  /* ── 11. INLINE CODE TAGS & BADGES ── */
-                  .prose-custom code {
+                  /* ── 6. INLINE CODE TAGS ── */
+                  .prose-custom code:not(pre code) {
                     background-color: ${isDark ? 'rgba(245, 158, 11, 0.18)' : '#fef3c7'} !important;
                     color: ${isDark ? '#fde047' : '#b45309'} !important;
                     border: 1px solid ${isDark ? 'rgba(245, 158, 11, 0.35)' : '#fde68a'} !important;

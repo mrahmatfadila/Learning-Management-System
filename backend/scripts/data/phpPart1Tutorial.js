@@ -200,32 +200,32 @@ echo "<h3>Status PHP:</h3>";
             <span class="px-2.5 py-0.5 rounded-full text-xs font-black bg-purple-600 text-white">SETUP & INSTALL</span>
             <span class="text-xs text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider">Materi 03 / 19</span>
           </div>
-          <h2 class="text-2xl md:text-3xl font-black text-slate-800 dark:text-white mb-2">⚙️ Mempersiapkan Web Server Lokal</h2>
-          <p class="text-slate-600 dark:text-slate-300 leading-relaxed text-sm md:text-base">
+          <h2 class="text-2xl md:text-3xl font-black text-slate-900 dark:text-white mb-2">⚙️ Mempersiapkan Web Server Lokal</h2>
+          <p class="text-slate-700 dark:text-slate-200 leading-relaxed text-sm md:text-base">
             Untuk menjalankan skrip PHP di komputer lokal, Anda membutuhkan 3 komponen utama: <strong>Web Server (Apache/Nginx)</strong>, <strong>PHP Interpreter</strong>, dan <strong>Database Engine (MySQL/MariaDB)</strong>.
           </p>
         </div>
 
-        <div class="space-y-4">
-          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-            <h3 class="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-purple-600 text-white flex items-center justify-center text-xs font-black">1</span>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#161b22] border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-xl bg-purple-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-md">1</span>
               <span>Paket All-in-One (XAMPP / Laragon)</span>
             </h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
               Pilihan paling populer bagi pemula. Cukup unduh dan instal XAMPP dari apachefriends.org atau Laragon dari laragon.org. Letakkan file proyek Anda di folder <code>htdocs/</code> (XAMPP) atau <code>www/</code> (Laragon).
             </p>
           </div>
 
-          <div class="p-5 rounded-2xl bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 space-y-3">
-            <h3 class="text-base font-black text-slate-800 dark:text-white flex items-center gap-2">
-              <span class="w-7 h-7 rounded-lg bg-indigo-600 text-white flex items-center justify-center text-xs font-black">2</span>
-              <span>PHP Built-In Web Server (Command Line)</span>
+          <div class="p-5 rounded-2xl bg-white dark:bg-[#161b22] border border-slate-200 dark:border-slate-800 shadow-sm space-y-3">
+            <h3 class="text-base font-black text-slate-900 dark:text-white flex items-center gap-2.5">
+              <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white flex items-center justify-center text-xs font-black shrink-0 shadow-md">2</span>
+              <span>PHP Built-In Web Server (CLI)</span>
             </h3>
-            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            <p class="text-xs text-slate-700 dark:text-slate-200 leading-relaxed">
               PHP memiliki server bawaan ringan tanpa perlu konfigurasi Apache. Buka terminal di folder proyek Anda dan ketikkan perintah:
             </p>
-            <pre class="bg-slate-950 text-slate-200 p-2.5 rounded text-[11px] font-mono">php -S localhost:8000</pre>
+            <pre class="bg-slate-950 text-sky-400 p-2.5 rounded-lg text-xs font-mono font-bold border border-slate-800">php -S localhost:8000</pre>
           </div>
         </div>
       </div>
