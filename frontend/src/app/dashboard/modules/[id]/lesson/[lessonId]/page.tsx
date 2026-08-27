@@ -448,20 +448,66 @@ export default function LessonPage() {
     });
   }
 
-  // ── Progress tracking ──
+  // ── Progress & XP Gamification Tracking ──
   const [completedLessons, setCompletedLessons] = useState<Set<string>>(new Set());
   const [isProgressLoaded, setIsProgressLoaded] = useState(false);
+  const [userTotalXp, setUserTotalXp] = useState<number>(0);
+  const [xpRewardToast, setXpRewardToast] = useState<{ show: boolean; xp: number; title: string } | null>(null);
+
+  // Dynamic Duration Calculation Helper
+  const getLessonDuration = (lData: any): number => {
+    if (!lData) return 10;
+    const rawText = (lData?.theory || lData?.content || '').replace(/<[^>]*>?/gm, ' ');
+    const words = rawText.trim().split(/\s+/).filter(Boolean).length;
+    const readTime = Math.max(3, Math.ceil(words / 130));
+    let extra = 0;
+    if (lData?.code || lData?.starterCode) extra += 5;
+    if (lData?.quiz) extra += 3;
+    if (lData?.challenge) extra += 7;
+    if (lData?.type === 'video') extra += 10;
+    return Math.min(45, Math.max(5, readTime + extra));
+  };
+
+  // Dynamic XP Calculation Helper
+  const getLessonXp = (lData: any): number => {
+    if (!lData) return 50;
+    let xp = 50;
+    if (lData?.code || lData?.starterCode) xp += 25;
+    if (lData?.quiz) xp += 25;
+    if (lData?.challenge) xp += 50;
+    if (lData?.codeExplanation && lData.codeExplanation.length > 0) xp += 25;
+    const meta = `${lData?.title || ''} ${lData?.chapter || ''}`.toLowerCase();
+    if (
+      meta.includes('advanced') ||
+      meta.includes('temporal') ||
+      meta.includes('proxy') ||
+      meta.includes('ajax') ||
+      meta.includes('project') ||
+      meta.includes('certificate') ||
+      meta.includes('capstone')
+    ) {
+      xp += 50;
+    }
+    return xp;
+  };
 
   const allLessons = sidebarModules.flatMap((m: any) => m.lessons);
   const currentIdx = allLessons.findIndex((l: any) => l.id === lessonId);
   const totalLessons = allLessons.length;
 
-  // Step 1: Load progress dari localStorage
+  // Step 1: Load progress & XP dari localStorage
   useEffect(() => {
     const key = `progress_${id}`;
     const saved = localStorage.getItem(key);
     const completed: Set<string> = saved ? new Set(JSON.parse(saved)) : new Set<string>();
     setCompletedLessons(completed);
+
+    const savedXp = localStorage.getItem('devgrow_user_xp');
+    if (savedXp) {
+      setUserTotalXp(parseInt(savedXp, 10) || 0);
+    } else {
+      setUserTotalXp(350); // initial welcoming XP
+    }
   }, [id]);
 
   // Step 2: Cek kunci HANYA setelah data DB sudah dimuat (isDbLoaded = true)
@@ -519,6 +565,16 @@ export default function LessonPage() {
   const validCompletedCount = [...allLessonIdsSet].filter(lid => effectiveCompletedLessons.has(lid)).length;
   const progressPct = Math.min(100, totalLessons > 0 ? Math.round((validCompletedCount / totalLessons) * 100) : (enrollmentProgress || 0));
 
+  // Akumulasi Total XP Kursus
+  const totalModuleXp = allLessons.reduce((acc: number, l: any) => acc + getLessonXp(l), 0);
+  const collectedModuleXp = allLessons
+    .filter((l: any) => effectiveCompletedLessons.has(l.id))
+    .reduce((acc: number, l: any) => acc + getLessonXp(l), 0);
+
+  // Nilai XP dan Durasi Materi Aktif
+  const currentLessonDuration = getLessonDuration(lessonData);
+  const currentLessonXp = getLessonXp(lessonData);
+
   // Helper: apakah lesson di-index tertentu bisa diakses?
   const isLessonUnlocked = (lessonIdx: number): boolean => {
     if (progressPct >= 100) return true;
@@ -543,11 +599,28 @@ export default function LessonPage() {
   const prevLessonId = allLessons[currentIdx - 1]?.id || lessonData?.prevPath;
 
   const handleCompleteLesson = () => {
+    const wasAlreadyDone = completedLessons.has(lessonId);
     const updated = new Set([...completedLessons, lessonId]);
     const cleaned = (lessonId || '').replace(/^html-lesson-/, '').replace(/---.*$/, '');
     if (cleaned) updated.add(cleaned);
     setCompletedLessons(updated);
     localStorage.setItem(`progress_${id}`, JSON.stringify([...updated]));
+
+    // Gamifikasi XP Reward
+    if (!wasAlreadyDone) {
+      const newXp = (userTotalXp || 0) + currentLessonXp;
+      setUserTotalXp(newXp);
+      localStorage.setItem('devgrow_user_xp', String(newXp));
+      setXpRewardToast({
+        show: true,
+        xp: currentLessonXp,
+        title: lessonData?.title || 'Materi Pembelajaran'
+      });
+      setTimeout(() => {
+        setXpRewardToast(null);
+      }, 3500);
+    }
+
     // Sync progress % to backend enrollment
     const stored = localStorage.getItem('lms_user');
     if (stored) {
@@ -890,19 +963,38 @@ export default function LessonPage() {
 
         {/* Progress footer */}
         <div className={`p-4 border-t ${border} shrink-0`}>
-          <div className="flex items-center justify-between mb-2">
-            <span className={`text-[10px] font-bold uppercase tracking-widest ${textMuted}`}>Progress</span>
+          <div className="flex items-center justify-between mb-1.5">
+            <span className={`text-[10px] font-bold uppercase tracking-widest ${textMuted}`}>Progress Kursus</span>
             <span className={`text-xs font-black ${colors.main}`}>{progressPct}%</span>
           </div>
           <div className={`w-full h-2 rounded-full overflow-hidden ${isDark ? 'bg-white/8' : 'bg-slate-200'}`}>
             <div className={`h-full rounded-full transition-all duration-500 ${colors.bg}`} style={{ width: `${progressPct}%` }} />
           </div>
-          <div className={`text-[10px] mt-1.5 ${textMuted}`}>{completedLessons.size} dari {totalLessons} materi selesai</div>
+          <div className="flex items-center justify-between text-[10px] mt-2 font-medium">
+            <span className={textMuted}>{completedLessons.size}/{totalLessons} Selesai</span>
+            <span className="font-extrabold text-amber-500 flex items-center gap-1">
+              <Zap className="w-3 h-3 fill-amber-400 text-amber-400" />
+              {collectedModuleXp}/{totalModuleXp} XP
+            </span>
+          </div>
         </div>
       </aside>
 
       {/* -- MAIN AREA -- */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0 relative">
+
+        {/* Floating XP Reward Toast */}
+        {xpRewardToast && (
+          <div className="absolute top-5 left-1/2 -translate-x-1/2 z-50 animate-bounce">
+            <div className="flex items-center gap-3 px-5 py-3 rounded-2xl bg-gradient-to-r from-amber-500 via-yellow-400 to-amber-500 text-slate-950 font-black text-xs sm:text-sm shadow-2xl border-2 border-yellow-200">
+              <span className="text-xl">🎉</span>
+              <div>
+                <div className="text-[10px] font-black uppercase tracking-wider text-slate-900">Materi Selesai!</div>
+                <div>+{xpRewardToast.xp} XP Berhasil Ditambahkan ke Profil Kamu! ⚡</div>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* -- Top Bar -- */}
         <header className={`flex items-center justify-between px-5 py-3 border-b shrink-0 z-20 ${surface} ${border} shadow-sm`}>
@@ -923,6 +1015,14 @@ export default function LessonPage() {
           </div>
           {/* Right */}
           <div className="flex items-center gap-2 shrink-0">
+            <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black transition-all ${
+              isDark
+                ? 'bg-amber-500/15 text-amber-300 border border-amber-500/30'
+                : 'bg-gradient-to-r from-amber-50 to-yellow-50 text-amber-700 border border-amber-200 shadow-2xs'
+            }`} title="Total XP Kamu">
+              <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-500" />
+              <span>{userTotalXp} XP</span>
+            </div>
             <button
               onClick={() => setIsReviewModalOpen(true)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
@@ -978,14 +1078,20 @@ export default function LessonPage() {
                 <h1 className={`text-3xl md:text-4xl font-black tracking-tight leading-tight mb-3 ${textPrimary}`}>
                   {lessonData?.title || 'Memuat...'}
                 </h1>
-                <div className="flex items-center gap-4">
-                  <div className={`flex items-center gap-1.5 text-xs font-medium ${textMuted}`}>
-                    <Clock className="w-3.5 h-3.5" />
-                    <span>~15 menit</span>
+                <div className="flex flex-wrap items-center gap-3">
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold ${
+                    isDark ? 'bg-white/5 border border-white/10 text-slate-300' : 'bg-slate-100 border border-slate-200 text-slate-600'
+                  }`}>
+                    <Clock className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>~{currentLessonDuration} menit belajar</span>
                   </div>
-                  <div className={`flex items-center gap-1.5 text-xs font-medium ${textMuted}`}>
-                    <Trophy className="w-3.5 h-3.5" />
-                    <span>+50 XP</span>
+                  <div className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-extrabold transition-all ${
+                    isCurrentLessonDone
+                      ? (isDark ? 'bg-emerald-500/15 border border-emerald-500/30 text-emerald-300' : 'bg-emerald-50 border border-emerald-200 text-emerald-700')
+                      : (isDark ? 'bg-amber-500/15 border border-amber-500/30 text-amber-300' : 'bg-amber-50 border border-amber-200 text-amber-700 shadow-xs')
+                  }`}>
+                    <Trophy className={`w-3.5 h-3.5 ${isCurrentLessonDone ? 'text-emerald-500 fill-emerald-500' : 'text-amber-500 fill-amber-500'}`} />
+                    <span>{isCurrentLessonDone ? `✓ +${currentLessonXp} XP Telah Diklaim` : `+${currentLessonXp} XP Reward`}</span>
                   </div>
                 </div>
               </div>
