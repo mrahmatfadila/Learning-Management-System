@@ -1639,7 +1639,7 @@ function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStat
       const initialOpenBab: Record<string, boolean> = {};
       const initialOpenSubBab: Record<string, boolean> = {};
       syllabus.forEach((bab: any, idx: number) => {
-        const babKey = bab.title || String(idx);
+        const babKey = bab.id || (bab.title ? `${bab.title}-${idx}` : `chapter-${idx}`);
         initialOpenBab[babKey] = false;
         (bab.lessons || []).forEach((l: any) => {
           if (l.chapter) {
@@ -1656,7 +1656,7 @@ function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStat
     const newBab: Record<string, boolean> = {};
     const newSubBab: Record<string, boolean> = {};
     syllabus.forEach((bab: any, idx: number) => {
-      const babKey = bab.title || String(idx);
+      const babKey = bab.id || (bab.title ? `${bab.title}-${idx}` : `chapter-${idx}`);
       newBab[babKey] = expand;
       (bab.lessons || []).forEach((l: any) => {
         if (l.chapter) {
@@ -1709,7 +1709,7 @@ function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStat
           const babLessons: any[] = bab.lessons || [];
           const babDone = babLessons.filter((l: any) => completedSet.has(l.id)).length;
           const babCompleted = babLessons.length > 0 && babDone === babLessons.length;
-          const babKey = bab.title || String(babIdx);
+          const babKey = bab.id || (bab.title ? `${bab.title}-${babIdx}` : `chapter-${babIdx}`);
           const isBabOpen = openBab[babKey] !== false;
           const babProgressPct = babLessons.length > 0 ? Math.round((babDone / babLessons.length) * 100) : 0;
 
