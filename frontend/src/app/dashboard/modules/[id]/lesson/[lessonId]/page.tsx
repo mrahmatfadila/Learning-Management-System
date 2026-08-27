@@ -1311,13 +1311,42 @@ export default function LessonPage() {
                   .prose-custom div[class*="bg-slate-900"] [class*="text-emerald-400"] { color: #34d399 !important; }
                   .prose-custom div[class*="bg-slate-900"] [class*="text-slate-400"] { color: #94a3b8 !important; }
 
-                  /* ── 9. INTERACTIVE GRID CARDS & ACTION BOXES ── */
-                  .prose-custom .grid > div {
+                  /* ── 9. INTERACTIVE GRID & STACKED CARDS ── */
+                  .prose-custom .grid > div,
+                  .prose-custom div[class*="space-y-3"] > div[class*="rounded-xl"],
+                  .prose-custom div[class*="space-y-4"] > div[class*="rounded-xl"],
+                  .prose-custom div[class*="rounded-xl"][class*="border"] {
                     background-color: ${isDark ? '#161b22' : '#ffffff'} !important;
                     border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : '#e2e8f0'} !important;
                     border-radius: 1rem !important;
                     padding: 1.25rem !important;
                     box-shadow: ${isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.04)'} !important;
+                  }
+
+                  .prose-custom div[class*="space-y-"] > div h4,
+                  .prose-custom div[class*="rounded-xl"] h4 {
+                    font-size: 0.95rem !important;
+                    font-weight: 900 !important;
+                    margin-top: 0 !important;
+                    margin-bottom: 0.5rem !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 0.5rem !important;
+                  }
+
+                  .prose-custom h4[class*="text-emerald-"],
+                  .prose-custom h4[class*="text-green-"] {
+                    color: ${isDark ? '#34d399' : '#059669'} !important;
+                  }
+
+                  .prose-custom h4[class*="text-blue-"],
+                  .prose-custom h4[class*="text-sky-"] {
+                    color: ${isDark ? '#60a5fa' : '#2563eb'} !important;
+                  }
+
+                  .prose-custom h4[class*="text-amber-"],
+                  .prose-custom h4[class*="text-yellow-"] {
+                    color: ${isDark ? '#fbbf24' : '#d97706'} !important;
                   }
 
                   .prose-custom .grid > div strong[class*="text-amber-"],
@@ -1332,7 +1361,9 @@ export default function LessonPage() {
                     gap: 0.5rem !important;
                   }
 
-                  .prose-custom .grid > div p {
+                  .prose-custom .grid > div p,
+                  .prose-custom div[class*="space-y-"] > div p,
+                  .prose-custom div[class*="rounded-xl"] p {
                     color: ${isDark ? '#cbd5e1' : '#334155'} !important;
                     font-size: 0.85rem !important;
                     line-height: 1.65 !important;
@@ -1356,7 +1387,27 @@ export default function LessonPage() {
                     box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
                   }
 
-                  /* ── 10. INLINE CODE TAGS & BADGES ── */
+                  /* ── 10. PRE-FORMATTED MULTI-LINE CODE TERMINAL ── */
+                  .prose-custom pre,
+                  .prose-custom div[class*="space-y-"] pre,
+                  .prose-custom div[class*="rounded-xl"] pre {
+                    background-color: #0f172a !important;
+                    color: #38bdf8 !important; /* sky-400 code */
+                    border: 1px solid #1e293b !important;
+                    border-radius: 0.625rem !important;
+                    padding: 0.75rem 1rem !important;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+                    font-size: 0.8125rem !important;
+                    font-weight: 700 !important;
+                    line-height: 1.6 !important;
+                    white-space: pre-wrap !important;
+                    word-break: break-word !important;
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+                    margin-top: 0.5rem !important;
+                    margin-bottom: 0 !important;
+                  }
+
+                  /* ── 11. INLINE CODE TAGS & BADGES ── */
                   .prose-custom code {
                     background-color: ${isDark ? 'rgba(245, 158, 11, 0.18)' : '#fef3c7'} !important;
                     color: ${isDark ? '#fde047' : '#b45309'} !important;
