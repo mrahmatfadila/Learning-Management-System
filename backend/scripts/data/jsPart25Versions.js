@@ -1256,7 +1256,7 @@ module.exports = [
 
   // ── 153. JS HISTORY ─────────────────────────────────────────────────────
   {
-    id: 'js-history',
+    id: 'js-versions-history',
     title: 'JS History',
     chapter: 'JS Versions',
     chapterId: 'js-chap-versions',

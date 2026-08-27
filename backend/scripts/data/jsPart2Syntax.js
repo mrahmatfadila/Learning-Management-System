@@ -104,7 +104,7 @@ module.exports = [
 
   // ── 6. JS STATEMENTS ────────────────────────────────────────────────────
   {
-    id: 'js-statements',
+    id: 'js-syntax-statements',
     title: 'JS Statements',
     chapter: 'JS Syntax',
     chapterId: 'js-chap-syntax',
