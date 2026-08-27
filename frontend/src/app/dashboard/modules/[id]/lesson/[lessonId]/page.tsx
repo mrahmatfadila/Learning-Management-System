@@ -1310,6 +1310,62 @@ export default function LessonPage() {
                   .prose-custom div[class*="bg-slate-900"] [class*="text-sky-400"] { color: #38bdf8 !important; }
                   .prose-custom div[class*="bg-slate-900"] [class*="text-emerald-400"] { color: #34d399 !important; }
                   .prose-custom div[class*="bg-slate-900"] [class*="text-slate-400"] { color: #94a3b8 !important; }
+
+                  /* ── 9. INTERACTIVE GRID CARDS & ACTION BOXES ── */
+                  .prose-custom .grid > div {
+                    background-color: ${isDark ? '#161b22' : '#ffffff'} !important;
+                    border: 1px solid ${isDark ? 'rgba(255, 255, 255, 0.12)' : '#e2e8f0'} !important;
+                    border-radius: 1rem !important;
+                    padding: 1.25rem !important;
+                    box-shadow: ${isDark ? '0 4px 12px rgba(0, 0, 0, 0.3)' : '0 2px 8px rgba(0, 0, 0, 0.04)'} !important;
+                  }
+
+                  .prose-custom .grid > div strong[class*="text-amber-"],
+                  .prose-custom .grid > div strong[class*="text-yellow-"],
+                  .prose-custom .grid > div strong[class*="text-orange-"],
+                  .prose-custom .grid > div strong {
+                    color: ${isDark ? '#fbbf24' : '#d97706'} !important;
+                    font-size: 0.95rem !important;
+                    font-weight: 900 !important;
+                    display: flex !important;
+                    align-items: center !important;
+                    gap: 0.5rem !important;
+                  }
+
+                  .prose-custom .grid > div p {
+                    color: ${isDark ? '#cbd5e1' : '#334155'} !important;
+                    font-size: 0.85rem !important;
+                    line-height: 1.65 !important;
+                    margin-top: 0.35rem !important;
+                    margin-bottom: 0.75rem !important;
+                  }
+
+                  .prose-custom .grid > div div[class*="font-mono"],
+                  .prose-custom div[class*="bg-slate-100"][class*="font-mono"],
+                  .prose-custom div[class*="bg-slate-800"][class*="font-mono"] {
+                    background-color: #0f172a !important;
+                    color: #38bdf8 !important; /* sky-400 syntax code */
+                    border: 1px solid #1e293b !important;
+                    border-radius: 0.625rem !important;
+                    padding: 0.625rem 0.875rem !important;
+                    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace !important;
+                    font-size: 0.8125rem !important;
+                    font-weight: 700 !important;
+                    line-height: 1.5 !important;
+                    overflow-x: auto !important;
+                    box-shadow: inset 0 2px 4px rgba(0,0,0,0.3) !important;
+                  }
+
+                  /* ── 10. INLINE CODE TAGS & BADGES ── */
+                  .prose-custom code {
+                    background-color: ${isDark ? 'rgba(245, 158, 11, 0.18)' : '#fef3c7'} !important;
+                    color: ${isDark ? '#fde047' : '#b45309'} !important;
+                    border: 1px solid ${isDark ? 'rgba(245, 158, 11, 0.35)' : '#fde68a'} !important;
+                    padding: 0.15rem 0.45rem !important;
+                    border-radius: 0.375rem !important;
+                    font-weight: 800 !important;
+                    font-size: 0.825em !important;
+                  }
                 `}</style>
                 <div dangerouslySetInnerHTML={{ __html: lessonData?.theory || '' }} />
               </div>
