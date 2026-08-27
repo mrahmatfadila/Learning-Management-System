@@ -668,6 +668,13 @@ export default function LessonPage() {
     userCodeRef.current = lessonData?.code || '';
     setQuizAnswered({});
     
+    // Save last active lesson for resuming progress
+    if (lessonId && id) {
+      try {
+        localStorage.setItem(`last_active_lesson_${id}`, lessonId);
+      } catch {}
+    }
+
     // Ensure the current lesson's chapter is expanded in the sidebar
     if (activeChapter) {
       setExpandedBab(prev => prev.includes(activeChapter) ? prev : [...prev, activeChapter]);

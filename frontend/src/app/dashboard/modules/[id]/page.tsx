@@ -810,18 +810,39 @@ export default function ModuleDetail({ params }: { params: Promise<{ id: string 
   const validCompletedCount = [...allLessonIds].filter(lid => completedSet.has(lid)).length;
   const progressPct = Math.min(100, totalLessonsCount > 0 ? Math.round((validCompletedCount / totalLessonsCount) * 100) : (enrollmentProgress || 0));
 
-  const getFirstLesson = () => {
-    if (moduleData?.lessons?.length > 0) {
-      const sorted = [...moduleData.lessons].sort((a: any, b: any) => a.order - b.order);
-      return sorted[0]?.id;
+  const getResumeLesson = () => {
+    const allOrderedLessons = syllabus.flatMap((s: any) => s.lessons || []);
+    if (allOrderedLessons.length === 0) {
+      if (moduleData?.lessons?.length > 0) {
+        const sorted = [...moduleData.lessons].sort((a: any, b: any) => a.order - b.order);
+        return sorted[0]?.id;
+      }
+      return null;
     }
-    const firstModule = syllabus[0];
-    return firstModule?.lessons?.[0]?.id || null;
+
+    // 1. Cek materi terakhir yang pernah/sedang dibuka pengguna
+    const lastActive = typeof window !== 'undefined' ? localStorage.getItem(`last_active_lesson_${id}`) : null;
+    if (lastActive && allOrderedLessons.some((l: any) => l.id === lastActive)) {
+      const idx = allOrderedLessons.findIndex((l: any) => l.id === lastActive);
+      // Valid jika materi pertama, atau materi sebelumnya sudah diselesaikan, atau kursus sudah selesai 100%
+      if (idx === 0 || completedSet.has(allOrderedLessons[idx - 1]?.id) || isFullyCompleted) {
+        return lastActive;
+      }
+    }
+
+    // 2. Jika tidak ada last_active, cari materi pertama yang BELUM SELESAI
+    const nextUnfinished = allOrderedLessons.find((l: any) => !completedSet.has(l.id));
+    if (nextUnfinished) {
+      return nextUnfinished.id;
+    }
+
+    // 3. Jika semua materi sudah selesai (100%), kembali ke materi pertama
+    return allOrderedLessons[0]?.id || null;
   };
 
   const handleStart = () => {
-    const first = getFirstLesson();
-    if (first) router.push(`/dashboard/modules/${id}/lesson/${first}`);
+    const targetLesson = getResumeLesson();
+    if (targetLesson) router.push(`/dashboard/modules/${id}/lesson/${targetLesson}`);
   };
 
   const learningPoints = getLearningPoints(moduleData?.title || '', moduleData?.category || '');
