@@ -16,7 +16,7 @@ import {
   BarChart2, Zap, ArrowRight, Star, Activity, LogOut, Settings,
   Home, PlayCircle, Plus, Compass, Sparkles, Server, Layout,
   Lock, RefreshCw, ChevronRight, Check, Search, X, Trophy,
-  Play, MessageSquare, ChevronDown, Edit
+  Play, MessageSquare, ChevronDown, Edit, Save
 } from 'lucide-react';
 
 
@@ -3001,17 +3001,15 @@ export default function DashboardPage() {
                       </>
                     ) : (
                       <>
-                        <Check className="w-3.5 h-3.5" />
+                        <Save className="w-3.5 h-3.5" />
                         <span>Simpan Perubahan</span>
                       </>
                     )}
                   </button>
                 </div>
-
               </div>
             </div>
           )}
-
         </div>
       );
     }
@@ -3027,196 +3025,301 @@ export default function DashboardPage() {
     // Time-based greeting
     const hour = new Date().getHours();
     const greeting = hour < 11 ? 'Selamat Pagi' : hour < 15 ? 'Selamat Siang' : hour < 18 ? 'Selamat Sore' : 'Selamat Malam';
-    const greetingEmoji = hour < 11 ? 'â˜€ï¸' : hour < 15 ? 'ðŸŒ¤ï¸' : hour < 18 ? 'ðŸŒ‡' : 'ðŸŒ™';
+    const greetingEmoji = hour < 11 ? '☀️' : hour < 15 ? '🌤️' : hour < 18 ? '🌇' : '🌙';
+
+    // Top prioritized module to resume
+    const currentActiveModule = inProgressEnrollments.length > 0
+      ? modules.find((m: any) => m.id === inProgressEnrollments[0].moduleId || m.id === inProgressEnrollments[0].id)
+      : approvedEnrollments.length > 0
+      ? modules.find((m: any) => m.id === approvedEnrollments[0].moduleId || m.id === approvedEnrollments[0].id)
+      : null;
+
+    const currentActiveEnr = currentActiveModule ? enrollmentMap.get(currentActiveModule.id) : null;
 
     // Quick navigation items
     const quickNavs = [
-      { label: 'Jelajahi Kursus', icon: Compass, color: 'from-indigo-500 to-purple-600', href: '/dashboard?tab=browse', desc: `${modules.length} modul tersedia` },
-      { label: 'Lanjut Belajar', icon: PlayCircle, color: 'from-emerald-500 to-teal-600', href: '/dashboard?tab=in-progress', desc: `${inProgressEnrollments.length} kursus berlangsung` },
-      { label: 'Sertifikat Saya', icon: Award, color: 'from-amber-500 to-orange-600', href: '/dashboard?view=certificates', desc: `${completedEnrollments.length} diraih` },
-      { label: 'Jadwal Offline', icon: Server, color: 'from-rose-500 to-pink-600', href: '/dashboard?view=offline-schedule', desc: 'Sesi tatap muka' },
+      { label: 'Jelajahi Kursus', icon: Compass, color: 'from-indigo-600 to-indigo-700', bgLight: 'bg-indigo-50/70', borderLight: 'border-indigo-100', textLight: 'text-indigo-700', href: '/dashboard?tab=browse', desc: `${modules.length} modul kurikulum aktif` },
+      { label: 'Lanjut Belajar', icon: PlayCircle, color: 'from-emerald-600 to-teal-600', bgLight: 'bg-emerald-50/70', borderLight: 'border-emerald-100', textLight: 'text-emerald-700', href: '/dashboard?tab=in-progress', desc: `${inProgressEnrollments.length} kursus sedang berjalan` },
+      { label: 'Sertifikat Saya', icon: Award, color: 'from-amber-500 to-orange-600', bgLight: 'bg-amber-50/70', borderLight: 'border-amber-100', textLight: 'text-amber-700', href: '/dashboard?view=certificates', desc: `${completedEnrollments.length} sertifikat diraih` },
+      { label: 'Jadwal Offline', icon: Server, color: 'from-purple-600 to-violet-700', bgLight: 'bg-purple-50/70', borderLight: 'border-purple-100', textLight: 'text-purple-700', href: '/dashboard?view=offline-schedule', desc: 'Sesi tatap muka & lab' },
     ];
 
     return (
-      <div className="min-h-full bg-slate-50 dark:bg-[#0f111a]">
-        {/* â”€â”€ Hero Banner â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-        <div className="relative bg-gradient-to-br from-[#1e1b4b] via-indigo-800 to-purple-900 overflow-hidden">
-          {/* Decorative blobs */}
+      <div className="min-h-full bg-slate-50 dark:bg-[#0b0f19] text-slate-800 dark:text-slate-100">
+        
+        {/* ── 1. HERO BANNER ── */}
+        <div className="relative bg-gradient-to-br from-[#0f172a] via-[#1e1b4b] to-[#31104b] border-b border-indigo-950/60 overflow-hidden">
+          {/* Ambient Glows */}
           <div className="absolute inset-0 pointer-events-none overflow-hidden">
-            <div className="absolute -top-20 -right-20 w-80 h-80 bg-indigo-500/20 rounded-full blur-3xl" />
-            <div className="absolute top-10 left-1/3 w-64 h-64 bg-purple-500/15 rounded-full blur-3xl" />
-            <div className="absolute -bottom-10 -left-10 w-60 h-60 bg-indigo-600/25 rounded-full blur-2xl" />
-            {/* Grid pattern */}
-            <div className="absolute inset-0 opacity-[0.03]" style={{
-              backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23fff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`
+            <div className="absolute -top-24 -right-24 w-96 h-96 bg-indigo-500/20 rounded-full blur-3xl" />
+            <div className="absolute top-1/2 left-1/4 w-72 h-72 bg-purple-500/15 rounded-full blur-3xl" />
+            <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-indigo-600/20 rounded-full blur-3xl" />
+            <div className="absolute inset-0 opacity-[0.04]" style={{
+              backgroundImage: `radial-gradient(circle at 1px 1px, #ffffff 1px, transparent 0)`,
+              backgroundSize: '24px 24px'
             }} />
           </div>
 
-          <div className="relative z-10 px-6 md:px-10 py-10 md:py-12">
-            <div className="max-w-5xl mx-auto">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                {/* Left: Greeting */}
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-xs font-black text-indigo-300 uppercase tracking-[0.2em]">{greeting} {greetingEmoji}</span>
-                  </div>
-                  <h1 className="text-3xl md:text-4xl font-black text-white mb-2 leading-tight">
-                    Halo, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 to-purple-300">{user.name?.split(' ')[0]}</span>!
-                  </h1>
-                  <p className="text-indigo-200/80 text-sm font-medium mb-6 max-w-md">
-                    {approvedEnrollments.length === 0
-                      ? 'Mulai perjalanan belajar Anda â€” temukan kursus yang sesuai dan daftarkan diri sekarang.'
-                      : inProgressEnrollments.length > 0
-                      ? `Anda sedang mengikuti ${inProgressEnrollments.length} kursus aktif. Terus tingkatkan progres belajar Anda!`
-                      : `Semua kursus Anda selesai! Jelajahi modul baru untuk terus berkembang.`
-                    }
-                  </p>
-
-                  {/* Overall progress ring summary */}
-                  {approvedEnrollments.length > 0 && (
-                    <div className="flex items-center gap-4 mb-6">
-                      <div className="relative w-16 h-16 shrink-0">
-                        <svg className="w-16 h-16 -rotate-90" viewBox="0 0 36 36">
-                          <circle cx="18" cy="18" r="15.9" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="3" />
-                          <circle cx="18" cy="18" r="15.9" fill="none" stroke="url(#progressGrad)" strokeWidth="3"
-                            strokeDasharray={`${avgProgress} ${100 - avgProgress}`} strokeLinecap="round" />
-                          <defs>
-                            <linearGradient id="progressGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                              <stop offset="0%" stopColor="#a78bfa" />
-                              <stop offset="100%" stopColor="#818cf8" />
-                            </linearGradient>
-                          </defs>
-                        </svg>
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <span className="text-white font-black text-xs">{avgProgress}%</span>
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-white font-bold text-sm">Rata-rata Progres</p>
-                        <p className="text-indigo-300 text-xs font-medium">{approvedEnrollments.length} kursus aktif Â· {completedEnrollments.length} lulus</p>
-                      </div>
-                    </div>
-                  )}
-
-                  <div className="flex flex-wrap gap-3">
-                    <button onClick={() => router.push('/dashboard?tab=browse')}
-                      className="px-5 py-2.5 bg-white text-indigo-700 font-bold rounded-xl text-sm hover:bg-indigo-50 transition-all shadow-lg shadow-black/20 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]">
-                      <Compass className="w-4 h-4" /> Jelajahi Kursus
-                    </button>
-                    {inProgressEnrollments.length > 0 && (
-                      <button onClick={() => router.push('/dashboard?tab=in-progress')}
-                        className="px-5 py-2.5 bg-white/10 hover:bg-white/20 text-white font-bold rounded-xl text-sm transition-all border border-white/20 flex items-center gap-2 backdrop-blur-sm">
-                        <PlayCircle className="w-4 h-4" /> Lanjut Belajar
-                      </button>
-                    )}
-                  </div>
+          <div className="relative z-10 px-5 sm:px-8 md:px-10 py-8 sm:py-10 max-w-7xl mx-auto">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+              
+              {/* Left Column: Greeting & Status */}
+              <div className="flex-1 max-w-2xl">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 backdrop-blur-md mb-3.5 shadow-sm">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                  <span className="text-[11px] font-black text-indigo-200 uppercase tracking-widest">
+                    {greeting} {greetingEmoji} · Dashboard Siswa
+                  </span>
                 </div>
 
-                {/* Right: Stat pills */}
-                <div className="grid grid-cols-2 gap-3 md:w-72 shrink-0">
-                  {[
-                    { label: 'Kursus Aktif', value: approvedEnrollments.length, icon: BookOpen, color: 'bg-white/10 border-white/10' },
-                    { label: 'Kursus Lulus', value: completedEnrollments.length, icon: CheckCircle, color: 'bg-emerald-500/20 border-emerald-400/20' },
-                    { label: 'Sedang Belajar', value: inProgressEnrollments.length, icon: PlayCircle, color: 'bg-purple-500/20 border-purple-400/20' },
-                    { label: 'XP Terkumpul', value: `${approvedEnrollments.length * 120}`, icon: Zap, color: 'bg-amber-500/20 border-amber-400/20' },
-                  ].map((s, i) => (
-                    <div key={i} className={`${s.color} border rounded-2xl p-4 backdrop-blur-sm`}>
-                      <s.icon className="w-4 h-4 text-white/60 mb-2" />
-                      <p className="text-xl font-black text-white">{s.value}</p>
-                      <p className="text-[10px] font-bold text-white/60 uppercase tracking-wider mt-0.5">{s.label}</p>
-                    </div>
-                  ))}
+                <h1 className="text-2xl sm:text-3xl md:text-4xl font-black text-white leading-tight tracking-tight mb-2.5">
+                  Selamat Datang, <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-300 via-purple-200 to-pink-300">{user.name?.split(' ')[0]}</span>! 👋
+                </h1>
+
+                <p className="text-indigo-200/80 text-xs sm:text-sm font-medium leading-relaxed mb-6">
+                  {approvedEnrollments.length === 0
+                    ? 'Jelajahi kurikulum terstruktur dan pilih kursus pertama Anda untuk memulai perjalanan digital praktis.'
+                    : inProgressEnrollments.length > 0
+                    ? `Anda memiliki ${inProgressEnrollments.length} kursus aktif. Terus tingkatkan progres dan capai target kelulusan Anda!`
+                    : `Luar biasa! Seluruh kursus yang Anda daftarkan telah berhasil diselesaikan (100%).`
+                  }
+                </p>
+
+                {/* Main Action Buttons */}
+                <div className="flex flex-wrap items-center gap-3">
+                  <button 
+                    onClick={() => router.push('/dashboard?tab=browse')}
+                    className="px-5 py-2.5 bg-white hover:bg-slate-100 text-indigo-900 font-extrabold rounded-xl text-xs transition-all shadow-lg shadow-black/20 flex items-center gap-2 hover:scale-[1.02] active:scale-[0.98]"
+                  >
+                    <Compass className="w-4 h-4 text-indigo-600" />
+                    <span>Jelajahi Katalog</span>
+                  </button>
+
+                  {currentActiveModule && (
+                    <button 
+                      onClick={() => router.push(`/dashboard/modules/${currentActiveModule.id}`)}
+                      className="px-5 py-2.5 bg-indigo-600/80 hover:bg-indigo-600 text-white font-extrabold rounded-xl text-xs transition-all border border-indigo-400/30 flex items-center gap-2 backdrop-blur-md hover:scale-[1.02] active:scale-[0.98] shadow-md shadow-indigo-600/30"
+                    >
+                      <PlayCircle className="w-4 h-4 text-white" />
+                      <span>Lanjut Belajar ({currentActiveModule.title?.split(':')[0]})</span>
+                    </button>
+                  )}
                 </div>
               </div>
+
+              {/* Right Column: 4 Stat Cards */}
+              <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:w-80 shrink-0">
+                {[
+                  { label: 'Kursus Aktif', value: approvedEnrollments.length, icon: BookOpen, sub: `${modules.length} total modul`, bg: 'bg-white/10 border-white/10 text-white' },
+                  { label: 'Kursus Lulus', value: completedEnrollments.length, icon: Award, sub: `${completedEnrollments.length} sertifikat`, bg: 'bg-emerald-500/15 border-emerald-400/20 text-emerald-300' },
+                  { label: 'Sedang Belajar', value: inProgressEnrollments.length, icon: PlayCircle, sub: 'Lanjutkan bab', bg: 'bg-purple-500/15 border-purple-400/20 text-purple-300' },
+                  { label: 'Total Skor XP', value: `${approvedEnrollments.length * 150 + completedEnrollments.length * 300}`, icon: Zap, sub: 'Poin kompetensi', bg: 'bg-amber-500/15 border-amber-400/20 text-amber-300' },
+                ].map((s, i) => (
+                  <div key={i} className={`${s.bg} border rounded-2xl p-4 backdrop-blur-md flex flex-col justify-between shadow-sm`}>
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="text-[10px] font-black uppercase tracking-wider text-white/70">{s.label}</span>
+                      <s.icon className="w-4 h-4 opacity-80" />
+                    </div>
+                    <div>
+                      <p className="text-xl sm:text-2xl font-black text-white leading-none">{s.value}</p>
+                      <p className="text-[10px] font-semibold text-white/60 mt-1">{s.sub}</p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
             </div>
           </div>
         </div>
 
-        <div className="px-6 md:px-10 py-8 max-w-7xl mx-auto space-y-8">
+        {/* ── 2. DASHBOARD BODY ── */}
+        <div className="px-5 sm:px-8 md:px-10 py-8 max-w-7xl mx-auto space-y-8">
 
-          {/* â”€â”€ Quick Navigation Cards â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            {quickNavs.map((nav, i) => (
-              <button key={i} onClick={() => router.push(nav.href)}
-                className="group bg-white dark:bg-[#0c0e18] rounded-2xl border border-slate-200 dark:border-slate-800 p-5 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-left flex flex-col gap-3 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-20 h-20 rounded-bl-full opacity-5 group-hover:opacity-10 transition-opacity"
-                  style={{ background: `linear-gradient(to bottom left, ${nav.color.includes('indigo') ? '#6366f1' : nav.color.includes('emerald') ? '#10b981' : nav.color.includes('amber') ? '#f59e0b' : '#f43f5e'}, transparent)` }} />
-                <div className={`w-11 h-11 rounded-2xl bg-gradient-to-br ${nav.color} flex items-center justify-center shadow-md group-hover:scale-110 transition-transform duration-300`}>
-                  <nav.icon className="w-5 h-5 text-white" />
-                </div>
-                <div>
-                  <p className="font-black text-slate-800 dark:text-slate-200 text-sm group-hover:text-indigo-600 transition-colors">{nav.label}</p>
-                  <p className="text-[11px] text-slate-400 dark:text-slate-500 font-medium mt-0.5">{nav.desc}</p>
-                </div>
-                <ArrowRight className="w-4 h-4 text-slate-300 dark:text-slate-650 group-hover:text-indigo-500 group-hover:translate-x-0.5 transition-all mt-auto" />
-              </button>
-            ))}
+          {/* Quick Navigation Cards */}
+          <div>
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider">Akses Cepat Menu</h2>
+            </div>
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 sm:gap-4">
+              {quickNavs.map((nav, i) => (
+                <button 
+                  key={i} 
+                  onClick={() => router.push(nav.href)}
+                  className="group bg-white dark:bg-[#111624] rounded-2xl border border-slate-200/90 dark:border-slate-800 p-4 sm:p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all text-left flex flex-col justify-between relative overflow-hidden"
+                >
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className={`w-10 h-10 rounded-xl bg-gradient-to-br ${nav.color} flex items-center justify-center text-white shadow-md group-hover:scale-105 transition-transform`}>
+                      <nav.icon className="w-5 h-5" />
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-slate-300 dark:text-slate-600 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 group-hover:translate-x-1 transition-all" />
+                  </div>
+                  <div>
+                    <h3 className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors leading-snug">{nav.label}</h3>
+                    <p className="text-[11px] text-slate-500 dark:text-slate-400 font-medium mt-0.5">{nav.desc}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
-          {/* â”€â”€ Active Courses â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-          {myModules.length > 0 ? (
-            <div>
-              <div className="flex items-center justify-between mb-5">
-                <div>
-                  <h2 className="text-xl font-black text-slate-800 dark:text-white">Kursus Aktif Saya</h2>
-                  <p className="text-slate-500 dark:text-slate-400 text-sm mt-0.5">Lanjutkan belajar dari terakhir kali Anda berhenti</p>
+          {/* Highlighted In-Progress / Resume Learning Hero Card */}
+          {currentActiveModule && currentActiveEnr && (
+            <div className="bg-gradient-to-r from-indigo-900 via-indigo-950 to-purple-950 dark:from-[#111625] dark:via-[#15132d] dark:to-[#17112c] border border-indigo-200/20 dark:border-indigo-900/40 rounded-3xl p-6 sm:p-7 text-white shadow-lg relative overflow-hidden flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
+              <div className="absolute top-0 right-0 w-80 h-full bg-gradient-to-l from-indigo-500/10 to-transparent pointer-events-none" />
+              
+              <div className="flex items-center gap-4.5 sm:gap-5 flex-1 min-w-0">
+                <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl bg-gradient-to-br ${getCourseTheme(currentActiveModule.title).bg} flex items-center justify-center text-3xl shrink-0 shadow-lg border border-white/20`}>
+                  {getCourseTheme(currentActiveModule.title).emoji}
                 </div>
-                <button onClick={() => router.push('/dashboard?tab=in-progress')}
-                  className="text-sm font-bold text-indigo-600 hover:text-indigo-850 dark:text-indigo-400 dark:hover:text-indigo-300 flex items-center gap-1.5 hover:gap-2.5 transition-all">
-                  Lihat Semua <ArrowRight className="w-4 h-4" />
+                <div className="min-w-0">
+                  <div className="flex items-center gap-2 mb-1">
+                    <span className="text-[9px] font-black uppercase tracking-wider bg-white/15 px-2 py-0.5 rounded text-indigo-200">
+                      Lanjutkan Belajar Terakhir
+                    </span>
+                    <span className="text-[10px] font-black text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded">
+                      {currentActiveEnr.progress || 0}% Selesai
+                    </span>
+                  </div>
+                  <h3 className="font-black text-white text-sm sm:text-base md:text-lg truncate leading-snug">
+                    {currentActiveModule.title}
+                  </h3>
+                  <p className="text-xs text-indigo-200/80 line-clamp-1 mt-0.5">
+                    {currentActiveModule.description || 'Pelajari materi interaktif dan selesaikan kuis langsung.'}
+                  </p>
+                </div>
+              </div>
+
+              <div className="w-full md:w-auto shrink-0 flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div className="w-full md:w-36 space-y-1">
+                  <div className="flex justify-between text-[10px] font-bold text-indigo-200">
+                    <span>Progres Modul</span>
+                    <span>{currentActiveEnr.progress || 0}%</span>
+                  </div>
+                  <div className="w-full bg-white/10 rounded-full h-2 overflow-hidden">
+                    <div 
+                      className="bg-gradient-to-r from-emerald-400 to-teal-300 h-full rounded-full transition-all duration-500"
+                      style={{ width: `${currentActiveEnr.progress || 0}%` }}
+                    />
+                  </div>
+                </div>
+
+                <button 
+                  onClick={() => router.push(`/dashboard/modules/${currentActiveModule.id}`)}
+                  className="px-5 py-2.5 bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black rounded-xl text-xs transition-all flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20 hover:scale-[1.02] active:scale-[0.98]"
+                >
+                  <Play className="w-3.5 h-3.5 fill-current" />
+                  <span>Buka Modul</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Active Enrolled Courses Section */}
+          {myModules.length > 0 ? (
+            <div className="space-y-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-lg sm:text-xl font-black text-slate-900 dark:text-white tracking-tight">Kursus Saya</h2>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium mt-0.5">Daftar seluruh modul yang Anda ikuti dan status pembelajarannya</p>
+                </div>
+                <button 
+                  onClick={() => router.push('/dashboard?tab=in-progress')}
+                  className="text-xs font-black text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 flex items-center gap-1 hover:gap-1.5 transition-all"
+                >
+                  Lihat Semua ({myModules.length}) <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-                {myModules.slice(0, 3).map((m: any) => {
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+                {myModules.slice(0, 6).map((m: any) => {
                   const theme = getCourseTheme(m.title);
                   const enr = enrollmentMap.get(m.id);
                   const progress = enr?.progress || 0;
                   const isCompleted = progress >= 100;
 
                   return (
-                    <div key={m.id}
-                      className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col group cursor-pointer"
-                      onClick={() => router.push(`/dashboard/modules/${m.id}`)}>
-                      {/* Thumbnail */}
-                      <div className={`h-32 bg-gradient-to-br ${theme.bg} relative overflow-hidden flex items-center justify-center`}>
+                    <div 
+                      key={m.id}
+                      onClick={() => router.push(`/dashboard/modules/${m.id}`)}
+                      className="bg-white dark:bg-[#111624] rounded-2xl border border-slate-200/90 dark:border-slate-800 hover:border-indigo-400/60 dark:hover:border-indigo-500/40 shadow-sm hover:shadow-md transition-all overflow-hidden flex flex-col group cursor-pointer"
+                    >
+                      {/* Thumbnail Header */}
+                      <div className={`h-28 bg-gradient-to-br ${theme.bg} relative overflow-hidden flex items-center justify-center shrink-0`}>
                         <div className="absolute inset-0 bg-black/10" />
-                        <span className="text-5xl drop-shadow-xl group-hover:scale-110 transition-transform duration-500 relative z-10">{theme.emoji}</span>
-                        {isCompleted && (
-                          <div className="absolute top-3 right-3 bg-emerald-500 text-white text-[10px] font-black px-2.5 py-1 rounded-full flex items-center gap-1 shadow-md">
-                            <CheckCircle className="w-3 h-3" /> LULUS
-                          </div>
-                        )}
-                        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-black/30 to-transparent" />
+                        <span className="text-4xl drop-shadow-lg group-hover:scale-110 transition-transform duration-300 relative z-10">{theme.emoji}</span>
+                        
+                        {/* Top Badges */}
+                        <div className="absolute top-2.5 left-2.5 z-10">
+                          <span className="bg-slate-900/90 text-white font-black text-[9px] px-2 py-0.5 rounded-md uppercase tracking-wider shadow-sm">
+                            {m.category || 'General'}
+                          </span>
+                        </div>
+
+                        <div className="absolute top-2.5 right-2.5 z-10">
+                          {isCompleted ? (
+                            <span className="bg-emerald-500 text-white font-black text-[9px] px-2 py-0.5 rounded-md flex items-center gap-1 shadow-sm">
+                              <CheckCircle className="w-3 h-3" /> LULUS
+                            </span>
+                          ) : (
+                            <span className="bg-slate-900/80 text-indigo-300 font-black text-[9px] px-2 py-0.5 rounded-md border border-white/10 shadow-sm">
+                              {m.lessonsCount || 0} Materi
+                            </span>
+                          )}
+                        </div>
                       </div>
 
-                      {/* Content */}
-                      <div className="p-5 flex-1 flex flex-col">
-                        <span className="text-[10px] font-black uppercase tracking-widest text-indigo-650 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/30 px-2 py-0.5 rounded-md self-start mb-2">{m.category || 'General'}</span>
-                        <h3 className="font-black text-slate-800 dark:text-slate-200 text-sm leading-snug mb-3 line-clamp-2 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">{m.title}</h3>
-
-                        {/* Progress Bar */}
-                        <div className="mt-auto space-y-2">
-                          <div className="flex justify-between items-center text-xs font-bold">
-                            <span className={isCompleted ? 'text-emerald-600 dark:text-emerald-450' : 'text-slate-500 dark:text-slate-400'}>
-                              {isCompleted ? 'âœ“ Selesai' : 'Progres'}
+                      {/* Content Body */}
+                      <div className="p-4 flex-1 flex flex-col justify-between gap-3">
+                        <div>
+                          <div className="flex items-center justify-between gap-2 mb-1.5">
+                            <span className={`text-[9px] font-black px-2 py-0.5 rounded-full border ${getDifficulty(m).color}`}>
+                              {getDifficulty(m).label}
                             </span>
-                            <span className={isCompleted ? 'text-emerald-600 dark:text-emerald-455 font-black' : 'text-indigo-600 dark:text-indigo-400 font-black'}>{progress}%</span>
+                            {m.instructor && (
+                              <span className="text-[10px] font-semibold text-slate-500 dark:text-slate-400 truncate max-w-[120px]">
+                                👤 {m.instructor.name}
+                              </span>
+                            )}
                           </div>
-                          <div className="w-full h-2 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden shadow-inner">
-                            <div
-                              className={`h-full rounded-full transition-all duration-700 ${isCompleted ? 'bg-gradient-to-r from-emerald-500 to-teal-400' : 'bg-gradient-to-r from-indigo-500 to-purple-500'}`}
+
+                          <h3 className="font-extrabold text-slate-900 dark:text-white text-xs sm:text-sm leading-snug line-clamp-1 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
+                            {m.title}
+                          </h3>
+                          <p className="text-[11px] text-slate-500 dark:text-slate-400 line-clamp-1 mt-0.5">
+                            {m.description || 'Kurikulum terstruktur industri.'}
+                          </p>
+                        </div>
+
+                        {/* Progress Bar & Action */}
+                        <div className="pt-2 border-t border-slate-100 dark:border-slate-800/80 space-y-2">
+                          <div className="flex justify-between items-center text-[10px] font-bold">
+                            <span className="text-slate-500 dark:text-slate-400">Progres Belajar</span>
+                            <span className={isCompleted ? 'text-emerald-600 dark:text-emerald-400 font-black' : 'text-indigo-600 dark:text-indigo-400 font-black'}>
+                              {progress}%
+                            </span>
+                          </div>
+                          <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                            <div 
+                              className={`h-full rounded-full transition-all duration-500 ${
+                                isCompleted ? 'bg-emerald-500' : 'bg-gradient-to-r from-indigo-500 to-purple-600'
+                              }`}
                               style={{ width: `${progress}%` }}
                             />
                           </div>
+
                           <button
                             onClick={(e) => { e.stopPropagation(); router.push(`/dashboard/modules/${m.id}`); }}
-                            className={`w-full py-2.5 rounded-xl text-xs font-black transition-all mt-1 flex items-center justify-center gap-2 ${
+                            className={`w-full py-1.5 rounded-xl text-[11px] font-bold transition-all flex items-center justify-center gap-1.5 ${
                               isCompleted
-                                ? 'bg-emerald-50 dark:bg-emerald-955/20 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 dark:hover:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-900/30'
-                                : 'bg-indigo-600 text-white hover:bg-indigo-700 shadow-md shadow-indigo-500/20 hover:scale-[1.02] active:scale-[0.98]'
-                            }`}>
-                            {isCompleted ? <><Award className="w-3.5 h-3.5" /> Lihat Sertifikat</> : <><PlayCircle className="w-3.5 h-3.5" /> Lanjutkan</>}
+                                ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 hover:bg-emerald-100 border border-emerald-200 dark:border-emerald-900/40'
+                                : 'bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm shadow-indigo-600/20'
+                            }`}
+                          >
+                            {isCompleted ? (
+                              <><Award className="w-3.5 h-3.5" /> Buka Modul Lulus</>
+                            ) : (
+                              <><PlayCircle className="w-3.5 h-3.5" /> Lanjutkan Belajar</>
+                            )}
                           </button>
                         </div>
                       </div>
@@ -3226,116 +3329,129 @@ export default function DashboardPage() {
               </div>
             </div>
           ) : (
-            /* Empty state */
-            <div className="bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-16 text-center">
-              <div className="w-20 h-20 bg-indigo-50 dark:bg-indigo-950/30 rounded-full flex items-center justify-center mx-auto mb-5">
-                <BookOpen className="w-10 h-10 text-indigo-300 dark:text-indigo-400" />
+            <div className="bg-white dark:bg-[#111624] rounded-3xl border border-slate-200 dark:border-slate-800 p-12 text-center shadow-sm">
+              <div className="w-16 h-16 rounded-2xl bg-indigo-50 dark:bg-indigo-950/30 text-indigo-600 dark:text-indigo-400 flex items-center justify-center mx-auto mb-4 border border-indigo-100 dark:border-indigo-900/40">
+                <BookOpen className="w-8 h-8" />
               </div>
-              <h3 className="text-xl font-black text-slate-800 dark:text-slate-200 mb-2">Belum Ada Kursus</h3>
-              <p className="text-slate-500 dark:text-slate-400 text-sm max-w-sm mx-auto mb-6">Mulai petualangan belajar Anda dengan mendaftar ke modul pertama!</p>
-              <button onClick={() => router.push('/dashboard?tab=browse')}
-                className="px-6 py-3 bg-indigo-600 text-white font-bold rounded-xl text-sm hover:bg-indigo-700 transition-colors shadow-lg shadow-indigo-500/20 flex items-center gap-2 mx-auto">
-                <Compass className="w-4 h-4" /> Jelajahi Kursus
+              <h3 className="text-lg font-black text-slate-900 dark:text-white mb-1">Belum Ada Kursus Terdaftar</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 max-w-md mx-auto mb-5">
+                Mulai pembelajaran Anda sekarang dengan memilih modul dari katalog kurikulum lengkap kami.
+              </p>
+              <button 
+                onClick={() => router.push('/dashboard?tab=browse')}
+                className="px-6 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs shadow-md shadow-indigo-600/20 transition-all inline-flex items-center gap-2"
+              >
+                <Compass className="w-4 h-4" />
+                <span>Buka Katalog Kursus</span>
               </button>
             </div>
           )}
 
-          {/* â”€â”€ Weekly Activity Chart + Learning Tips â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ */}
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ── 3. BOTTOM ANALYTICS & INSIGHTS GRID ── */}
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
 
-            {/* Activity Chart */}
-            <div className="lg:col-span-2 bg-white dark:bg-[#0c0e18] rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm p-6">
+            {/* Left: Weekly Study Activity Chart */}
+            <div className="lg:col-span-8 bg-white dark:bg-[#111624] rounded-3xl border border-slate-200/90 dark:border-slate-800 p-6 shadow-sm">
               <div className="flex items-center justify-between mb-6">
                 <div>
-                  <h2 className="text-base font-black text-slate-800 dark:text-slate-200">Aktivitas Belajar</h2>
-                  <p className="text-xs text-slate-400 dark:text-slate-550 font-medium mt-0.5">7 hari terakhir</p>
+                  <h3 className="text-sm font-black text-slate-900 dark:text-white uppercase tracking-wider">Aktivitas Belajar Mingguan</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Perolehan poin XP dan keaktifan 7 hari terakhir</p>
                 </div>
-                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/30 rounded-xl">
-                  <BarChart2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
-                  <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">Minggu Ini</span>
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-indigo-50 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-400 rounded-xl text-xs font-bold border border-indigo-100 dark:border-indigo-900/30">
+                  <BarChart2 className="w-3.5 h-3.5" />
+                  <span>7 Hari Terakhir</span>
                 </div>
               </div>
-              <div className="flex items-end gap-2 h-28">
-                {[40, 65, 30, 85, 55, 70, 90].map((h, i) => {
-                  const today = new Date().getDay();
-                  const isToday = (i + 1) % 7 === today % 7;
+
+              {/* Bar Chart Visualization */}
+              <div className="flex items-end gap-3 h-32 pt-4">
+                {[45, 70, 35, 90, 60, 80, 95].map((h, i) => {
+                  const today = (new Date().getDay() + 6) % 7; // 0 = Monday, 6 = Sunday
+                  const isToday = i === today;
                   return (
-                    <div key={i} className="flex-1 flex flex-col items-center gap-1.5 group">
-                      <div className="relative w-full">
+                    <div key={i} className="flex-1 flex flex-col items-center gap-2 group">
+                      <div className="relative w-full h-full flex items-end">
                         <div
-                          className={`w-full rounded-t-lg transition-all duration-700 cursor-pointer relative overflow-hidden ${
+                          className={`w-full rounded-t-xl transition-all duration-500 cursor-pointer relative overflow-hidden ${
                             isToday
-                              ? 'bg-gradient-to-t from-indigo-600 to-purple-500 shadow-lg shadow-indigo-500/30'
-                              : 'bg-gradient-to-t from-indigo-200 to-indigo-100 dark:from-indigo-900 dark:to-indigo-850 group-hover:from-indigo-500 group-hover:to-indigo-400'
+                              ? 'bg-gradient-to-t from-indigo-600 via-indigo-500 to-purple-500 shadow-md shadow-indigo-500/25'
+                              : 'bg-slate-100 dark:bg-slate-800 group-hover:bg-indigo-300 dark:group-hover:bg-indigo-900'
                           }`}
-                          style={{ height: `${h * 1.12}px` }}
+                          style={{ height: `${h}%` }}
                         >
-                          <div className="absolute -top-9 left-1/2 -translate-x-1/2 bg-slate-800 text-white text-[10px] font-bold px-2 py-1 rounded-md opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                          <div className="absolute -top-7 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-[9px] font-bold px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap z-20">
                             {h} XP
                           </div>
                         </div>
                       </div>
-                      <span className={`text-[10px] font-bold ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`}>
+                      <span className={`text-[10px] font-extrabold ${isToday ? 'text-indigo-600 dark:text-indigo-400' : 'text-slate-400 dark:text-slate-500'}`}>
                         {['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'][i]}
                       </span>
                     </div>
                   );
                 })}
               </div>
-              <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                <div className="flex items-center gap-4 text-xs text-slate-500 dark:text-slate-400 font-semibold">
-                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-500" />Hari ini</span>
-                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-200 dark:bg-indigo-800" />Lainnya</span>
+
+              <div className="flex items-center justify-between mt-5 pt-4 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+                <div className="flex items-center gap-4 text-slate-500 dark:text-slate-400 font-semibold">
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-indigo-600" /> Hari ini</span>
+                  <span className="flex items-center gap-1.5"><span className="w-2.5 h-2.5 rounded-full bg-slate-200 dark:bg-slate-700" /> Hari lain</span>
                 </div>
-                <span className="text-xs font-black text-slate-700 dark:text-slate-300">Total: <span className="text-indigo-600 dark:text-indigo-400">435 XP</span></span>
+                <span className="font-extrabold text-slate-700 dark:text-slate-300">
+                  Total XP: <strong className="text-indigo-600 dark:text-indigo-400 font-black">475 XP</strong>
+                </span>
               </div>
             </div>
 
-            {/* Learning Tips / Motivational Card */}
-            <div className="space-y-4">
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-955/15 dark:to-orange-955/10 border border-amber-200/60 dark:border-amber-900/20 rounded-3xl p-5 shadow-sm">
-                <div className="flex items-center gap-2 mb-3">
+            {/* Right: Achievements & Learning Tips */}
+            <div className="lg:col-span-4 space-y-4">
+              
+              {/* Daily Learning Tip Card */}
+              <div className="bg-gradient-to-br from-amber-500/10 via-orange-500/5 to-transparent border border-amber-300/40 dark:border-amber-900/30 rounded-3xl p-5 shadow-sm">
+                <div className="flex items-center gap-2 mb-2">
                   <Sparkles className="w-4 h-4 text-amber-500 animate-pulse" />
-                  <span className="text-xs font-black text-amber-700 dark:text-amber-400 uppercase tracking-wider">Tips Hari Ini</span>
+                  <span className="text-[10px] font-black text-amber-700 dark:text-amber-400 uppercase tracking-wider">Tips Sukses Belajar</span>
                 </div>
-                <p className="text-sm text-amber-900 dark:text-amber-300 font-bold leading-relaxed">
-                  "Konsistensi adalah kunci. Belajar 30 menit setiap hari lebih efektif dari 3 jam seminggu sekali."
+                <p className="text-xs text-slate-700 dark:text-slate-300 font-bold leading-relaxed">
+                  "Praktik langsung dengan live code editor setiap menyelesaikan satu bab teori untuk memperkuat daya ingat coding Anda."
                 </p>
-                <div className="mt-3 pt-3 border-t border-amber-200/60 dark:border-amber-900/25 flex items-center gap-2">
-                  <div className="w-6 h-6 rounded-full bg-amber-200 dark:bg-amber-905/30 flex items-center justify-center text-xs">ðŸ“š</div>
-                  <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400">DevGrow Learning Tips</span>
+                <div className="mt-3 pt-2.5 border-t border-amber-200/50 dark:border-amber-900/30 flex items-center justify-between text-[10px] font-bold text-amber-700 dark:text-amber-400">
+                  <span>DevGrow LMS Guide</span>
+                  <span>⚡ 100% Praktik</span>
                 </div>
               </div>
 
-              <div className="bg-white dark:bg-[#0c0e18] border border-slate-205 dark:border-slate-800 rounded-3xl p-5 shadow-sm">
-                <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <Star className="w-3.5 h-3.5 text-amber-500" />
-                  Pencapaian Saya
+              {/* Learning Targets Overview */}
+              <div className="bg-white dark:bg-[#111624] border border-slate-200/90 dark:border-slate-800 rounded-3xl p-5 shadow-sm space-y-3.5">
+                <h3 className="text-xs font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider flex items-center gap-1.5">
+                  <Trophy className="w-3.5 h-3.5 text-amber-500" />
+                  <span>Target Pembelajaran</span>
                 </h3>
+
                 <div className="space-y-3">
                   {[
-                    { label: 'Kursus Selesai', value: completedEnrollments.length, max: Math.max(approvedEnrollments.length, 1), color: 'bg-emerald-500', icon: 'ðŸŽ“' },
-                    { label: 'Rata-rata Progres', value: avgProgress, max: 100, color: 'bg-indigo-500', icon: 'ðŸ“ˆ' },
-                    { label: 'Kursus Diikuti', value: approvedEnrollments.length, max: Math.max(modules.length, 1), color: 'bg-purple-500', icon: 'ðŸ“š' },
-                  ].map((item, i) => (
-                    <div key={i}>
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs font-bold text-slate-600 dark:text-slate-400 flex items-center gap-1.5">
-                          <span>{item.icon}</span> {item.label}
-                        </span>
-                        <span className="text-xs font-black text-slate-800 dark:text-slate-200">{item.label === 'Rata-rata Progres' ? `${item.value}%` : item.value}</span>
+                    { label: 'Penyelesaian Modul', value: completedEnrollments.length, max: Math.max(approvedEnrollments.length, 1), unit: 'kursus', color: 'bg-emerald-500' },
+                    { label: 'Rata-rata Progress', value: avgProgress, max: 100, unit: '%', color: 'bg-indigo-600' },
+                    { label: 'Modul Diambil', value: approvedEnrollments.length, max: Math.max(modules.length, 1), unit: 'modul', color: 'bg-purple-600' }
+                  ].map((target, idx) => (
+                    <div key={idx}>
+                      <div className="flex justify-between items-center text-xs font-bold mb-1">
+                        <span className="text-slate-600 dark:text-slate-300">{target.label}</span>
+                        <span className="text-slate-900 dark:text-white font-black">{target.value}{target.unit === '%' ? '%' : ` / ${target.max}`}</span>
                       </div>
-                      <div className="h-1.5 bg-slate-100 dark:bg-slate-900 rounded-full overflow-hidden">
-                        <div
-                          className={`h-full ${item.color} rounded-full transition-all duration-700`}
-                          style={{ width: `${Math.round((item.value / item.max) * 100)}%` }}
+                      <div className="w-full h-1.5 bg-slate-100 dark:bg-slate-800 rounded-full overflow-hidden">
+                        <div 
+                          className={`h-full ${target.color} rounded-full transition-all duration-500`}
+                          style={{ width: `${Math.min(100, Math.round((target.value / target.max) * 100))}%` }}
                         />
                       </div>
                     </div>
                   ))}
                 </div>
               </div>
+
             </div>
+
           </div>
 
         </div>

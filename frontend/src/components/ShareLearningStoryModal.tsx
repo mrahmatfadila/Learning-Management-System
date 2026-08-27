@@ -3,7 +3,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
   X, Download, Share2, Copy, Check, Sparkles, Trophy, 
-  Clock, Award, Calendar, Zap, MessageCircle, Instagram, 
+  Clock, Award, Calendar, Zap, MessageCircle, 
   Smartphone, Maximize2, Palette, CheckCircle2, Flame, Heart,
   Camera, Upload, Image as ImageIcon, RefreshCw, User, ShieldCheck, CheckCircle
 } from 'lucide-react';
