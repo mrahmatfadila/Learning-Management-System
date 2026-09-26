@@ -23,6 +23,16 @@ import {
 } from 'lucide-react';
 
 
+const getApiUrl = (endpoint: string) => {
+  if (typeof window !== 'undefined') {
+    if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+      return `http://localhost:5000${endpoint}`;
+    }
+    return endpoint;
+  }
+  return `http://localhost:5000${endpoint}`;
+};
+
 export default function DashboardPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -142,7 +152,7 @@ export default function DashboardPage() {
       applyNavFromUrl(u);
       fetchData(u);
       // Sync latest profile data (incl. profilePicture) from backend
-      fetch(`http://localhost:5000/api/users/${u.id}`)
+      fetch(getApiUrl(`/api/users/${u.id}`))
         .then(r => r.ok ? r.json() : null)
         .then(fresh => {
           if (!fresh) return;
@@ -169,15 +179,15 @@ export default function DashboardPage() {
       const role = u?.role?.toUpperCase();
       if (role === 'STUDENT') {
         const [modRes, enrRes] = await Promise.all([
-          fetch('http://localhost:5000/api/modules').catch(() => null),
-          fetch(`http://localhost:5000/api/enrollments/student/${u.id}`).catch(() => null)
+          fetch(getApiUrl('/api/modules')).catch(() => null),
+          fetch(getApiUrl(`/api/enrollments/student/${u.id}`)).catch(() => null)
         ]);
         if (modRes?.ok) setModules(await modRes.json());
         if (enrRes?.ok) setEnrollments(await enrRes.json());
       } else {
         const [modRes, studRes] = await Promise.all([
-          fetch('http://localhost:5000/api/modules').catch(() => null),
-          fetch(`http://localhost:5000/api/enrollments/instructor/${u.id}`).catch(() => null)
+          fetch(getApiUrl('/api/modules')).catch(() => null),
+          fetch(getApiUrl(`/api/enrollments/instructor/${u.id}`)).catch(() => null)
         ]);
         if (modRes?.ok) setModules(await modRes.json());
         if (studRes?.ok) setEnrolledStudents(await studRes.json());
@@ -189,7 +199,7 @@ export default function DashboardPage() {
   const fetchStudentsOnly = async (currentUser: any) => {
     if (!currentUser) return;
     try {
-      const studRes = await fetch(`http://localhost:5000/api/enrollments/instructor/${currentUser.id}`);
+      const studRes = await fetch(getApiUrl(`/api/enrollments/instructor/${currentUser.id}`));
       if (studRes.ok) setEnrolledStudents(await studRes.json());
     } catch (err) {
       console.error('Failed to fetch students', err);
@@ -198,7 +208,7 @@ export default function DashboardPage() {
 
   const handleApproveStudent = async (enrollmentId: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/enrollments/${enrollmentId}/approve`, {
+      const res = await fetch(getApiUrl(`/api/enrollments/${enrollmentId}/approve`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({})
@@ -217,7 +227,7 @@ export default function DashboardPage() {
 
   const handleRejectStudent = async (enrollmentId: string, note?: string) => {
     try {
-      const res = await fetch(`http://localhost:5000/api/enrollments/${enrollmentId}/reject`, {
+      const res = await fetch(getApiUrl(`/api/enrollments/${enrollmentId}/reject`), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ note: note || 'Ditolak oleh instruktur.' })
@@ -237,7 +247,7 @@ export default function DashboardPage() {
   const handleUpdateProgress = async (studentId: string, moduleId: string, newProgress: number) => {
     setIsUpdatingProgress(true);
     try {
-      const res = await fetch('http://localhost:5000/api/enrollments/progress', {
+      const res = await fetch(getApiUrl('/api/enrollments/progress'), {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ studentId, moduleId, progress: Number(newProgress) })
@@ -604,7 +614,7 @@ export default function DashboardPage() {
       const handleEnroll = async (moduleId: string) => {
         try {
           const targetMod = modules.find((m: any) => m.id === moduleId);
-          const res = await fetch('http://localhost:5000/api/enrollments', {
+          const res = await fetch(getApiUrl('/api/enrollments'), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ studentId: user.id, moduleId })
@@ -642,7 +652,7 @@ export default function DashboardPage() {
           }));
 
           // Fire API in background — no await, no loading
-          fetch(`http://localhost:5000/api/modules/${moduleId}/like`, {
+          fetch(getApiUrl(`/api/modules/${moduleId}/like`), {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ userId: user.id })
