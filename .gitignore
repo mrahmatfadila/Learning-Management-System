@@ -35,5 +35,7 @@ Thumbs.db
 # Database Backups (Local Only)
 backups/
 backend/backups/
-content-api-server/backups/
 *.sql
+# Uploads
+backend/uploads/
+uploads/

@@ -489,3 +489,134 @@ When initializing rules:
 > EVERY SUCCESSFUL TASK MUST HAVE A RECOVERABLE GIT CHECKPOINT.
 >
 > WHEN IN DOUBT, STOP AND ASK THE DEVELOPER.
+
+---
+
+# 27. ENTERPRISE LMS CURRICULUM & CONTENT STANDARDS (JS, PHP, PYTHON, ETC.)
+
+> ATURAN BAKU PENYUSUNAN MATERI KURIKULUM LMS
+>
+> Seluruh pengisian modul pemrograman (JavaScript, PHP, Python, HTML, CSS, Git, dll.) WAJIB mengikuti standar kelengkapan, kedalaman, dan struktur data berskala enterprise seperti modul JavaScript (306 materi) dan PHP (888 materi).
+
+### 1. Granularitas & Kedalaman Materi Skala Besar (Aturan Sub-Judul Sidebar)
+- Setiap materi harus diuraikan secara mendalam, komprehensif, dan menyeluruh (exhaustively detailed).
+- **ATURAN TANDA KURUNG / SUB-JUDUL SIDEBAR**: Jika sebuah topik memiliki sub-topik di dalam tanda kurung (contoh: `Python Variables (Python Variables, Variable Names, Assign Multiple Values, Output Variables, Global Variables, Variable Exercises, Code Challenge)`), maka **SETIAP SUB-TOPIK WAJIB DIPECAH MENJADI ENTRY LESSON TERSENDIRI DI SIDEBAR** dengan judul yang bersih dan rapi (contoh lesson: `Python Variables`, `Python Variable Names`, `Python Assign Multiple Values`, `Python Output Variables`, `Python Global Variables`, `Python Variable Exercises`, `Python Variables Challenge`).
+- **DILARANG** menggabungkan daftar sub-topik panjang ke dalam 1 judul lesson tunggal (seperti `Python Lists (Python Lists, Access List Items, Change List Items, ...)`).
+- Dilarang membuat konten ringkas/singkat (jangan buat placeholder atau "lorem ipsum").
+
+### 2. Struktur Objek Materi Wajib
+Setiap lesson wajib memiliki struktur data lengkap:
+```javascript
+{
+  id: 'slug-unik-kebab-case',
+  title: 'Judul Lengkap Beserta Sub-Grup',
+  chapter: 'Nama Bab',
+  chapterId: 'id-bab',
+  order: 1, // Nomor urut sekuensial
+  overview: 'Ringkasan konsep dan tujuan pembelajaran',
+  theory: `<!-- HTML Visual Cards dengan Tailwind CSS, tabel referensi, box perbandingan, dan pembedahan konsep -->`,
+  code: `# Kode program executable yang bersih, modern, dan mendidik`,
+  codeExplanation: [
+    'Penjelasan baris kode per baris secara detail'
+  ],
+  challenge: {
+    instruction: 'Instruksi tantangan koding yang jelas',
+    starterCode: 'Kode awal untuk dikerjakan siswa',
+    hint: 'Petunjuk penyelesaian tantangan'
+  },
+  quiz: {
+    question: 'Pertanyaan kuis pilihan ganda evaluasi teknis',
+    options: ['Opsi A', 'Opsi B', 'Opsi C', 'Opsi D'],
+    correctIndex: 0,
+    explanation: 'Pembahasan lengkap mengapa jawaban tersebut benar'
+  }
+}
+```
+
+### 3. Dual-Database Sync & Student Auto-Enrollment
+- Data materi harus disimpan di **`lms_content_db`** dan langsung disinkronkan ke **`lms_edutech_db`**.
+- Chapter dan Module di `lms_edutech_db` harus terverifikasi (`isVerified: true`) dan terhubung dengan role instruktur/admin.
+- Siswa (*role: STUDENT*) harus otomatis terdaftar (*Enrollment APPROVED*) agar modul langsung tampil dengan jumlah materi yang tepat di dashboard siswa.
+
+### 4. Eksekusi Backup Otomatis (Rule #24)
+- Setiap kali selesai melakukan seeding atau update materi ke database, WAJIB menjalankan:
+  ```bash
+  npm run db:backup
+  ```
+  pada folder `backend/`.
+
+### 5. Standar Hierarki 3 Tingkat Sidebar (Judul Bab -> Sub Judul 1 -> Sub Judul 2 Menjorok)
+Aturan pemetaan saat developer mengirimkan format kurikulum seperti:
+```text
+Python Tutorial
+Python HOME
+Python Intro
+Python Get Started
+Python Syntax (Syntax, Statements, Code Challenge)
+Python Output (Print Text, Print Numbers, Code Challenge)
+Python Comments (Comments, Code Challenge)
+```
+
+Pemetaan hierarki sidebar yang WAJIB diterapkan:
+- **Tier 1 (Judul Bab Utama / Accordion Level 1)**:
+  - Judul bab besar (contoh: `Python Tutorial`).
+- **Topik Mandiri (Tanpa Tanda Kurung)**:
+  - Topik dasar mandiri (contoh: `Python HOME`, `Python Intro`, `Python Get Started`) ditampilkan langsung sejajar di bawah Bab dengan bullet/icon rapi.
+- **Tier 2 (Sub Judul 1 / Parent Topic Header)**:
+  - Nama topik pengelompokan yang memiliki anak di dalam kurung (contoh: `Python Syntax`, `Python Output`, `Python Comments`). Ditampilkan sebagai header kategori dengan indikator visual pemisah.
+- **Tier 3 (Sub Judul 2 / Child Lessons Menjorok ke Dalam / Indented)**:
+  - Setiap materi di dalam tanda kurung dipecah menjadi entri materi interaktif mandiri yang ditampilkan **menjorok ke dalam (indented)** dengan garis pohon vertikal:
+    - Di bawah `Python Syntax` $\rightarrow$ `Syntax`, `Statements`, `Code Challenge`
+    - Di bawah `Python Output` $\rightarrow$ `Print Text`, `Print Numbers`, `Code Challenge`
+    - Di bawah `Python Comments` $\rightarrow$ `Comments`, `Code Challenge`
+- Format penamaan database untuk Tier 3 menggunakan format: `[Parent Topic] - [Child Lesson]` (contoh: `Python Syntax - Syntax`, `Python Syntax - Statements`, `Python Syntax - Code Challenge`) sehingga parser frontend otomatis mengenali induk dan merender nama bersihnya menjorok di sidebar.
+
+---
+
+# 28. CLEAN CODE, MAINTAINABILITY & HIGH-PERFORMANCE WEB STANDARDS
+
+> ATURAN BAKU PENULISAN KODE BERSIH, MUDAH DI-MAINTENANCE, DAN RINGAN (HIGH PERFORMANCE)
+>
+> Seluruh penulisan kode (Frontend & Backend) WAJIB mematuhi prinsip Clean Code, mudah dibaca, mudah dikembangkan (maintainable), dan berkinerja tinggi agar sistem tidak berat atau lambat.
+
+### 1. Prinsip Clean Code & Readable Architecture
+- **Keterbacaan Utama (Readability First)**: Gunakan penamaan variabel, fungsi, dan komponen yang jelas, eksplisit, dan deskriptif bahasa Inggris/Indonesia yang konsisten.
+- **Single Responsibility Principle (SRP)**: Satu fungsi atau komponen hanya menangani satu tugas spesifik. Hindari fungsi multi-task yang panjang dan rumit.
+- **Pemisahan Logika & Tampilan (Separation of Concerns)**: Pisahkan logika kalkulasi bisnis, data fetching, dan rendering UI ke dalam helper atau custom hooks jika kode mulai kompleks.
+- **Clean File Structure**: Jaga agar file tidak membengkak tanpa struktur yang jelas. Hindari duplikasi kode (DRY - Don't Repeat Yourself).
+
+### 2. Efisiensi & Kinerja Tinggi Frontend (Anti-Lag & Anti-Freeze)
+- **Cegah DOM Overload / Over-Rendering**:
+  - Pada modul dengan ratusan/ribuan data (contoh: PHP 888 materi), **DILARANG** merender seluruh item DOM terbuka secara bersamaan.
+  - Gunakan sistem **Collapsible Accordion / On-Demand Rendering** sehingga hanya bab aktif yang dirender ke DOM.
+- **Optimasi Next.js Routing & Prefetch**:
+  - Gunakan hook resmi dan stabil Next.js seperti `useParams()` dan `useRouter()` dari `next/navigation`.
+  - Tambahkan `prefetch={false}` pada link di dalam tabel atau daftar panjang materi untuk mencegah browser membeku akibat ratusan request prefetch latar belakang yang simultan.
+- **Zero Keystroke Lag (Memoization)**:
+  - Gunakan `useMemo` dan `useCallback` untuk kalkulasi filter, pencarian, dan pengelompokan hierarki agar pengetikan di input/editor tetap responsif (0ms lag).
+- **Asynchronous Heavy Libraries**:
+  - Komponen berat seperti Code Editor (Monaco Editor) wajib dimuat secara non-blocking (`dynamic import` dengan `ssr: false` dan lightweight fallback loader).
+
+### 3. Efisiensi & Kinerja Tinggi Backend (Lightweight Payloads)
+- **Pemisahan Query List vs Query Detail (Payload Reduction)**:
+  - Endpoint yang mengambil daftar modul/silabus (`getModuleById` / `getLessonsByModuleId`) **HANYA** boleh memilih metadata ringan (`id`, `title`, `type`, `order`, `chapter`, `chapterId`).
+  - **DILARANG** menyertakan string HTML/JSON `content` yang besar pada query daftar, karena dapat membengkakkan payload hingga puluhan Megabytes.
+  - Konten detail materi yang lengkap hanya diambil saat pengguna membuka satu materi spesifik (`getLessonById`).
+- **Fast Timeout & Non-Blocking API**:
+  - Setiap pemanggilan HTTP internal/Content API harus dilengkapi timeout yang cepat (maksimal 150-200ms) agar jika service offline, sistem tidak mengalami blocking atau jeda tunggu lama.
+
+---
+
+# 29. BROWSER AUTOMATION RESTRICTION (NO AUTO BROWSER SUBAGENT / USER SCREENSHOT ONLY)
+
+> ATURAN BAKU: DILARANG KERAS MEMBUKA BROWSER / SUBAGENT BROWSER SECARA OTOMATIS
+>
+> Penggunaan browser subagent otomatis sangat memakan banyak kuota limit AI dan berpotensi menyebabkan hanging/lag.
+
+### Aturan:
+1. **DILARANG KERAS** menjalankan `browser_subagent` atau membuka browser sendiri untuk melihat hasil tampilan/analisis frontend.
+2. Jika membutuhkan konfirmasi/pemeriksaan visual UI: **AI WAJIB MEMINTA DEVELOPER (USER) UNTUK MELAKUKAN SCREENSHOT (SS)** dan mengirimkannya ke chat.
+3. Verifikasi pekerjaan frontend berfokus pada kebenaran logika kode, pemetaan data, build check, dan respons instruksi langsung dengan developer.
+
+
+

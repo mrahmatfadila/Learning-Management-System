@@ -290,20 +290,24 @@ export default function DashboardNavbar() {
         </Link>
 
         <div className="flex items-center gap-2">
-          {/* Search */}
-          <div className="hidden lg:flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3 py-2 w-52 gap-2 focus-within:border-indigo-300 focus-within:ring-2 focus-within:ring-indigo-100 dark:focus-within:ring-indigo-950 transition-all">
+          {/* Search Bar matching EduNova ERP */}
+          <div className="hidden lg:flex items-center bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl px-3.5 py-2 w-80 gap-2 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-100 dark:focus-within:ring-blue-950 transition-all">
             <Search className="w-4 h-4 text-slate-400 shrink-0" />
             <input
               type="text"
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
-              placeholder="Cari kursus, tugas..."
-              className="bg-transparent border-none focus:outline-none text-sm w-full placeholder:text-slate-400 text-slate-700 dark:text-slate-200"
+              placeholder="Search students, classes, assignments, resources..."
+              className="bg-transparent border-none focus:outline-none text-xs font-medium w-full placeholder:text-slate-400 text-slate-700 dark:text-slate-200"
             />
-            {searchQuery && (
+            {searchQuery ? (
               <button onClick={() => setSearchQuery('')} className="text-slate-400 hover:text-slate-600 dark:hover:text-white">
                 <X className="w-3.5 h-3.5" />
               </button>
+            ) : (
+              <span className="text-[10px] font-bold text-slate-400 bg-white dark:bg-slate-800 px-1.5 py-0.5 rounded border border-slate-200 dark:border-slate-700 shrink-0">
+                ⌘ K
+              </span>
             )}
           </div>
 

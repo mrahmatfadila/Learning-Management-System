@@ -1740,10 +1740,19 @@ function SyllabusAccordion({ syllabus, completedSet, progressPct, enrollmentStat
           const isBabOpen = openBab[babKey] !== false;
           const babProgressPct = babLessons.length > 0 ? Math.round((babDone / babLessons.length) * 100) : 0;
 
-          // Group lessons by sub-bab (lesson.chapter string)
+          // Group lessons by sub-bab (lesson.chapter string or Title prefix 'Parent - Sub')
           const subBabMap: Record<string, any[]> = {};
           for (const lesson of babLessons) {
-            const subKey = (lesson.chapter && lesson.chapter !== bab.title) ? lesson.chapter : '__direct__';
+            let subKey = '__direct__';
+            if (lesson.chapter && lesson.chapter !== bab.title) {
+              subKey = lesson.chapter;
+            } else {
+              const titleStr = lesson.title || '';
+              const parts = titleStr.split(/\s*[-–—:]\s*/);
+              if (parts.length >= 2 && parts[0].trim().length > 0) {
+                subKey = parts[0].trim();
+              }
+            }
             if (!subBabMap[subKey]) subBabMap[subKey] = [];
             subBabMap[subKey].push(lesson);
           }
@@ -1992,7 +2001,7 @@ function LessonRow({ lesson, allLessons, completedSet, progressPct, enrollmentSt
         <h4 className={`text-xs sm:text-sm font-bold truncate ${
           isDone ? 'text-slate-600 font-semibold' : isUnlocked ? 'text-slate-800 group-hover:text-indigo-600 font-bold' : 'text-slate-400'
         }`}>
-          {lesson.title}
+          {lesson.displayTitle || (lesson.title && lesson.title.includes(' - ') ? lesson.title.split(/\s*[-–—:]\s*/).slice(1).join(' - ') : lesson.title)}
         </h4>
       </div>
 

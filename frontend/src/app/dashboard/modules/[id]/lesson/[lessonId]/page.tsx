@@ -921,51 +921,164 @@ export default function LessonPage() {
         </div>
 
         {/* Lesson list */}
-        <div className="flex-1 overflow-y-auto py-2 px-2">
-          {sidebarModules.map((bab: any) => (
-            <div key={bab.id} className="mb-1">
-              <button onClick={() => toggleBab(bab.id)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-colors ${textMuted} ${hover}`}>
-                <span>{bab.title}</span>
-                {expandedBab.includes(bab.id) ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-              </button>
-              {expandedBab.includes(bab.id) && bab.lessons.map((l: any, li: number) => {
-                const globalIdx = allLessons.findIndex((x: any) => x.id === l.id);
-                const unlocked = isLessonUnlocked(globalIdx);
-                const done = completedLessons.has(l.id);
-                return unlocked ? (
-                  <Link key={l.id} href={`/dashboard/modules/${id}/lesson/${l.id}`}
-                    className={`flex items-center gap-3 px-3 py-2.5 mx-1 rounded-xl mb-0.5 text-sm font-medium transition-all ${
-                      l.id === lessonId
-                        ? `${isDark ? 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/30' : 'bg-indigo-50 text-indigo-700 border border-indigo-200'} shadow-sm`
-                        : `${textMuted} ${hover} border border-transparent`
-                    }`}>
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                      done ? 'bg-emerald-500' : l.id === lessonId ? (isDark ? 'bg-indigo-500' : 'bg-indigo-600') : (isDark ? 'bg-white/10' : 'bg-slate-200')
-                    }`}>
-                      {done ? (
-                        <CheckCircle className="w-3.5 h-3.5 text-white" />
-                      ) : l.type === 'video' ? (
-                        <Video className={`w-2.5 h-2.5 ${l.id === lessonId ? 'text-white' : isDark ? 'text-slate-400' : 'text-slate-500'}`} />
-                      ) : l.type === 'reading' ? (
-                        <FileText className={`w-2.5 h-2.5 ${l.id === lessonId ? 'text-white' : isDark ? 'text-slate-400' : 'text-slate-500'}`} />
-                      ) : (
-                        <Code2 className={`w-2.5 h-2.5 ${l.id === lessonId ? 'text-white' : isDark ? 'text-slate-400' : 'text-slate-500'}`} />
-                      )}
-                    </div>
-                    <span className={`truncate text-xs ${done ? 'line-through opacity-60' : ''}`}>{l.title}</span>
-                  </Link>
-                ) : (
-                  <div key={l.id} className={`flex items-center gap-3 px-3 py-2.5 mx-1 rounded-xl mb-0.5 text-sm font-medium opacity-40 cursor-not-allowed border border-transparent`}>
-                    <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/5' : 'bg-slate-100'}`}>
-                      <svg className="w-3 h-3 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                    </div>
-                    <span className="truncate text-xs">{l.title}</span>
+        <div className="flex-1 overflow-y-auto py-2 px-2.5 space-y-2">
+          {sidebarModules.map((bab: any) => {
+            const isBabOpen = expandedBab.includes(bab.id);
+            const groups: { groupName?: string; isStandalone: boolean; lessons: any[] }[] = [];
+            
+            if (isBabOpen && bab.lessons) {
+              bab.lessons.forEach((l: any) => {
+                const titleStr = l.title || '';
+                const parts = titleStr.split(/\s*[-–—:]\s*/);
+                let group: string | undefined = undefined;
+                let sub: string = titleStr;
+                if (parts.length >= 2 && parts[0].trim().length > 0) {
+                  group = parts[0].trim();
+                  sub = parts.slice(1).join(' - ').trim();
+                }
+                
+                const item = { ...l, displayTitle: sub || l.title };
+                if (!group) {
+                  groups.push({ isStandalone: true, lessons: [item] });
+                } else {
+                  const lastGroup = groups[groups.length - 1];
+                  if (lastGroup && !lastGroup.isStandalone && lastGroup.groupName === group) {
+                    lastGroup.lessons.push(item);
+                  } else {
+                    groups.push({ groupName: group, isStandalone: false, lessons: [item] });
+                  }
+                }
+              });
+            }
+
+            return (
+              <div key={bab.id} className="rounded-xl overflow-hidden">
+                <button onClick={() => toggleBab(bab.id)}
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded-xl text-[11px] font-black uppercase tracking-wider transition-colors ${
+                    isBabOpen 
+                      ? `${isDark ? 'bg-white/5 text-white' : 'bg-slate-100/80 text-slate-800'}` 
+                      : `${textMuted} ${hover}`
+                  }`}>
+                  <span className="truncate">{bab.title}</span>
+                  {isBabOpen ? <ChevronUp className="w-3.5 h-3.5 shrink-0 opacity-70" /> : <ChevronDown className="w-3.5 h-3.5 shrink-0 opacity-70" />}
+                </button>
+
+                {isBabOpen && (
+                  <div className="space-y-2 pt-1.5 pb-1">
+                    {groups.map((grp, gIdx) => {
+                      if (grp.isStandalone) {
+                        const l = grp.lessons[0];
+                        const globalIdx = allLessons.findIndex((x: any) => x.id === l.id);
+                        const unlocked = isLessonUnlocked(globalIdx);
+                        const done = completedLessons.has(l.id);
+                        const isActive = l.id === lessonId;
+                        return unlocked ? (
+                          <Link key={l.id} href={`/dashboard/modules/${id}/lesson/${l.id}`}
+                            className={`flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-semibold transition-all ${
+                              isActive
+                                ? `${isDark ? 'bg-indigo-600/30 text-indigo-300 border border-indigo-500/40 shadow-xs' : 'bg-indigo-50 text-indigo-700 border border-indigo-200 shadow-xs'} font-bold`
+                                : `${textMuted} ${hover} border border-transparent`
+                            }`}>
+                            <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${
+                              done ? 'bg-emerald-500 text-white' : isActive ? (isDark ? 'bg-indigo-500 text-white' : 'bg-indigo-600 text-white') : (isDark ? 'bg-white/10' : 'bg-slate-200')
+                            }`}>
+                              {done ? (
+                                <CheckCircle className="w-2.5 h-2.5" />
+                              ) : l.type === 'video' ? (
+                                <Video className="w-2 h-2" />
+                              ) : l.type === 'reading' ? (
+                                <FileText className="w-2 h-2" />
+                              ) : (
+                                <Code2 className="w-2 h-2" />
+                              )}
+                            </div>
+                            <span className={`truncate ${done ? 'line-through opacity-60' : ''}`}>{l.title}</span>
+                          </Link>
+                        ) : (
+                          <div key={l.id} className="flex items-center gap-2.5 px-3 py-2 rounded-xl text-xs font-medium opacity-40 cursor-not-allowed border border-transparent">
+                            <div className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/5' : 'bg-slate-100'}`}>
+                              <Lock className="w-2.5 h-2.5 text-slate-400" />
+                            </div>
+                            <span className="truncate">{l.title}</span>
+                          </div>
+                        );
+                      }
+
+                      // Tier 2 Parent Group Header + Tier 3 Indented Children
+                      const hasActiveChild = grp.lessons.some((x: any) => x.id === lessonId);
+                      const completedCount = grp.lessons.filter((x: any) => completedLessons.has(x.id)).length;
+                      const isGroupDone = completedCount === grp.lessons.length && grp.lessons.length > 0;
+
+                      return (
+                        <div key={gIdx} className={`rounded-xl transition-colors ${
+                          hasActiveChild 
+                            ? (isDark ? 'bg-indigo-950/20' : 'bg-indigo-50/40') 
+                            : ''
+                        } pt-1 pb-0.5`}>
+                          {/* Tier 2: Sub Judul 1 / Parent Topic Header */}
+                          <div className="flex items-center justify-between px-2.5 py-1 mb-1">
+                            <div className="flex items-center gap-1.5 min-w-0">
+                              <span className={`w-1.5 h-3 rounded-full shrink-0 ${
+                                isGroupDone ? 'bg-emerald-500' : hasActiveChild ? 'bg-indigo-500' : 'bg-slate-400 dark:bg-slate-600'
+                              }`} />
+                              <span className={`text-[10px] font-black uppercase tracking-wider truncate ${
+                                hasActiveChild 
+                                  ? (isDark ? 'text-indigo-300' : 'text-indigo-700') 
+                                  : 'text-slate-500 dark:text-slate-400'
+                              }`}>
+                                {grp.groupName}
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-semibold text-slate-400 dark:text-slate-500 shrink-0 ml-1">
+                              {completedCount}/{grp.lessons.length}
+                            </span>
+                          </div>
+
+                          {/* Tier 3: Sub Judul 2 / Child Lessons Menjorok ke Dalam (Indented Tree) */}
+                          <div className="ml-3.5 pl-2.5 border-l-2 border-slate-200 dark:border-slate-800 space-y-0.5">
+                            {grp.lessons.map((l: any) => {
+                              const globalIdx = allLessons.findIndex((x: any) => x.id === l.id);
+                              const unlocked = isLessonUnlocked(globalIdx);
+                              const done = completedLessons.has(l.id);
+                              const isActive = l.id === lessonId;
+                              return unlocked ? (
+                                <Link key={l.id} href={`/dashboard/modules/${id}/lesson/${l.id}`}
+                                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs transition-all ${
+                                    isActive
+                                      ? `${isDark ? 'bg-indigo-600/30 text-indigo-200 border border-indigo-500/40 shadow-xs' : 'bg-indigo-100/90 text-indigo-900 border border-indigo-300/80 shadow-xs'} font-bold`
+                                      : `${textMuted} ${hover} border border-transparent font-medium`
+                                  }`}>
+                                  <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${
+                                    done ? 'bg-emerald-500 text-white' : isActive ? (isDark ? 'bg-indigo-500 text-white' : 'bg-indigo-600 text-white') : (isDark ? 'bg-white/10' : 'bg-slate-200')
+                                  }`}>
+                                    {done ? (
+                                      <CheckCircle className="w-2 h-2" />
+                                    ) : l.type === 'video' ? (
+                                      <Video className="w-1.5 h-1.5" />
+                                    ) : (
+                                      <Code2 className="w-1.5 h-1.5" />
+                                    )}
+                                  </div>
+                                  <span className={`truncate text-[11.5px] ${done ? 'line-through opacity-60' : ''}`}>{l.displayTitle}</span>
+                                </Link>
+                              ) : (
+                                <div key={l.id} className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg text-xs font-medium opacity-40 cursor-not-allowed border border-transparent">
+                                  <div className={`w-3.5 h-3.5 rounded-full flex items-center justify-center shrink-0 ${isDark ? 'bg-white/5' : 'bg-slate-100'}`}>
+                                    <Lock className="w-2 h-2 text-slate-400" />
+                                  </div>
+                                  <span className="truncate text-[11.5px]">{l.displayTitle}</span>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
-          ))}
+                )}
+              </div>
+            );
+          })}
         </div>
 
         {/* Progress footer */}

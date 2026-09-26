@@ -421,6 +421,42 @@ export default function DashboardSidebar() {
           </div>
         </div>
 
+        {/* Meet Nova AI Card (Exact EduNova Design) */}
+        <div className="p-4 border-t border-slate-100 dark:border-slate-800/80">
+          <div className="p-3.5 rounded-2xl bg-gradient-to-br from-blue-50/80 via-sky-50/50 to-indigo-50/60 dark:from-blue-950/30 dark:via-sky-950/20 dark:to-indigo-950/30 border border-blue-100 dark:border-blue-900/40 space-y-3 relative overflow-hidden">
+            <div className="flex items-start justify-between">
+              <div className="min-w-0 pr-2">
+                <h4 className="text-xs font-black text-slate-900 dark:text-white leading-tight">Meet Nova AI</h4>
+                <p className="text-[10px] text-slate-500 dark:text-slate-400 font-medium leading-snug mt-1">
+                  Your AI Teaching Assistant for smarter &amp; faster teaching.
+                </p>
+              </div>
+              
+              {/* 3D Robot Mascot Icon */}
+              <div className="w-10 h-10 shrink-0">
+                <svg viewBox="0 0 100 100" fill="none" className="w-full h-full drop-shadow">
+                  <rect x="22" y="24" width="56" height="46" rx="16" fill="#FFFFFF" stroke="#E2E8F0" strokeWidth="2" />
+                  <rect x="30" y="34" width="40" height="24" rx="8" fill="#0F172A" />
+                  <circle cx="42" cy="46" r="4" fill="#38BDF8" />
+                  <circle cx="58" cy="46" r="4" fill="#38BDF8" />
+                  {/* Headphone Ears */}
+                  <rect x="14" y="38" width="8" height="18" rx="4" fill="#2563EB" />
+                  <rect x="78" y="38" width="8" height="18" rx="4" fill="#2563EB" />
+                  <line x1="50" y1="12" x2="50" y2="24" stroke="#94A3B8" strokeWidth="3" />
+                  <circle cx="50" cy="10" r="4.5" fill="#38BDF8" />
+                </svg>
+              </div>
+            </div>
+
+            <button
+              onClick={() => router.push('/dashboard?view=quizizz')}
+              className="w-full py-2 bg-[#1D64F2] hover:bg-[#1554D1] active:scale-95 text-white text-[11px] font-extrabold rounded-xl shadow-sm transition-all cursor-pointer flex items-center justify-center"
+            >
+              Chat with Nova AI
+            </button>
+          </div>
+        </div>
+
       </div>
       {/* MOBILE BOTTOM NAVIGATION */}
       <div className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-[#0c0e18] border-t border-slate-200 dark:border-slate-800 z-[60] px-4 py-2 flex justify-between items-center shadow-[0_-5px_20px_rgba(0,0,0,0.05)] dark:shadow-none pb-safe transition-colors duration-300">

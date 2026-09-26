@@ -82,6 +82,119 @@ select:disabled,
   animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
+/* ─── Hero Dynamic Cyber & Aurora Floating Background (0% CPU / 60fps GPU Accelerated) ─── */
+@keyframes heroOrb1 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(50px, -40px, 0) scale(1.12);
+  }
+  66% {
+    transform: translate3d(-40px, 30px, 0) scale(0.94);
+  }
+}
+
+@keyframes heroOrb2 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  40% {
+    transform: translate3d(-60px, 50px, 0) scale(1.15);
+  }
+  80% {
+    transform: translate3d(45px, -30px, 0) scale(0.9);
+  }
+}
+
+@keyframes heroOrb3 {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(40px, 60px, 0) scale(1.18);
+  }
+}
+
+@keyframes heroFloatSlow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, -16px, 0) rotate(2deg);
+  }
+}
+
+@keyframes heroFloatReverse {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(0, 15px, 0) rotate(-2deg);
+  }
+}
+
+@keyframes heroFloatGentle {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(-10px, -12px, 0) scale(1.03);
+  }
+}
+
+@keyframes heroScanLine {
+  0% {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.6;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(220%);
+    opacity: 0;
+  }
+}
+
+.animate-hero-orb-1 {
+  animation: heroOrb1 20s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-orb-2 {
+  animation: heroOrb2 25s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-orb-3 {
+  animation: heroOrb3 22s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-float-1 {
+  animation: heroFloatSlow 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-float-2 {
+  animation: heroFloatReverse 9s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-float-3 {
+  animation: heroFloatGentle 8s ease-in-out infinite;
+  will-change: transform;
+}
+
+.animate-hero-scan {
+  animation: heroScanLine 9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  will-change: transform, opacity;
+}
+
 /* =========================================================
    📚 LESSON THEORY CONTENT & HERO CARDS HIGH CONTRAST STYLES
    ========================================================= */
